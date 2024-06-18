@@ -1,32 +1,33 @@
-import { Button, Form, Steps } from "antd"
-import { useState } from "react"
-import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form"
-import { RegisterCompanyForm } from "../../../components/register-company/company-form"
-import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form"
-import { useRegisterCompanyContext } from "../contexts/register-company-provider"
+import { Button, Form, Steps } from "antd";
+import { useState } from "react";
+import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form";
+import { RegisterCompanyForm } from "../../../components/register-company/company-form";
+import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form";
+import { useRegisterCompanyContext } from "../contexts/register-company-provider";
 
 export const RegisterCompanyPage = () => {
-  const [currentStep, setCurrentStep] = useState(0)
-  const { setRegisterCompanyFormData } = useRegisterCompanyContext()
+  const [currentStep, setCurrentStep] = useState(0);
+  const { setRegisterCompanyFormData } = useRegisterCompanyContext();
 
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
   const nextStep = () => {
-    form.validateFields().then(() => {
-      setRegisterCompanyFormData((prev) => ({
-        ...prev,
-        ...form.getFieldsValue(),
-      }))
-      if (currentStep < 2) {
-        setCurrentStep(currentStep + 1)
-      }
-    })
-  }
+    if (currentStep < 2) {
+      form.validateFields().then(() => {
+        setRegisterCompanyFormData((prev) => ({
+          ...prev,
+          ...form.getFieldsValue(),
+        }));
+
+        setCurrentStep(currentStep + 1);
+      });
+    }
+  };
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
   return (
     <main
@@ -69,10 +70,14 @@ export const RegisterCompanyPage = () => {
           {currentStep === 0 && <RegisterCompanyForm />}
           {currentStep === 1 && <RegisterCompanyAddressForm />}
           {currentStep === 2 && <RegisterCompanyConfirmationForm />}
+          <Form.Item>
+            <Button onClick={prevStep}>Voltar</Button>
+          </Form.Item>
+          <Form.Item>
+            <Button onClick={nextStep}>Avançar</Button>
+          </Form.Item>
         </Form>
       </section>
-      <Button onClick={prevStep}>Voltar</Button>
-      <Button onClick={() => form.submit()}>Avançar</Button>
     </main>
-  )
-}
+  );
+};
