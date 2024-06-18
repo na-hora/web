@@ -1,8 +1,8 @@
-import { Form, Input } from "antd";
+import { Form, Input } from "antd"
 
 export const RegisterCompanyAddressForm = () => {
   return (
-    <Form layout="vertical" size="large">
+    <>
       <Form.Item label="CEP" name="zipCode">
         <Input />
       </Form.Item>
@@ -26,6 +26,6 @@ export const RegisterCompanyAddressForm = () => {
       <Form.Item label="Complemento" name="complement">
         <Input type="password" />
       </Form.Item>
-    </Form>
-  );
-};
+    </>
+  )
+}
