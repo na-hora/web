@@ -1,4 +1,4 @@
-import { Form, Input } from "antd";
+import { Form, Input } from "antd"
 
 export const RegisterCompanyAddressForm = () => {
   return (
@@ -6,7 +6,7 @@ export const RegisterCompanyAddressForm = () => {
       <Form.Item
         label="CEP"
         name="zipCode"
-        rules={[{ required: true }]}
+        rules={[{ required: true, message: "CEP obrigatório" }]}
         required
       >
         <Input type="number" />
@@ -15,7 +15,7 @@ export const RegisterCompanyAddressForm = () => {
       <Form.Item
         label="Cidade"
         name="cityId"
-        rules={[{ required: true }]}
+        rules={[{ required: true, message: "Cidade obrigatória" }]}
         required
       >
         <Input type="number" />
@@ -24,7 +24,7 @@ export const RegisterCompanyAddressForm = () => {
       <Form.Item
         label="Bairro"
         name="neighborhood"
-        rules={[{ required: true }]}
+        rules={[{ required: true, message: "Bairro obrigatório" }]}
         required
       >
         <Input />
@@ -33,7 +33,7 @@ export const RegisterCompanyAddressForm = () => {
       <Form.Item
         label="Rua"
         name="street"
-        rules={[{ required: true }]}
+        rules={[{ required: true, message: "Rua obrigatória" }]}
         required
       >
         <Input />
@@ -42,7 +42,7 @@ export const RegisterCompanyAddressForm = () => {
       <Form.Item
         label="Número"
         name="number"
-        rules={[{ required: true }]}
+        rules={[{ required: true, message: "Número obrigatório" }]}
         required
       >
         <Input type="number" />
@@ -52,5 +52,5 @@ export const RegisterCompanyAddressForm = () => {
         <Input type="password" />
       </Form.Item>
     </>
-  );
-};
+  )
+}
