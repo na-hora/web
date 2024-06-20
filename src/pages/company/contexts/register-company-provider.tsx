@@ -1,18 +1,21 @@
 import { createContext, useContext, useState } from "react";
 
 type RegisterCompanyFormParams = {
-  name?: string;
-  email?: string;
-  password?: string;
+  name: string;
+  fantasyName: string;
+  cnpj: string;
+  email: string;
+  phone: string;
+  password: string;
   address?: {
-    street?: string;
-    number?: string;
-    neighborhood?: string;
-    city?: string;
-    state?: string;
-    zipCode?: string;
-    complement?: string;
+    zipCode: string;
+    cityId: number;
+    neighborhood: string;
+    street: string;
+    number: number;
+    complement: string;
   };
+  validator: string;
 };
 
 export type Params = {
@@ -28,7 +31,7 @@ export const RegisterCompanyProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [registerCompanyFormData, setRegisterCompanyFormData] =
-    useState<RegisterCompanyFormParams>({});
+    useState<RegisterCompanyFormParams>({} as RegisterCompanyFormParams);
 
   return (
     <RegisterCompanyContext.Provider
