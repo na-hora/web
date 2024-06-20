@@ -1,15 +1,39 @@
-import { Form, Input } from "antd"
+import { Form, Input } from "antd";
+import { PatternFormat } from "react-number-format";
+// import { useLoadViaCepCep } from "../../../hooks/providers/viacep/use-load-cep";
 
 export const RegisterCompanyAddressForm = () => {
+  // const { data: cepData } = useLoadViaCepCep("89160925");
+
   return (
     <>
       <Form.Item
         label="CEP"
         name="zipCode"
-        rules={[{ required: true, message: "CEP obrigatório" }]}
+        rules={[
+          {
+            required: true,
+            message: "CEP obrigatório",
+            pattern: /^(\d{2}).(\d{3})-(\d{3})$/,
+          },
+        ]}
         required
       >
-        <Input type="number" />
+        <PatternFormat
+          placeholder="Digite o CEP da sua empresa"
+          customInput={Input}
+          format={"##.###-###"}
+          required={true}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Estado"
+        name="state"
+        rules={[{ required: true, message: "Estado obrigatório" }]}
+        required
+      >
+        <Input placeholder="Digite o estado" />
       </Form.Item>
 
       <Form.Item
@@ -18,7 +42,7 @@ export const RegisterCompanyAddressForm = () => {
         rules={[{ required: true, message: "Cidade obrigatória" }]}
         required
       >
-        <Input type="number" />
+        <Input placeholder="Digite a cidade" />
       </Form.Item>
 
       <Form.Item
@@ -49,8 +73,8 @@ export const RegisterCompanyAddressForm = () => {
       </Form.Item>
 
       <Form.Item label="Complemento" name="complement">
-        <Input type="password" />
+        <Input />
       </Form.Item>
     </>
-  )
-}
+  );
+};

@@ -55,13 +55,15 @@ export const RegisterCompanyPage = () => {
           items={[
             {
               title: "Dados Pessoais",
+              disabled: true,
             },
             {
               title: "Endereço",
+              disabled: true,
             },
             {
               title: "Confirmação",
-              disabled: currentStep < 1,
+              disabled: true,
             },
           ]}
           onChange={setCurrentStep}
@@ -70,12 +72,9 @@ export const RegisterCompanyPage = () => {
           {currentStep === 0 && <RegisterCompanyForm />}
           {currentStep === 1 && <RegisterCompanyAddressForm />}
           {currentStep === 2 && <RegisterCompanyConfirmationForm />}
-          <Form.Item>
-            <Button onClick={prevStep}>Voltar</Button>
-          </Form.Item>
-          <Form.Item>
-            <Button onClick={nextStep}>Avançar</Button>
-          </Form.Item>
+
+          <Button onClick={prevStep}>Voltar</Button>
+          <Button onClick={nextStep}>Avançar</Button>
         </Form>
       </section>
     </main>
