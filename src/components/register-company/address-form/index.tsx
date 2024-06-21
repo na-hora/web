@@ -1,28 +1,28 @@
-import { Button, Form, Input } from "antd"
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { PatternFormat } from "react-number-format"
-import { Link } from "react-router-dom"
+import { Button, Form, Input } from "antd";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { PatternFormat } from "react-number-format";
+import { Link } from "react-router-dom";
 // import { useLoadViaCepCep } from "../../../hooks/providers/viacep/use-load-cep"
-import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider"
+import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider";
 
-type ViaCEPREsponse = {
-  cep: string
-  logradouro: string
-  complemento: string
-  bairro: string
-  localidade: string
-  uf: string
-  ibge: string
-  gia: string
-  ddd: string
-  siafi: string
-} | null
+type ViaCEPResponse = {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  ibge: string;
+  gia: string;
+  ddd: string;
+  siafi: string;
+} | null;
 
 export const RegisterCompanyAddressForm = () => {
-  const [zipCode, setZipCode] = useState("")
-  const [address, setAddress] = useState<ViaCEPREsponse>(null)
-  const { form } = useRegisterCompanyContext()
+  const [zipCode, setZipCode] = useState("");
+  const [address, setAddress] = useState<ViaCEPResponse>(null);
+  const { form } = useRegisterCompanyContext();
 
   // const { data, isFetched } = useLoadViaCepCep()
 
@@ -30,12 +30,12 @@ export const RegisterCompanyAddressForm = () => {
     try {
       const response = await axios.get(
         `https://viacep.com.br/ws/${zipCode.replace(/\D/g, "")}/json/`
-      )
-      setAddress(response.data)
+      );
+      setAddress(response.data);
     } catch (error) {
-      console.error("Erro ao buscar o endereço:", error)
+      console.error("Erro ao buscar o endereço:", error);
     }
-  }
+  };
 
   // useEffect(() => {
   //   if (/^\d{2}\.\d{3}-\d{3}$/.test(zipCode)) {
@@ -50,14 +50,14 @@ export const RegisterCompanyAddressForm = () => {
     if (address) {
       const mappedAddress = {
         state: address.uf,
-        cityId: address.localidade,
+        cityIbge: address.ibge,
         neighborhood: address.bairro,
         street: address.logradouro,
-      }
+      };
 
-      form.setFieldsValue(mappedAddress)
+      form.setFieldsValue(mappedAddress);
     }
-  }, [address])
+  }, [address]);
 
   return (
     <>
@@ -143,5 +143,5 @@ export const RegisterCompanyAddressForm = () => {
         <Input />
       </Form.Item>
     </>
-  )
-}
+  );
+};

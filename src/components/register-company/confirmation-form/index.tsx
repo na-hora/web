@@ -23,7 +23,7 @@ export const RegisterCompanyConfirmationForm = () => {
 
       <Form.Item
         label="Confirme a senha"
-        name="password"
+        name="confirmPassword"
         rules={[{ required: true }]}
         required
       >
