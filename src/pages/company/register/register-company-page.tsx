@@ -1,13 +1,14 @@
-import { Button, Form, Steps } from "antd"
-import { useState } from "react"
-import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form"
-import { RegisterCompanyForm } from "../../../components/register-company/company-form"
-import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form"
-import { useRegisterCompanyContext } from "../contexts/register-company-provider"
+import { Button, Form, Steps } from "antd";
+import { useState } from "react";
+import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form";
+import { RegisterCompanyForm } from "../../../components/register-company/company-form";
+import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form";
+import { useRegisterCompanyContext } from "../contexts/register-company-provider";
 
 export const RegisterCompanyPage = () => {
-  const [currentStep, setCurrentStep] = useState(0)
-  const { setRegisterCompanyFormData, form } = useRegisterCompanyContext()
+  const [currentStep, setCurrentStep] = useState(0);
+  const { setRegisterCompanyFormData, form, validator } =
+    useRegisterCompanyContext();
 
   const nextStep = () => {
     if (currentStep < 2) {
@@ -15,18 +16,18 @@ export const RegisterCompanyPage = () => {
         setRegisterCompanyFormData((prev) => ({
           ...prev,
           ...form.getFieldsValue(),
-        }))
+        }));
 
-        setCurrentStep(currentStep + 1)
-      })
+        setCurrentStep(currentStep + 1);
+      });
     }
-  }
+  };
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
   return (
     <main
@@ -66,15 +67,19 @@ export const RegisterCompanyPage = () => {
           ]}
           onChange={setCurrentStep}
         />
-        <Form layout="vertical" form={form}>
-          {currentStep === 0 && <RegisterCompanyForm />}
-          {currentStep === 1 && <RegisterCompanyAddressForm />}
-          {currentStep === 2 && <RegisterCompanyConfirmationForm />}
+        {validator ? (
+          <Form layout="vertical" form={form}>
+            {currentStep === 0 && <RegisterCompanyForm />}
+            {currentStep === 1 && <RegisterCompanyAddressForm />}
+            {currentStep === 2 && <RegisterCompanyConfirmationForm />}
 
-          <Button onClick={prevStep}>Voltar</Button>
-          <Button onClick={nextStep}>Avançar</Button>
-        </Form>
+            <Button onClick={prevStep}>Voltar</Button>
+            <Button onClick={nextStep}>Avançar</Button>
+          </Form>
+        ) : (
+          <h1>Link inválido</h1>
+        )}
       </section>
     </main>
-  )
-}
+  );
+};
