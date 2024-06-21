@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, InputNumber } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { PatternFormat } from "react-number-format";
@@ -31,20 +31,22 @@ export const RegisterCompanyAddressForm = () => {
       const response = await axios.get(
         `https://viacep.com.br/ws/${zipCode.replace(/\D/g, "")}/json/`
       );
+
+      if (response.data?.erro) {
+        throw new Error("CEP inválido");
+      }
+
       setAddress(response.data);
     } catch (error) {
-      console.error("Erro ao buscar o endereço:", error);
+      form.setFields([
+        {
+          name: "zipCode",
+          errors: ["CEP inválido"],
+        },
+      ]);
+      form.resetFields(["state", "cityIbge", "neighborhood", "street"]);
     }
   };
-
-  // useEffect(() => {
-  //   if (/^\d{2}\.\d{3}-\d{3}$/.test(zipCode)) {
-  //     console.log("fetch")
-  //     fetchAddress()
-  //   }
-
-  //   fetchAddress()
-  // }, [zipCode])
 
   useEffect(() => {
     if (address) {
@@ -101,11 +103,15 @@ export const RegisterCompanyAddressForm = () => {
 
       <Form.Item
         label="Cidade"
-        name="cityId"
+        name="cityIbge"
         rules={[{ required: true, message: "Cidade obrigatória" }]}
         required
       >
-        <Input placeholder="Digite a cidade" disabled />
+        <Input
+          placeholder="Digite a cidade"
+          disabled
+          value={address?.localidade}
+        />
       </Form.Item>
 
       <Form.Item
@@ -115,6 +121,7 @@ export const RegisterCompanyAddressForm = () => {
         required
       >
         <Input
+          placeholder="Digite o bairro"
           disabled={address?.localidade && !address?.bairro ? false : true}
         />
       </Form.Item>
@@ -126,7 +133,8 @@ export const RegisterCompanyAddressForm = () => {
         required
       >
         <Input
-          disabled={address?.localidade && !address?.logradouro ? false : true}
+          placeholder="Digite a rua"
+          disabled={address?.localidade && address?.logradouro ? false : true}
         />
       </Form.Item>
 
@@ -136,11 +144,15 @@ export const RegisterCompanyAddressForm = () => {
         rules={[{ required: true, message: "Número obrigatório" }]}
         required
       >
-        <Input type="number" />
+        <InputNumber
+          min={0}
+          placeholder="Digite o número"
+          style={{ width: "100%" }}
+        />
       </Form.Item>
 
       <Form.Item label="Complemento" name="complement">
-        <Input />
+        <Input placeholder="Digite o complemento" />
       </Form.Item>
     </>
   );
