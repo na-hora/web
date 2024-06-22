@@ -1,10 +1,5 @@
-import { Menu, MenuProps } from "antd";
+import { Button } from "antd";
 import { Header } from "antd/es/layout/layout";
-
-const items1: MenuProps["items"] = ["1", "2", "3"].map((key) => ({
-  key,
-  label: `nav ${key}`,
-}));
 
 export const NavbarDashboard = () => {
   return (
@@ -21,14 +16,8 @@ export const NavbarDashboard = () => {
       >
         <img src="/logo.svg" alt="" style={{ width: "50px" }} />
       </div>
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        defaultSelectedKeys={["1"]}
-        items={items1}
-        style={{ flex: 1, minWidth: 0, justifyContent: "center" }}
-      />
-      <button>Logout</button>
+      <h2 style={{ color: "#ffffff98" }}>Na Hora</h2>
+      <Button type="primary">Login</Button>
     </Header>
   );
 };
