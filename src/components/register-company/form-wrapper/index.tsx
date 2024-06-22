@@ -15,21 +15,20 @@ export const CreateCompanyForm = () => {
     validator,
   } = useRegisterCompanyContext()
 
-  console.log("currentStep: ", currentStep)
   const { mutate } = useCreateCompanyAndAddress()
 
   const nextStep = () => {
-    const isNotLastStep = currentStep < 2
-    if (isNotLastStep) {
-      form.validateFields().then(() => {
-        setRegisterCompanyFormData((prev) => ({
-          ...prev,
-          ...form.getFieldsValue(),
-        }))
+    const isLastStep = currentStep === 2
+    if (isLastStep) return
 
-        setCurrentStep(currentStep + 1)
-      })
-    }
+    form.validateFields().then(() => {
+      setRegisterCompanyFormData((prev) => ({
+        ...prev,
+        ...form.getFieldsValue(),
+      }))
+
+      setCurrentStep(currentStep + 1)
+    })
   }
 
   const saveFormValuesInContext = () => {
