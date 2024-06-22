@@ -8,14 +8,12 @@ type RegisterCompanyFormParams = {
   email: string;
   phone: string;
   password: string;
-  address?: {
-    zipCode: string;
-    cityId: number;
-    neighborhood: string;
-    street: string;
-    number: number;
-    complement: string;
-  };
+  zipCode: string;
+  cityIbge: string;
+  neighborhood: string;
+  street: string;
+  number: number;
+  complement: string;
   validator: string;
 };
 
@@ -28,6 +26,8 @@ export type Params = {
   zipCodeToSearch: string;
   setZipCodeToSearch: React.Dispatch<React.SetStateAction<string>>;
   validator: string | null;
+  currentStep: number;
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export const RegisterCompanyContext = createContext<Params>({} as Params);
@@ -38,6 +38,7 @@ export const RegisterCompanyProvider: React.FC<{
   const [registerCompanyFormData, setRegisterCompanyFormData] =
     useState<RegisterCompanyFormParams>({} as RegisterCompanyFormParams);
   const [zipCodeToSearch, setZipCodeToSearch] = useState("");
+  const [currentStep, setCurrentStep] = useState(0);
 
   const [form] = Form.useForm();
   const searchParams = new URLSearchParams(window.location.search);
@@ -52,6 +53,8 @@ export const RegisterCompanyProvider: React.FC<{
         zipCodeToSearch,
         setZipCodeToSearch,
         validator,
+        currentStep,
+        setCurrentStep,
       }}
     >
       {children}

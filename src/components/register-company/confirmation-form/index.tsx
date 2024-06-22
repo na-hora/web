@@ -1,5 +1,9 @@
 import { Button, Form, Input } from "antd";
-import { useCreateCompanyAndAddress } from "../../../hooks/na-hora/company/use-create-company";
+import { useEffect } from "react";
+import {
+  UseCreateCompanyAndAddressParams,
+  useCreateCompanyAndAddress,
+} from "../../../hooks/na-hora/company/use-create-company";
 import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider";
 
 export const RegisterCompanyConfirmationForm = () => {
@@ -8,9 +12,41 @@ export const RegisterCompanyConfirmationForm = () => {
     form,
     setRegisterCompanyFormData,
     validator,
+    setCurrentStep,
   } = useRegisterCompanyContext();
 
-  const { mutate } = useCreateCompanyAndAddress();
+  const {
+    mutate,
+    isSuccess: isCreateCompanySuccess,
+    isPending: isCreateCompanyPending,
+  } = useCreateCompanyAndAddress();
+
+  useEffect(() => {
+    if (isCreateCompanySuccess) {
+      setCurrentStep(3);
+    }
+  }, [isCreateCompanySuccess, setCurrentStep]);
+
+  const getFormattedMutateFields = (): UseCreateCompanyAndAddressParams => {
+    const newFields = form.getFieldsValue();
+    return {
+      name: registerCompanyFormData.name,
+      fantasyName: registerCompanyFormData.fantasyName,
+      cnpj: registerCompanyFormData.cnpj?.replace(/[^\d]+/g, ""),
+      email: newFields.email,
+      phone: registerCompanyFormData.phone?.replace(/[^\d]+/g, ""),
+      password: newFields.password,
+      address: {
+        cityIbge: registerCompanyFormData.cityIbge,
+        zipCode: registerCompanyFormData.zipCode?.replace(/[^\d]+/g, ""),
+        neighborhood: registerCompanyFormData.neighborhood,
+        street: registerCompanyFormData.street,
+        number: registerCompanyFormData.number,
+        complement: registerCompanyFormData.complement,
+      },
+      validator: validator as string,
+    };
+  };
 
   const onSubmit = () => {
     const newFields = form.getFieldsValue();
@@ -22,17 +58,14 @@ export const RegisterCompanyConfirmationForm = () => {
         password: newFields.password,
       }));
 
-      mutate({
-        ...registerCompanyFormData,
-        ...newFields,
-        cnpj: registerCompanyFormData.cnpj.replace(/[^\d]+/g, ""),
-        phone: registerCompanyFormData.phone.replace(/[^\d]+/g, ""),
-        validator,
-      });
+      const data = getFormattedMutateFields();
+      mutate(data);
     });
   };
 
-  return (
+  return isCreateCompanyPending ? (
+    <p>Criando sua conta...</p>
+  ) : (
     <>
       <Form.Item
         label="Email"

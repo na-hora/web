@@ -1,14 +1,17 @@
 import { Button, Form, Steps } from "antd";
-import { useState } from "react";
 import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form";
 import { RegisterCompanyForm } from "../../../components/register-company/company-form";
 import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form";
 import { useRegisterCompanyContext } from "../contexts/register-company-provider";
 
 export const RegisterCompanyPage = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const { setRegisterCompanyFormData, form, validator } =
-    useRegisterCompanyContext();
+  const {
+    setRegisterCompanyFormData,
+    form,
+    validator,
+    currentStep,
+    setCurrentStep,
+  } = useRegisterCompanyContext();
 
   const nextStep = () => {
     if (currentStep < 2) {
@@ -45,7 +48,7 @@ export const RegisterCompanyPage = () => {
           textAlign: "center",
         }}
       >
-        <img src="/logo.png" alt="" style={{ width: "300px" }} />
+        <img src="/logo.svg" alt="" style={{ width: "300px" }} />
         <h1>Register Company</h1>
         <p>Vamos lá! Primeiro, preencha os dados abaixo:</p>
 
@@ -72,6 +75,7 @@ export const RegisterCompanyPage = () => {
             {currentStep === 0 && <RegisterCompanyForm />}
             {currentStep === 1 && <RegisterCompanyAddressForm />}
             {currentStep === 2 && <RegisterCompanyConfirmationForm />}
+            {currentStep === 3 && <h1>Cadastro concluído</h1>}
 
             <Button onClick={prevStep}>Voltar</Button>
             <Button onClick={nextStep}>Avançar</Button>
