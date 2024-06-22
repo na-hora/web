@@ -1,10 +1,10 @@
-import { Menu, MenuProps } from "antd"
-import { Header } from "antd/es/layout/layout"
+import { Menu, MenuProps } from "antd";
+import { Header } from "antd/es/layout/layout";
 
 const items1: MenuProps["items"] = ["1", "2", "3"].map((key) => ({
   key,
   label: `nav ${key}`,
-}))
+}));
 
 export const NavbarDashboard = () => {
   return (
@@ -15,8 +15,11 @@ export const NavbarDashboard = () => {
         justifyContent: "space-between",
       }}
     >
-      <div className="demo-logo" style={{ color: "#fff" }}>
-        Logo Na hora
+      <div
+        className="demo-logo"
+        style={{ alignItems: "center", display: "flex" }}
+      >
+        <img src="/logo.svg" alt="" style={{ width: "50px" }} />
       </div>
       <Menu
         theme="dark"
@@ -27,5 +30,5 @@ export const NavbarDashboard = () => {
       />
       <button>Logout</button>
     </Header>
-  )
-}
+  );
+};

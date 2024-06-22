@@ -4,6 +4,7 @@ import { PulseLoader } from "react-spinners";
 import { RegisterCompanyAddressForm } from "@/components/register-company/address-form";
 import { RegisterCompanyForm } from "@/components/register-company/company-form";
 import { RegisterCompanyConfirmationForm } from "@/components/register-company/confirmation-form";
+import { SuccessCompanyRegister } from "@/components/register-company/sucess";
 import { useCreateCompanyAndAddress } from "@/hooks/na-hora/company/use-create-company";
 import { useRegisterCompanyContext } from "../contexts/register-company-provider";
 import styles from "./styles.module.css";
@@ -17,7 +18,7 @@ export const RegisterCompanyPage = () => {
     setCurrentStep,
     registerCompanyFormData,
   } = useRegisterCompanyContext();
-  const { mutate } = useCreateCompanyAndAddress();
+  const { mutate, isPending, isSuccess } = useCreateCompanyAndAddress();
 
   const nextStep = () => {
     const isNotLastStep = currentStep < 2;
@@ -81,71 +82,74 @@ export const RegisterCompanyPage = () => {
     }
   };
 
-  const isLoading = false;
-
   return (
     <main className={styles.main}>
       <section className={styles.section}>
-        <img src="/logo.svg" alt="" style={{ width: "150px" }} />
-        <h1>Obrigado por escolher o Na Hora!</h1>
+        {isSuccess ? (
+          <SuccessCompanyRegister />
+        ) : (
+          <>
+            <img src="/logo.svg" alt="" style={{ width: "150px" }} />
+            <h1>Obrigado por escolher o Na Hora!</h1>
 
-        <div className={styles.steps}>
-          <Steps
-            current={currentStep}
-            items={[
-              {
-                title: "Empresa",
-                disabled: true,
-                style: { cursor: "default" },
-              },
-              {
-                title: "Endereço",
-                disabled: true,
-                style: { cursor: "default" },
-              },
-              {
-                title: "Usuário",
-                disabled: true,
-                style: { cursor: "default" },
-              },
-            ]}
-            onChange={setCurrentStep}
-          />
-        </div>
+            <div className={styles.steps}>
+              <Steps
+                current={currentStep}
+                items={[
+                  {
+                    title: "Empresa",
+                    disabled: true,
+                    style: { cursor: "default" },
+                  },
+                  {
+                    title: "Endereço",
+                    disabled: true,
+                    style: { cursor: "default" },
+                  },
+                  {
+                    title: "Usuário",
+                    disabled: true,
+                    style: { cursor: "default" },
+                  },
+                ]}
+                onChange={setCurrentStep}
+              />
+            </div>
 
-        <Form
-          layout="vertical"
-          form={form}
-          style={{ width: "100%", marginTop: "20px" }}
-        >
-          {currentStep === 0 && <RegisterCompanyForm />}
-          {currentStep === 1 && <RegisterCompanyAddressForm />}
-          {currentStep === 2 && <RegisterCompanyConfirmationForm />}
-          {currentStep === 3 && <h1>Cadastro concluído</h1>}
-
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "10px",
-            }}
-          >
-            <Button
-              onClick={prevStep}
-              style={{ display: `${currentStep === 0 ? "none" : "block"}` }}
+            <Form
+              layout="vertical"
+              form={form}
+              style={{ width: "100%", marginTop: "20px" }}
             >
-              Voltar
-            </Button>
-            <Button type="primary" onClick={nextPageOrSubmit}>
-              {currentStep === 2 ? "Criar minha conta" : "Próximo"}
-            </Button>
-          </div>
-        </Form>
+              {currentStep === 0 && <RegisterCompanyForm />}
+              {currentStep === 1 && <RegisterCompanyAddressForm />}
+              {currentStep === 2 && <RegisterCompanyConfirmationForm />}
 
-        {isLoading && (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "10px",
+                }}
+              >
+                <Button
+                  onClick={prevStep}
+                  style={{ display: `${currentStep === 0 ? "none" : "block"}` }}
+                >
+                  Voltar
+                </Button>
+                <Button type="primary" onClick={nextPageOrSubmit}>
+                  {currentStep === 2 ? "Criar minha conta" : "Próximo"}
+                </Button>
+              </div>
+            </Form>
+          </>
+        )}
+
+        {isPending && (
           <Modal
-            open={isLoading}
+            open={isPending}
             closeIcon={false}
             centered
             styles={{
