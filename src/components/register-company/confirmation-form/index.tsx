@@ -1,71 +1,10 @@
 import { Form, Input } from "antd"
-import { useEffect } from "react"
-import {
-  UseCreateCompanyAndAddressParams,
-  useCreateCompanyAndAddress,
-} from "../../../hooks/na-hora/company/use-create-company"
 import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider"
 
 export const RegisterCompanyConfirmationForm = () => {
-  const {
-    registerCompanyFormData,
-    form,
-    setRegisterCompanyFormData,
-    validator,
-    setCurrentStep,
-  } = useRegisterCompanyContext()
+  const { form } = useRegisterCompanyContext()
 
-  const {
-    mutate,
-    isSuccess: isCreateCompanySuccess,
-    isPending: isCreateCompanyPending,
-  } = useCreateCompanyAndAddress()
-
-  useEffect(() => {
-    if (isCreateCompanySuccess) {
-      setCurrentStep(3)
-    }
-  }, [isCreateCompanySuccess, setCurrentStep])
-
-  const getFormattedMutateFields = (): UseCreateCompanyAndAddressParams => {
-    const newFields = form.getFieldsValue()
-    return {
-      name: registerCompanyFormData.name,
-      fantasyName: registerCompanyFormData.fantasyName,
-      cnpj: registerCompanyFormData.cnpj?.replace(/[^\d]+/g, ""),
-      email: newFields.email,
-      phone: registerCompanyFormData.phone?.replace(/[^\d]+/g, ""),
-      password: newFields.password,
-      address: {
-        cityIbge: registerCompanyFormData.cityIbge,
-        zipCode: registerCompanyFormData.zipCode?.replace(/[^\d]+/g, ""),
-        neighborhood: registerCompanyFormData.neighborhood,
-        street: registerCompanyFormData.street,
-        number: registerCompanyFormData.number,
-        complement: registerCompanyFormData.complement,
-      },
-      validator: validator as string,
-    }
-  }
-
-  const onSubmit = () => {
-    const newFields = form.getFieldsValue()
-
-    form.validateFields().then(() => {
-      setRegisterCompanyFormData((prev) => ({
-        ...prev,
-        email: newFields.email,
-        password: newFields.password,
-      }))
-
-      const data = getFormattedMutateFields()
-      mutate(data)
-    })
-  }
-
-  return isCreateCompanyPending ? (
-    <p>Criando sua conta...</p>
-  ) : (
+  return (
     <>
       <h2>Estamos quase lá! Informe seu e-mail e crie sua senha de acesso</h2>
 
