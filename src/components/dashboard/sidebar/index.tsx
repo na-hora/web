@@ -1,32 +1,32 @@
 import {
-  UploadOutlined,
+  AppstoreOutlined,
+  ProfileOutlined,
   UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons"
-import { Menu } from "antd"
-import Sider from "antd/es/layout/Sider"
-import { useState } from "react"
-import { Link } from "react-router-dom"
+} from "@ant-design/icons";
+import { Menu } from "antd";
+import Sider from "antd/es/layout/Sider";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const items = [
-  { key: "1", icon: <UserOutlined />, label: "Home", link: "home" },
-  { key: "2", icon: <VideoCameraOutlined />, label: "Perfil", link: "profile" },
+  { key: "1", icon: <AppstoreOutlined />, label: "Home", link: "home" },
+  { key: "2", icon: <ProfileOutlined />, label: "Empresa", link: "company" },
   {
     key: "3",
-    icon: <UploadOutlined />,
-    label: "Configurações",
-    link: "settings",
+    icon: <UserOutlined />,
+    label: "Meu usuário",
+    link: "profile",
   },
-]
+];
 
 const menuItems = items.map((item) => ({
   key: item.key,
   icon: item.icon,
   label: <Link to={item.link}>{item.label}</Link>,
-}))
+}));
 
 export const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <Sider
       collapsible
@@ -41,5 +41,5 @@ export const Sidebar = () => {
         items={menuItems}
       />
     </Sider>
-  )
-}
+  );
+};
