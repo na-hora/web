@@ -1,8 +1,8 @@
-import { Button, Form, Steps } from "antd";
-import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form";
-import { RegisterCompanyForm } from "../../../components/register-company/company-form";
-import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form";
-import { useRegisterCompanyContext } from "../contexts/register-company-provider";
+import { Button, Form, Steps } from "antd"
+import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form"
+import { RegisterCompanyForm } from "../../../components/register-company/company-form"
+import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form"
+import { useRegisterCompanyContext } from "../contexts/register-company-provider"
 
 export const RegisterCompanyPage = () => {
   const {
@@ -11,7 +11,7 @@ export const RegisterCompanyPage = () => {
     validator,
     currentStep,
     setCurrentStep,
-  } = useRegisterCompanyContext();
+  } = useRegisterCompanyContext()
 
   const nextStep = () => {
     if (currentStep < 2) {
@@ -19,18 +19,18 @@ export const RegisterCompanyPage = () => {
         setRegisterCompanyFormData((prev) => ({
           ...prev,
           ...form.getFieldsValue(),
-        }));
+        }))
 
-        setCurrentStep(currentStep + 1);
-      });
+        setCurrentStep(currentStep + 1)
+      })
     }
-  };
+  }
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep(currentStep - 1)
     }
-  };
+  }
 
   return (
     <main
@@ -39,6 +39,7 @@ export const RegisterCompanyPage = () => {
         height: "100%",
         display: "grid",
         placeItems: "center",
+        minHeight: "100vh",
       }}
     >
       <section
@@ -48,8 +49,8 @@ export const RegisterCompanyPage = () => {
           textAlign: "center",
         }}
       >
-        <img src="/logo.svg" alt="" style={{ width: "300px" }} />
-        <h1>Register Company</h1>
+        <img src="/logo.svg" alt="" style={{ width: "150px" }} />
+        <h1>Crie sua conta</h1>
         <p>Vamos lá! Primeiro, preencha os dados abaixo:</p>
 
         <Steps
@@ -85,5 +86,5 @@ export const RegisterCompanyPage = () => {
         )}
       </section>
     </main>
-  );
-};
+  )
+}
