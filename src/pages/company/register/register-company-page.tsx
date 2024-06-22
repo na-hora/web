@@ -1,13 +1,11 @@
-import { Modal, Steps } from "antd"
+import { Modal } from "antd"
 import { PulseLoader } from "react-spinners"
 
 import { CreateCompanyForm } from "@/components/register-company/form-wrapper"
-import { useRegisterCompanyContext } from "../contexts/register-company-provider"
+import { RegisterCompanySteps } from "@/components/register-company/steps"
 import styles from "./styles.module.css"
 
 export const RegisterCompanyPage = () => {
-  const { currentStep, setCurrentStep } = useRegisterCompanyContext()
-
   const isLoading = false
 
   return (
@@ -16,29 +14,7 @@ export const RegisterCompanyPage = () => {
         <img src="/logo.svg" alt="Ǹa Hora" style={{ width: "150px" }} />
         <h1>Obrigado por escolher o Na Hora!</h1>
 
-        <div className={styles.steps}>
-          <Steps
-            current={currentStep}
-            items={[
-              {
-                title: "Empresa",
-                disabled: true,
-                style: { cursor: "default" },
-              },
-              {
-                title: "Endereço",
-                disabled: true,
-                style: { cursor: "default" },
-              },
-              {
-                title: "Usuário",
-                disabled: true,
-                style: { cursor: "default" },
-              },
-            ]}
-            onChange={setCurrentStep}
-          />
-        </div>
+        <RegisterCompanySteps />
 
         <CreateCompanyForm />
 

@@ -1,0 +1,13 @@
+@media (max-width: 574px) {
+  .steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media (min-width: 575px) {
+  .steps {
+    width: 100%;
+  }
+}
