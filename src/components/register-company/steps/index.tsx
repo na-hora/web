@@ -2,7 +2,7 @@ import { useRegisterCompanyContext } from "@/pages/company/contexts/register-com
 import { Steps } from "antd"
 import styles from "./styles.module.css"
 
-export const RegisterCompanySteps = () => {
+export const CreateCompanySteps = () => {
   const { currentStep, setCurrentStep } = useRegisterCompanyContext()
 
   return (
