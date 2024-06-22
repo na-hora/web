@@ -5,7 +5,7 @@ type UseCreateCompanyAndAddressResult = {
   id: string;
 };
 
-type UseCreateCompanyAndAddressParams = {
+export type UseCreateCompanyAndAddressParams = {
   name: string;
   fantasyName: string;
   cnpj: string;

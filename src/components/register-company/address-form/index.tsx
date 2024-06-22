@@ -59,7 +59,7 @@ export const RegisterCompanyAddressForm = () => {
 
       form.setFieldsValue(mappedAddress);
     }
-  }, [address]);
+  }, [address, form]);
 
   return (
     <>
