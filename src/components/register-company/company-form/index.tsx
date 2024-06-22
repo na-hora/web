@@ -1,9 +1,11 @@
-import { Form, Input } from "antd";
-import { PatternFormat } from "react-number-format";
+import { Form, Input } from "antd"
+import { PatternFormat } from "react-number-format"
 
 export const RegisterCompanyForm = () => {
   return (
     <>
+      <h2>Vamos começar. Preencha os dados da sua empresa.</h2>
+
       <Form.Item
         label="Nome"
         name="name"
@@ -62,5 +64,5 @@ export const RegisterCompanyForm = () => {
         />
       </Form.Item>
     </>
-  );
-};
+  )
+}

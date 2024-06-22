@@ -4,6 +4,8 @@ import { RegisterCompanyForm } from "../../../components/register-company/compan
 import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form"
 import { useRegisterCompanyContext } from "../contexts/register-company-provider"
 
+import styles from "./styles.module.css"
+
 export const RegisterCompanyPage = () => {
   const {
     setRegisterCompanyFormData,
@@ -26,60 +28,75 @@ export const RegisterCompanyPage = () => {
     }
   }
 
+  const saveFormValuesInContext = () => {
+    setRegisterCompanyFormData((prev) => ({
+      ...prev,
+      ...form.getFieldsValue(),
+    }))
+  }
+
   const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
-    }
+    saveFormValuesInContext()
+
+    setCurrentStep(currentStep - 1)
   }
 
   return (
-    <main
-      style={{
-        background: "#f5f5f5",
-        height: "100%",
-        display: "grid",
-        placeItems: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <section
-        style={{
-          margin: "0 auto",
-          maxWidth: "1200px",
-          textAlign: "center",
-        }}
-      >
+    <main className={styles.main}>
+      <section className={styles.section}>
         <img src="/logo.svg" alt="" style={{ width: "150px" }} />
-        <h1>Crie sua conta</h1>
-        <p>Vamos lá! Primeiro, preencha os dados abaixo:</p>
+        <h1>Obrigado por escolher o Na Hora!</h1>
 
-        <Steps
-          current={currentStep}
-          items={[
-            {
-              title: "Dados Pessoais",
-              disabled: true,
-            },
-            {
-              title: "Endereço",
-              disabled: true,
-            },
-            {
-              title: "Confirmação",
-              disabled: true,
-            },
-          ]}
-          onChange={setCurrentStep}
-        />
+        <div className={styles.center}>
+          <Steps
+            current={currentStep}
+            items={[
+              {
+                title: "Empresa",
+                disabled: true,
+              },
+              {
+                title: "Endereço",
+                disabled: true,
+              },
+              {
+                title: "Usuário",
+                disabled: true,
+              },
+            ]}
+            onChange={setCurrentStep}
+          />
+        </div>
+
         {validator ? (
-          <Form layout="vertical" form={form}>
+          <Form
+            layout="vertical"
+            form={form}
+            style={{ width: "100%", marginTop: "20px" }}
+          >
             {currentStep === 0 && <RegisterCompanyForm />}
             {currentStep === 1 && <RegisterCompanyAddressForm />}
             {currentStep === 2 && <RegisterCompanyConfirmationForm />}
             {currentStep === 3 && <h1>Cadastro concluído</h1>}
 
-            <Button onClick={prevStep}>Voltar</Button>
-            <Button onClick={nextStep}>Avançar</Button>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "10px",
+              }}
+            >
+              <Button
+                onClick={prevStep}
+                style={{ display: `${currentStep === 0 ? "none" : "block"}` }}
+              >
+                Voltar
+              </Button>
+              <Button type="primary" onClick={nextStep}>
+                {currentStep === 2 ? "Criar minha conta" : "Próximo"}
+              </Button>
+            </div>
           </Form>
         ) : (
           <h1>Link inválido</h1>
