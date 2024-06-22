@@ -1,10 +1,10 @@
-import { Button, Form, Input } from "antd";
-import { useEffect } from "react";
+import { Form, Input } from "antd"
+import { useEffect } from "react"
 import {
   UseCreateCompanyAndAddressParams,
   useCreateCompanyAndAddress,
-} from "../../../hooks/na-hora/company/use-create-company";
-import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider";
+} from "../../../hooks/na-hora/company/use-create-company"
+import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider"
 
 export const RegisterCompanyConfirmationForm = () => {
   const {
@@ -13,22 +13,22 @@ export const RegisterCompanyConfirmationForm = () => {
     setRegisterCompanyFormData,
     validator,
     setCurrentStep,
-  } = useRegisterCompanyContext();
+  } = useRegisterCompanyContext()
 
   const {
     mutate,
     isSuccess: isCreateCompanySuccess,
     isPending: isCreateCompanyPending,
-  } = useCreateCompanyAndAddress();
+  } = useCreateCompanyAndAddress()
 
   useEffect(() => {
     if (isCreateCompanySuccess) {
-      setCurrentStep(3);
+      setCurrentStep(3)
     }
-  }, [isCreateCompanySuccess, setCurrentStep]);
+  }, [isCreateCompanySuccess, setCurrentStep])
 
   const getFormattedMutateFields = (): UseCreateCompanyAndAddressParams => {
-    const newFields = form.getFieldsValue();
+    const newFields = form.getFieldsValue()
     return {
       name: registerCompanyFormData.name,
       fantasyName: registerCompanyFormData.fantasyName,
@@ -45,28 +45,30 @@ export const RegisterCompanyConfirmationForm = () => {
         complement: registerCompanyFormData.complement,
       },
       validator: validator as string,
-    };
-  };
+    }
+  }
 
   const onSubmit = () => {
-    const newFields = form.getFieldsValue();
+    const newFields = form.getFieldsValue()
 
     form.validateFields().then(() => {
       setRegisterCompanyFormData((prev) => ({
         ...prev,
         email: newFields.email,
         password: newFields.password,
-      }));
+      }))
 
-      const data = getFormattedMutateFields();
-      mutate(data);
-    });
-  };
+      const data = getFormattedMutateFields()
+      mutate(data)
+    })
+  }
 
   return isCreateCompanyPending ? (
     <p>Criando sua conta...</p>
   ) : (
     <>
+      <h2>Estamos quase lá! Informe seu e-mail e crie sua senha de acesso</h2>
+
       <Form.Item
         label="Email"
         name="email"
@@ -79,36 +81,38 @@ export const RegisterCompanyConfirmationForm = () => {
       <Form.Item
         label="Senha"
         name="password"
-        rules={[{ required: true, message: "Senha obrigatória" }]}
+        hasFeedback
+        rules={[
+          { required: true, message: "Senha obrigatória" },
+          {
+            min: 6,
+            message: "Senha deve ter no mínimo 6 caracteres!",
+          },
+        ]}
         required
       >
-        <Input placeholder="Digite sua senha" type="password" />
+        <Input.Password placeholder="Digite sua senha" type="password" />
       </Form.Item>
 
       <Form.Item
         name="confirmPassword"
         label="Confirme a senha"
+        hasFeedback
         rules={[
           { required: true, message: "Confirme sua senha" },
           {
             validator: (_, value) => {
               if (value !== form.getFieldValue("password")) {
-                return Promise.reject("As senhas precisam ser iguais");
+                return Promise.reject("As senhas precisam ser iguais")
               }
-              return Promise.resolve();
+              return Promise.resolve()
             },
           },
         ]}
         required
       >
-        <Input placeholder="Confirme sua senha" type="password" />
-      </Form.Item>
-
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit" onClick={onSubmit}>
-          Criar minha conta
-        </Button>
+        <Input.Password placeholder="Confirme sua senha" type="password" />
       </Form.Item>
     </>
-  );
-};
+  )
+}
