@@ -1,12 +1,12 @@
-import { Button, Form, Modal, Steps } from "antd"
-import { PulseLoader } from "react-spinners"
-import { RegisterCompanyConfirmationForm } from "../../../components/register-company/confirmation-form"
-import { useRegisterCompanyContext } from "../contexts/register-company-provider"
+import { Button, Form, Modal, Steps } from "antd";
+import { PulseLoader } from "react-spinners";
 
-import { RegisterCompanyAddressForm } from "../../../components/register-company/address-form"
-import { RegisterCompanyForm } from "../../../components/register-company/company-form"
-import { useCreateCompanyAndAddress } from "../../../hooks/na-hora/company/use-create-company"
-import styles from "./styles.module.css"
+import { RegisterCompanyAddressForm } from "@/components/register-company/address-form";
+import { RegisterCompanyForm } from "@/components/register-company/company-form";
+import { RegisterCompanyConfirmationForm } from "@/components/register-company/confirmation-form";
+import { useCreateCompanyAndAddress } from "@/hooks/na-hora/company/use-create-company";
+import { useRegisterCompanyContext } from "../contexts/register-company-provider";
+import styles from "./styles.module.css";
 
 export const RegisterCompanyPage = () => {
   const {
@@ -16,38 +16,38 @@ export const RegisterCompanyPage = () => {
     currentStep,
     setCurrentStep,
     registerCompanyFormData,
-  } = useRegisterCompanyContext()
-  const { mutate } = useCreateCompanyAndAddress()
+  } = useRegisterCompanyContext();
+  const { mutate } = useCreateCompanyAndAddress();
 
   const nextStep = () => {
-    const isNotLastStep = currentStep < 2
+    const isNotLastStep = currentStep < 2;
     if (isNotLastStep) {
       form.validateFields().then(() => {
         setRegisterCompanyFormData((prev) => ({
           ...prev,
           ...form.getFieldsValue(),
-        }))
+        }));
 
-        setCurrentStep(currentStep + 1)
-      })
+        setCurrentStep(currentStep + 1);
+      });
     }
-  }
+  };
 
   const saveFormValuesInContext = () => {
     setRegisterCompanyFormData((prev) => ({
       ...prev,
       ...form.getFieldsValue(),
-    }))
-  }
+    }));
+  };
 
   const prevStep = () => {
-    saveFormValuesInContext()
+    saveFormValuesInContext();
 
-    setCurrentStep(currentStep - 1)
-  }
+    setCurrentStep(currentStep - 1);
+  };
 
   const formatFormValuesToSubmit = () => {
-    const lastStepFields = form.getFieldsValue()
+    const lastStepFields = form.getFieldsValue();
     return {
       name: registerCompanyFormData.name,
       fantasyName: registerCompanyFormData.fantasyName,
@@ -64,24 +64,24 @@ export const RegisterCompanyPage = () => {
         complement: registerCompanyFormData.complement,
       },
       validator: validator as string,
-    }
-  }
+    };
+  };
 
   const createCompany = () => {
-    const formattedFormValues = formatFormValuesToSubmit()
+    const formattedFormValues = formatFormValuesToSubmit();
 
-    mutate(formattedFormValues)
-  }
+    mutate(formattedFormValues);
+  };
 
   const nextPageOrSubmit = () => {
     if (currentStep === 2) {
-      createCompany()
+      createCompany();
     } else {
-      nextStep()
+      nextStep();
     }
-  }
+  };
 
-  const isLoading = false
+  const isLoading = false;
 
   return (
     <main className={styles.main}>
@@ -147,15 +147,19 @@ export const RegisterCompanyPage = () => {
           <Modal
             open={isLoading}
             closeIcon={false}
+            centered
             styles={{
               body: {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
+                textAlign: "center",
+                gap: "20px",
+                paddingBottom: "20px",
               },
               mask: { backdropFilter: "blur(15px)" },
-              content: { background: "transparent", boxShadow: "none" },
+              content: { backgroundColor: "#ffffff70", boxShadow: "none" },
             }}
             footer={null}
           >
@@ -165,5 +169,5 @@ export const RegisterCompanyPage = () => {
         )}
       </section>
     </main>
-  )
-}
+  );
+};

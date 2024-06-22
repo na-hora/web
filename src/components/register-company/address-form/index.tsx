@@ -1,70 +1,68 @@
-import { Button, Form, Input, InputNumber } from "antd"
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { PatternFormat } from "react-number-format"
-import { Link } from "react-router-dom"
-import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider"
+import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider";
+import { Button, Form, Input, InputNumber } from "antd";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { PatternFormat } from "react-number-format";
+import { Link } from "react-router-dom";
 
 type ViaCEPResponse = {
-  cep: string
-  logradouro: string
-  complemento: string
-  bairro: string
-  localidade: string
-  uf: string
-  ibge: string
-  gia: string
-  ddd: string
-  siafi: string
-} | null
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  ibge: string;
+  gia: string;
+  ddd: string;
+  siafi: string;
+} | null;
 
 export const RegisterCompanyAddressForm = () => {
-  const [zipCode, setZipCode] = useState("")
-  const [address, setAddress] = useState<ViaCEPResponse>(null)
+  const [zipCode, setZipCode] = useState("");
+  const [address, setAddress] = useState<ViaCEPResponse>(null);
   const { form, registerCompanyFormData, setRegisterCompanyFormData } =
-    useRegisterCompanyContext()
+    useRegisterCompanyContext();
 
   useEffect(() => {
-    form.setFieldValue("zipCode", registerCompanyFormData.zipCode)
-  }, [])
+    form.setFieldValue("zipCode", registerCompanyFormData.zipCode);
+  }, []);
 
   const fillFormWithAddress = (addressData: ViaCEPResponse) => {
     form.setFieldsValue({
       neighborhood: addressData?.bairro,
-      number: addressData?.complemento,
-      complement: addressData?.complemento,
       street: addressData?.logradouro,
       city: addressData?.localidade,
       state: addressData?.uf,
-    })
-  }
+    });
+  };
 
   const fetchAddress = async () => {
     try {
       const response = await axios.get(
         `https://viacep.com.br/ws/${zipCode.replace(/\D/g, "")}/json/`
-      )
+      );
 
       if (response.data?.erro) {
-        throw new Error("CEP inválido")
+        throw new Error("CEP inválido");
       }
 
-      setAddress(response.data)
-      fillFormWithAddress(response.data)
+      setAddress(response.data);
+      fillFormWithAddress(response.data);
       setRegisterCompanyFormData((prev) => ({
         ...prev,
         cityIbge: response.data.ibge,
-      }))
+      }));
     } catch (error) {
       form.setFields([
         {
           name: "zipCode",
           errors: ["CEP inválido"],
         },
-      ])
-      form.resetFields(["state", "cityIbge", "neighborhood", "street"])
+      ]);
+      form.resetFields(["state", "cityIbge", "neighborhood", "street"]);
     }
-  }
+  };
 
   return (
     <>
@@ -88,7 +86,11 @@ export const RegisterCompanyAddressForm = () => {
           customInput={Input}
           format={"##.###-###"}
           required={true}
-          addonAfter={<Button onClick={fetchAddress}>Buscar endereço</Button>}
+          addonAfter={
+            <Button type="primary" onClick={fetchAddress}>
+              Buscar endereço
+            </Button>
+          }
         />
       </Form.Item>
 
@@ -162,5 +164,5 @@ export const RegisterCompanyAddressForm = () => {
         <Input placeholder="Digite o complemento" />
       </Form.Item>
     </>
-  )
-}
+  );
+};

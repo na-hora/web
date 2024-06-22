@@ -1,15 +1,15 @@
-import { Layout, theme } from "antd"
-import { Content } from "antd/es/layout/layout"
-import { Outlet } from "react-router-dom"
-import { Breadcrumbs } from "../../components/dashboard/breadcrumb"
-import { NavbarDashboard } from "../../components/dashboard/navbar"
-import { Sidebar } from "../../components/dashboard/sidebar"
-import { DashboardProvider } from "./contexts/dashboard-provider"
+import { Breadcrumbs } from "@/components/dashboard/breadcrumb";
+import { NavbarDashboard } from "@/components/dashboard/navbar";
+import { Sidebar } from "@/components/dashboard/sidebar";
+import { Layout, theme } from "antd";
+import { Content } from "antd/es/layout/layout";
+import { Outlet } from "react-router-dom";
+import { DashboardProvider } from "./contexts/dashboard-provider";
 
 export const Dashboard = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken()
+  } = theme.useToken();
 
   return (
     <DashboardProvider>
@@ -34,5 +34,5 @@ export const Dashboard = () => {
         </Layout>
       </Layout>
     </DashboardProvider>
-  )
-}
+  );
+};

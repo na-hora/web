@@ -1,22 +1,22 @@
-import { UseQueryResult, useQuery } from "@tanstack/react-query"
-import axios from "axios"
-import { useRegisterCompanyContext } from "../../../pages/company/contexts/register-company-provider"
+import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 type UseLoadCepResult = {
-  bairro: string
-  cep: string
-  complemento: string
-  ddd: string
-  gia: string
-  ibge: string
-  localidade: string
-  logradouro: string
-  siafi: string
-  uf: string
-}
+  bairro: string;
+  cep: string;
+  complemento: string;
+  ddd: string;
+  gia: string;
+  ibge: string;
+  localidade: string;
+  logradouro: string;
+  siafi: string;
+  uf: string;
+};
 
 export const useLoadViaCepCep = (): UseQueryResult<UseLoadCepResult> => {
-  const { zipCodeToSearch } = useRegisterCompanyContext()
+  const { zipCodeToSearch } = useRegisterCompanyContext();
 
   return useQuery({
     queryFn: async () => {
@@ -27,11 +27,11 @@ export const useLoadViaCepCep = (): UseQueryResult<UseLoadCepResult> => {
             "Content-Type": "application/json",
           },
         }
-      )
+      );
 
-      return response.data
+      return response.data;
     },
     queryKey: ["via_cep"],
     enabled: zipCodeToSearch.length === 8,
-  })
-}
+  });
+};
