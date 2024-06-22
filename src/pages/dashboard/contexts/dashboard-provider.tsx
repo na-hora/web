@@ -1,24 +1,22 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext } from "react";
 
 export type Params = {
-  teste: number
-  setTeste: React.Dispatch<React.SetStateAction<number>>
-}
+  // teste: number
+  // setTeste: React.Dispatch<React.SetStateAction<number>>
+};
 
-export const DashboardContext = createContext<Params>({} as Params)
+export const DashboardContext = createContext<Params>({} as Params);
 
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [teste, setTeste] = useState(0)
+  // const [teste, setTeste] = useState(0)
 
   return (
-    <DashboardContext.Provider value={{ teste, setTeste }}>
-      {children}
-    </DashboardContext.Provider>
-  )
-}
+    <DashboardContext.Provider value={{}}>{children}</DashboardContext.Provider>
+  );
+};
 
 export const useDashboardContext = (): Params => {
-  return useContext(DashboardContext)
-}
+  return useContext(DashboardContext);
+};
