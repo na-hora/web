@@ -1,9 +1,17 @@
 import { RegisterCompanyAddressForm } from "@/components/register-company/address-form"
-import { RegisterCompanyConfirmationForm } from "@/components/register-company/confirmation-form"
+import { RegisterUserForm } from "@/components/register-company/user-form"
 import { useCreateCompanyAndAddress } from "@/hooks/na-hora/company/use-create-company"
 import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider"
 import { Button, Form } from "antd"
+import { useEffect } from "react"
 import { RegisterCompanyForm } from "../company-form"
+
+enum Steps {
+  COMPANY = 0,
+  ADDRESS = 1,
+  USER = 2,
+  SUCCESS = 3,
+}
 
 export const CreateCompanyForm = () => {
   const {
@@ -13,12 +21,21 @@ export const CreateCompanyForm = () => {
     setRegisterCompanyFormData,
     setCurrentStep,
     validator,
+    setIsRegisteringCompany,
   } = useRegisterCompanyContext()
 
-  const { mutate } = useCreateCompanyAndAddress()
+  const { mutate, isPending } = useCreateCompanyAndAddress()
+
+  useEffect(() => {
+    setIsRegisteringCompany(false)
+
+    if (isPending) {
+      setIsRegisteringCompany(true)
+    }
+  }, [isPending, setIsRegisteringCompany])
 
   const nextStep = () => {
-    const isLastStep = currentStep === 2
+    const isLastStep = currentStep === Steps.USER
     if (isLastStep) return
 
     form.validateFields().then(() => {
@@ -72,7 +89,7 @@ export const CreateCompanyForm = () => {
   }
 
   const nextPageOrSubmit = () => {
-    if (currentStep === 2) {
+    if (currentStep === Steps.USER) {
       createCompany()
     } else {
       nextStep()
@@ -85,10 +102,10 @@ export const CreateCompanyForm = () => {
       form={form}
       style={{ width: "100%", marginTop: "20px" }}
     >
-      {currentStep === 0 && <RegisterCompanyForm />}
-      {currentStep === 1 && <RegisterCompanyAddressForm />}
-      {currentStep === 2 && <RegisterCompanyConfirmationForm />}
-      {currentStep === 3 && <h1>Cadastro concluído</h1>}
+      {currentStep === Steps.COMPANY && <RegisterCompanyForm />}
+      {currentStep === Steps.ADDRESS && <RegisterCompanyAddressForm />}
+      {currentStep === Steps.USER && <RegisterUserForm />}
+      {currentStep === Steps.SUCCESS && <h1>Cadastro concluído</h1>}
 
       <div
         style={{

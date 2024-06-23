@@ -1,0 +1,8 @@
+.input :global(.ant-input-group-addon) {
+  border: none;
+  padding: 0;
+}
+
+.button {
+  border-radius: 0 6px 6px 0;
+}
