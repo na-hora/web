@@ -28,6 +28,8 @@ export type Params = {
   validator: string | null
   currentStep: number
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
+  isRegisteringCompany: boolean
+  setIsRegisteringCompany: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const RegisterCompanyContext = createContext<Params>({} as Params)
@@ -38,8 +40,8 @@ export const RegisterCompanyProvider: React.FC<{
   const [registerCompanyFormData, setRegisterCompanyFormData] =
     useState<RegisterCompanyFormParams>({} as RegisterCompanyFormParams)
   const [zipCodeToSearch, setZipCodeToSearch] = useState("")
-  console.log("registerCompanyFormData: ", registerCompanyFormData)
   const [currentStep, setCurrentStep] = useState(0)
+  const [isRegisteringCompany, setIsRegisteringCompany] = useState(false)
 
   const [form] = Form.useForm()
   const searchParams = new URLSearchParams(window.location.search)
@@ -56,6 +58,8 @@ export const RegisterCompanyProvider: React.FC<{
         validator,
         currentStep,
         setCurrentStep,
+        isRegisteringCompany,
+        setIsRegisteringCompany,
       }}
     >
       {children}

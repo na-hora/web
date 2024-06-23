@@ -1,8 +1,8 @@
-import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider";
-import { Form, Input } from "antd";
+import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider"
+import { Form, Input } from "antd"
 
-export const RegisterCompanyConfirmationForm = () => {
-  const { form } = useRegisterCompanyContext();
+export const RegisterUserForm = () => {
+  const { form } = useRegisterCompanyContext()
 
   return (
     <>
@@ -42,9 +42,9 @@ export const RegisterCompanyConfirmationForm = () => {
           {
             validator: (_, value) => {
               if (value !== form.getFieldValue("password")) {
-                return Promise.reject("As senhas precisam ser iguais");
+                return Promise.reject("As senhas precisam ser iguais")
               }
-              return Promise.resolve();
+              return Promise.resolve()
             },
           },
         ]}
@@ -53,5 +53,5 @@ export const RegisterCompanyConfirmationForm = () => {
         <Input.Password placeholder="Confirme sua senha" type="password" />
       </Form.Item>
     </>
-  );
-};
+  )
+}

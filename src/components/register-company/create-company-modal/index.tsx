@@ -1,12 +1,13 @@
+import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider"
 import { Modal } from "antd"
 import { PulseLoader } from "react-spinners"
 
 export const CreateCompanyModal = () => {
-  const isLoading = false
+  const { isRegisteringCompany } = useRegisterCompanyContext()
 
   return (
     <Modal
-      open={isLoading}
+      open={isRegisteringCompany}
       closeIcon={false}
       centered
       styles={{
