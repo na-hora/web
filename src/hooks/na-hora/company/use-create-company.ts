@@ -1,5 +1,6 @@
+import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider"
 import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 type UseCreateCompanyAndAddressResult = {
   id: string
@@ -26,9 +27,11 @@ export interface Address {
 }
 
 export const useCreateCompanyAndAddress = () => {
+  const { setCurrentStep } = useRegisterCompanyContext()
+
   return useMutation<
     UseCreateCompanyAndAddressResult,
-    Error,
+    AxiosError,
     UseCreateCompanyAndAddressParams
   >({
     mutationFn: async (
@@ -57,7 +60,7 @@ export const useCreateCompanyAndAddress = () => {
     },
     mutationKey: ["na-hora:create-company-and-address"],
     onSuccess: () => {
-      window.location.href = "/login"
+      setCurrentStep((prev) => prev + 1)
     },
   })
 }
