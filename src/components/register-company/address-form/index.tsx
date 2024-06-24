@@ -27,7 +27,7 @@ export const RegisterCompanyAddressForm = () => {
 
   useEffect(() => {
     form.setFieldValue('zipCode', registerCompanyFormData.zipCode)
-  }, [])
+  }, [form, registerCompanyFormData.zipCode])
 
   const fillFormWithAddress = (addressData: ViaCEPResponse) => {
     form.setFieldsValue({
