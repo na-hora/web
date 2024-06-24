@@ -4,7 +4,7 @@ export const SuccessCompanyRegister = () => {
   return (
     <Result
       icon={<img src="/logo.svg" alt="" style={{ width: "150px" }} />}
-      title="Parabéns! Seu cadastro foi concluído com sucesso!"
+      title={<h3>Parabéns! Seu cadastro foi concluído com sucesso!</h3>}
       extra={
         <div>
           <p>
