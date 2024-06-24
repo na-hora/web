@@ -10,7 +10,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <Home />,
-    ErrorBoundary: () => <NotFoundPage />,
+    errorElement: <NotFoundPage />,
   },
   {
     path: '/appointment',
@@ -31,17 +31,19 @@ export const router = createBrowserRouter([
   {
     path: '/admin/dashboard',
     element: <Dashboard />,
-  },
-  {
-    path: '/admin/dashboard/home',
-    element: <div>Home</div>,
-  },
-  {
-    path: '/admin/dashboard/company',
-    element: <div>Company</div>,
-  },
-  {
-    path: '/admin/dashboard/profile',
-    element: <div>Profile</div>,
+    children: [
+      {
+        path: '/admin/dashboard/home',
+        element: <div>Home</div>,
+      },
+      {
+        path: '/admin/dashboard/company',
+        element: <div>Company</div>,
+      },
+      {
+        path: '/admin/dashboard/profile',
+        element: <div>Profile</div>,
+      },
+    ],
   },
 ])
