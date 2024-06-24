@@ -1,10 +1,10 @@
-import { RegisterUserForm } from "@/components/register-company/user-form";
-import { useCreateCompanyAndAddress } from "@/hooks/na-hora/company/use-create-company";
-import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider";
-import { Button, Form } from "antd";
-import { useEffect } from "react";
-import { RegisterCompanyAddressForm } from "../address-form";
-import { RegisterCompanyForm } from "../company-form";
+import { RegisterUserForm } from '@/components/register-company/user-form'
+import { useCreateCompanyAndAddress } from '@/hooks/na-hora/company/use-create-company'
+import { useRegisterCompanyContext } from '@/pages/company/contexts/register-company-provider'
+import { Button, Form } from 'antd'
+import { useEffect } from 'react'
+import { RegisterCompanyAddressForm } from '../address-form'
+import { RegisterCompanyForm } from '../company-form'
 
 enum STEPS {
   COMPANY = 0,
@@ -21,87 +21,87 @@ export const CreateCompanyForm = () => {
     setCurrentStep,
     validator,
     setIsRegisteringCompany,
-  } = useRegisterCompanyContext();
+  } = useRegisterCompanyContext()
 
-  const { mutate, isPending } = useCreateCompanyAndAddress();
+  const { mutate, isPending } = useCreateCompanyAndAddress()
 
   useEffect(() => {
-    setIsRegisteringCompany(false);
+    setIsRegisteringCompany(false)
 
     if (isPending) {
-      setIsRegisteringCompany(true);
+      setIsRegisteringCompany(true)
     }
-  }, [isPending, setIsRegisteringCompany]);
+  }, [isPending, setIsRegisteringCompany])
 
   const nextStep = () => {
-    const isLastStep = currentStep === STEPS.USER;
-    if (isLastStep) return;
+    const isLastStep = currentStep === STEPS.USER
+    if (isLastStep) return
 
     form.validateFields().then(() => {
       setRegisterCompanyFormData((prev) => ({
         ...prev,
         ...form.getFieldsValue(),
-      }));
+      }))
 
-      setCurrentStep(currentStep + 1);
-    });
-  };
+      setCurrentStep(currentStep + 1)
+    })
+  }
 
   const saveFormValuesInContext = () => {
     setRegisterCompanyFormData((prev) => ({
       ...prev,
       ...form.getFieldsValue(),
-    }));
-  };
+    }))
+  }
 
   const prevStep = () => {
-    saveFormValuesInContext();
+    saveFormValuesInContext()
 
-    setCurrentStep(currentStep - 1);
-  };
+    setCurrentStep(currentStep - 1)
+  }
 
   const formatFormValuesToSubmit = () => {
-    const lastStepFields = form.getFieldsValue();
+    const lastStepFields = form.getFieldsValue()
     return {
       name: registerCompanyFormData.name,
       fantasyName: registerCompanyFormData.fantasyName,
-      cnpj: registerCompanyFormData.cnpj?.replace(/[^\d]+/g, ""),
+      cnpj: registerCompanyFormData.cnpj?.replace(/[^\d]+/g, ''),
       email: lastStepFields.email,
-      phone: registerCompanyFormData.phone?.replace(/[^\d]+/g, ""),
+      phone: registerCompanyFormData.phone?.replace(/[^\d]+/g, ''),
       password: lastStepFields.password,
       address: {
         cityIbge: registerCompanyFormData.cityIbge,
-        zipCode: registerCompanyFormData.zipCode?.replace(/[^\d]+/g, ""),
+        zipCode: registerCompanyFormData.zipCode?.replace(/[^\d]+/g, ''),
         neighborhood: registerCompanyFormData.neighborhood,
         street: registerCompanyFormData.street,
         number: registerCompanyFormData.number,
         complement: registerCompanyFormData.complement,
       },
       validator: validator as string,
-    };
-  };
+    }
+  }
 
   const createCompany = () => {
-    const formattedFormValues = formatFormValuesToSubmit();
+    const formattedFormValues = formatFormValuesToSubmit()
 
-    mutate(formattedFormValues);
-  };
+    mutate(formattedFormValues)
+  }
 
   const nextPageOrSubmit = () => {
     if (currentStep === STEPS.USER) {
-      createCompany();
+      createCompany()
     } else {
-      nextStep();
+      nextStep()
     }
-  };
+  }
 
-  const hidePrevStepButton = currentStep === STEPS.ADDRESS;
+  const hidePrevStepButton = currentStep === STEPS.ADDRESS
 
   return (
     <Form
-      layout="vertical"
+      layout='vertical'
       form={form}
-      style={{ width: "100%", marginTop: "20px" }}
+      style={{ width: '100%', marginTop: '20px' }}
     >
       {currentStep === STEPS.COMPANY && <RegisterCompanyForm />}
       {currentStep === STEPS.ADDRESS && <RegisterCompanyAddressForm />}
@@ -109,24 +109,24 @@ export const CreateCompanyForm = () => {
 
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: "10px",
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: '10px',
         }}
       >
         <Button
           onClick={prevStep}
           style={{
-            display: `${hidePrevStepButton ? "none" : "block"}`,
+            display: `${hidePrevStepButton ? 'none' : 'block'}`,
           }}
         >
           Voltar
         </Button>
-        <Button type="primary" onClick={nextPageOrSubmit}>
-          {currentStep === STEPS.USER ? "Criar minha conta" : "Próximo"}
+        <Button type='primary' onClick={nextPageOrSubmit}>
+          {currentStep === STEPS.USER ? 'Criar minha conta' : 'Próximo'}
         </Button>
       </div>
     </Form>
-  );
-};
+  )
+}

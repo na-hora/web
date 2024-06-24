@@ -1,28 +1,28 @@
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { useMutation } from '@tanstack/react-query'
+import axios, { AxiosError } from 'axios'
 
 type UseCreateCompanyAndAddressResult = {
-  id: string;
-};
+  id: string
+}
 
 export type UseCreateCompanyAndAddressParams = {
-  name: string;
-  fantasyName: string;
-  cnpj: string;
-  email: string;
-  phone: string;
-  password: string;
-  address: Address;
-  validator: string;
-};
+  name: string
+  fantasyName: string
+  cnpj: string
+  email: string
+  phone: string
+  password: string
+  address: Address
+  validator: string
+}
 
 export interface Address {
-  cityIbge: string;
-  zipCode: string;
-  neighborhood: string;
-  street: string;
-  number: string;
-  complement: string;
+  cityIbge: string
+  zipCode: string
+  neighborhood: string
+  street: string
+  number: string
+  complement: string
 }
 
 export const useCreateCompanyAndAddress = () => {
@@ -32,7 +32,7 @@ export const useCreateCompanyAndAddress = () => {
     UseCreateCompanyAndAddressParams
   >({
     mutationFn: async (
-      input: UseCreateCompanyAndAddressParams
+      input: UseCreateCompanyAndAddressParams,
     ): Promise<UseCreateCompanyAndAddressResult> => {
       try {
         const response = await axios.post<UseCreateCompanyAndAddressResult>(
@@ -40,24 +40,24 @@ export const useCreateCompanyAndAddress = () => {
           input,
           {
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
-          }
-        );
+          },
+        )
 
         if (response.status !== 201) {
-          throw new Error(response.data.toString());
+          throw new Error(response.data.toString())
         }
 
-        return response.data;
+        return response.data
       } catch (error) {
-        console.error(error);
-        throw error;
+        console.error(error)
+        throw error
       }
     },
-    mutationKey: ["na-hora:create-company-and-address"],
+    mutationKey: ['na-hora:create-company-and-address'],
     onSuccess: () => {
-      window.location.href = "/company/register/success";
+      window.location.href = '/company/register/success'
     },
-  });
-};
+  })
+}

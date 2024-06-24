@@ -1,6 +1,6 @@
-import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider"
-import { Steps } from "antd"
-import styles from "./styles.module.css"
+import { useRegisterCompanyContext } from '@/pages/company/contexts/register-company-provider'
+import { Steps } from 'antd'
+import styles from './styles.module.css'
 
 export const CreateCompanySteps = () => {
   const { currentStep, setCurrentStep } = useRegisterCompanyContext()
@@ -11,19 +11,19 @@ export const CreateCompanySteps = () => {
         current={currentStep}
         items={[
           {
-            title: "Empresa",
+            title: 'Empresa',
             disabled: true,
-            style: { cursor: "default" },
+            style: { cursor: 'default' },
           },
           {
-            title: "Endereço",
+            title: 'Endereço',
             disabled: true,
-            style: { cursor: "default" },
+            style: { cursor: 'default' },
           },
           {
-            title: "Usuário",
+            title: 'Usuário',
             disabled: true,
-            style: { cursor: "default" },
+            style: { cursor: 'default' },
           },
         ]}
         onChange={setCurrentStep}
