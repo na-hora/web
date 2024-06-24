@@ -11,36 +11,48 @@ export const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: '/company/register',
-    element: <RegisterCompany />,
-  },
-  {
-    path: '/company/register/success',
-    element: <SuccessCompanyPage />,
-  },
-  {
     path: '/appointment',
     element: <div>Appointment</div>,
   },
   {
-    path: '/admin/login',
-    element: <AdminLoginPage />,
-  },
-  {
-    path: '/admin/dashboard',
-    element: <Dashboard />,
+    path: '/company',
     children: [
       {
-        path: 'home',
-        element: <div>Home</div>,
+        path: 'register',
+        element: <RegisterCompany />,
+        children: [
+          {
+            path: 'success',
+            element: <SuccessCompanyPage />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    children: [
+      {
+        path: 'login',
+        element: <AdminLoginPage />,
       },
       {
-        path: 'company',
-        element: <div>Company</div>,
-      },
-      {
-        path: 'profile',
-        element: <div>Profile</div>,
+        path: 'dashboard',
+        element: <Dashboard />,
+        children: [
+          {
+            path: 'home',
+            element: <div>Home</div>,
+          },
+          {
+            path: 'company',
+            element: <div>Company</div>,
+          },
+          {
+            path: 'profile',
+            element: <div>Profile</div>,
+          },
+        ],
       },
     ],
   },
