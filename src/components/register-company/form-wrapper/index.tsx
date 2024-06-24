@@ -1,12 +1,13 @@
-import { RegisterCompanyAddressForm } from "@/components/register-company/address-form"
 import { RegisterUserForm } from "@/components/register-company/user-form"
 import { useCreateCompanyAndAddress } from "@/hooks/na-hora/company/use-create-company"
 import { useRegisterCompanyContext } from "@/pages/company/contexts/register-company-provider"
 import { Button, Form } from "antd"
 import { useEffect } from "react"
+import { RegisterCompanyAddressForm } from "../address-form"
 import { RegisterCompanyForm } from "../company-form"
+import { SuccessCompanyRegister } from "../sucess"
 
-enum Steps {
+enum STEPS {
   COMPANY = 0,
   ADDRESS = 1,
   USER = 2,
@@ -35,7 +36,7 @@ export const CreateCompanyForm = () => {
   }, [isPending, setIsRegisteringCompany])
 
   const nextStep = () => {
-    const isLastStep = currentStep === Steps.USER
+    const isLastStep = currentStep === STEPS.USER
     if (isLastStep) return
 
     form.validateFields().then(() => {
@@ -89,12 +90,16 @@ export const CreateCompanyForm = () => {
   }
 
   const nextPageOrSubmit = () => {
-    if (currentStep === Steps.USER) {
+    if (currentStep === STEPS.USER) {
       createCompany()
     } else {
       nextStep()
     }
   }
+
+  const hidePrevStepButton =
+    currentStep === STEPS.ADDRESS || currentStep === STEPS.SUCCESS
+  const hideNextStepButton = currentStep === STEPS.SUCCESS
 
   return (
     <Form
@@ -102,10 +107,10 @@ export const CreateCompanyForm = () => {
       form={form}
       style={{ width: "100%", marginTop: "20px" }}
     >
-      {currentStep === Steps.COMPANY && <RegisterCompanyForm />}
-      {currentStep === Steps.ADDRESS && <RegisterCompanyAddressForm />}
-      {currentStep === Steps.USER && <RegisterUserForm />}
-      {currentStep === Steps.SUCCESS && <h1>Cadastro concluído</h1>}
+      {currentStep === STEPS.COMPANY && <RegisterCompanyForm />}
+      {currentStep === STEPS.ADDRESS && <RegisterCompanyAddressForm />}
+      {currentStep === STEPS.USER && <RegisterUserForm />}
+      {currentStep === STEPS.SUCCESS && <SuccessCompanyRegister />}
 
       <div
         style={{
@@ -117,12 +122,20 @@ export const CreateCompanyForm = () => {
       >
         <Button
           onClick={prevStep}
-          style={{ display: `${currentStep === 0 ? "none" : "block"}` }}
+          style={{
+            display: `${hidePrevStepButton ? "none" : "block"}`,
+          }}
         >
           Voltar
         </Button>
-        <Button type="primary" onClick={nextPageOrSubmit}>
-          {currentStep === 2 ? "Criar minha conta" : "Próximo"}
+        <Button
+          type="primary"
+          onClick={nextPageOrSubmit}
+          style={{
+            display: `${hideNextStepButton ? "none" : "block"}`,
+          }}
+        >
+          {currentStep === STEPS.USER ? "Criar minha conta" : "Próximo"}
         </Button>
       </div>
     </Form>
