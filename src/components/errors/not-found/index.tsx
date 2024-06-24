@@ -11,13 +11,6 @@ export const NotFound = () => {
         backgroundColor: '#f5f5f5',
       }}
     >
-      {/* .main {
-  height: 100%;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  background-color: #f5f5f5;
-} */}
       <Result
         icon={<img src='/logo.svg' alt='' style={{ width: '150px' }} />}
         title={<h3>Opss... Esta página não foi encontrada</h3>}
