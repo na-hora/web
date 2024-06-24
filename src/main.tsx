@@ -1,16 +1,16 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import { router } from "./routes";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import './index.css'
+import { router } from './routes'
 
-import "@fontsource/rubik";
-import { RouterProvider } from "react-router-dom";
-import { ApplicationProvider } from "./contexts";
+import '@fontsource/rubik'
+import { RouterProvider } from 'react-router-dom'
+import { ApplicationProvider } from './contexts'
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ApplicationProvider>
       <RouterProvider router={router} />
     </ApplicationProvider>
-  </React.StrictMode>
-);
+  </React.StrictMode>,
+)

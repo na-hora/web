@@ -1,5 +1,5 @@
-import { SuccessCompanyRegister } from "@/components/register-company/sucess";
+import { SuccessCompanyRegister } from '@/components/register-company/sucess'
 
 export const SuccessCompanyPage = () => {
-  return <SuccessCompanyRegister />;
-};
+  return <SuccessCompanyRegister />
+}

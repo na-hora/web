@@ -1,0 +1,30 @@
+{
+  "parser": "typescript",
+  "singleQuote": true,
+  "tabWidth": 2,
+  "semi": false,
+  "trailingComma": "all",
+  "jsxSingleQuote": true,
+  "bracketSpacing": true,
+  "printWidth": 80,
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "parser": "json"
+      }
+    },
+    {
+      "files": "*.css",
+      "options": {
+        "parser": "css"
+      }
+    },
+    {
+      "files": ["**/*.css", "**/*.scss", "**/*.html"],
+      "options": {
+        "singleQuote": true
+      }
+    }
+  ]
+}

@@ -1,20 +1,20 @@
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { useMutation } from '@tanstack/react-query'
+import axios, { AxiosError } from 'axios'
 
 type UseLoginUserResult = {
-  id: string;
-  token: string;
-};
+  id: string
+  token: string
+}
 
 export type UseLoginUserParams = {
-  username: string;
-  password: string;
-};
+  username: string
+  password: string
+}
 
 export const useLoginUser = () => {
   return useMutation<UseLoginUserResult, AxiosError, UseLoginUserParams>({
     mutationFn: async (
-      input: UseLoginUserParams
+      input: UseLoginUserParams,
     ): Promise<UseLoginUserResult> => {
       try {
         const response = await axios.post<UseLoginUserResult>(
@@ -22,21 +22,21 @@ export const useLoginUser = () => {
           input,
           {
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
-          }
-        );
+          },
+        )
 
         if (response.status !== 200) {
-          throw new Error(response.data.toString());
+          throw new Error(response.data.toString())
         }
 
-        return response.data;
+        return response.data
       } catch (error) {
-        console.error(error);
-        throw error;
+        console.error(error)
+        throw error
       }
     },
-    mutationKey: ["na-hora:login-user"],
-  });
-};
+    mutationKey: ['na-hora:login-user'],
+  })
+}
