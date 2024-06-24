@@ -1,7 +1,9 @@
-import { RegisterCompany } from "@/pages/company/register"
-import { Dashboard } from "@/pages/dashboard"
-import { Home } from "@/pages/home"
-import { createBrowserRouter } from "react-router-dom"
+import { AdminLoginPage } from "@/pages/admin/login";
+import { RegisterCompany } from "@/pages/company/register";
+import { SuccessCompanyPage } from "@/pages/company/register-success";
+import { Dashboard } from "@/pages/dashboard";
+import { Home } from "@/pages/home";
+import { createBrowserRouter } from "react-router-dom";
 
 export const router = createBrowserRouter([
   {
@@ -13,11 +15,19 @@ export const router = createBrowserRouter([
     element: <RegisterCompany />,
   },
   {
+    path: "/company/register/success",
+    element: <SuccessCompanyPage />,
+  },
+  {
     path: "/appointment",
     element: <div>Appointment</div>,
   },
   {
-    path: "/dashboard",
+    path: "/admin/login",
+    element: <AdminLoginPage />,
+  },
+  {
+    path: "/admin/dashboard",
     element: <Dashboard />,
     children: [
       {
@@ -34,4 +44,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-])
+]);
