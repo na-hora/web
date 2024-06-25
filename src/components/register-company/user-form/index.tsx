@@ -50,7 +50,7 @@ export const RegisterUserForm = () => {
         ]}
         required
       >
-        <Input.Password placeholder='Confirme sua senha' type='password' />
+        <Input.Password placeholder='Confirme sua senha' />
       </Form.Item>
     </>
   )

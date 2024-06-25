@@ -31,6 +31,7 @@ export const AdminLoginPage: React.FC = () => {
       <div style={{ textAlign: 'center' }}>
         <img src='/logo.svg' alt='na hora' style={{ width: '150px' }} />
         <h1>Na Hora</h1>
+        <p>Faça aqui seu login no painel de controle.</p>
       </div>
       <Form
         form={form}
@@ -61,7 +62,7 @@ export const AdminLoginPage: React.FC = () => {
           <Form.Item name='remember' valuePropName='checked' noStyle>
             <Checkbox>Lembrar de mim</Checkbox>
           </Form.Item>
-          <a className='login-form-forgot' href=''>
+          <a className='login-form-forgot' href='/admin/forgot-password'>
             Esqueci minha senha
           </a>
         </Row>
@@ -71,7 +72,7 @@ export const AdminLoginPage: React.FC = () => {
             type='primary'
             htmlType='submit'
             className='login-form-button'
-            style={{ marginTop: '20px' }}
+            style={{ marginTop: '16px' }}
             loading={isPending}
             onClick={loginUser}
           >
