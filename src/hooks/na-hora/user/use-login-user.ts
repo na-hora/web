@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import { AxiosError } from 'axios'
+import http from '@/adapters/http'
 
 type UseLoginUserResult = {
   id: string
@@ -17,7 +18,7 @@ export const useLoginUser = () => {
       input: UseLoginUserParams,
     ): Promise<UseLoginUserResult> => {
       try {
-        const response = await axios.post<UseLoginUserResult>(
+        const response = await http.post<UseLoginUserResult>(
           `${import.meta.env.VITE_API_URL}/users/login`,
           input,
           {
