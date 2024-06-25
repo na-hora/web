@@ -1,4 +1,6 @@
+import { AdminForgotPasswordPage } from '@/pages/admin/forgot-password'
 import { AdminLoginPage } from '@/pages/admin/login'
+import { AdminResetPasswordPage } from '@/pages/admin/reset-password'
 import { RegisterCompany } from '@/pages/company/register'
 import { SuccessCompanyPage } from '@/pages/company/register-success'
 import { Dashboard } from '@/pages/dashboard'
@@ -27,6 +29,14 @@ export const router = createBrowserRouter([
   {
     path: '/admin/login',
     element: <AdminLoginPage />,
+  },
+  {
+    path: '/admin/forgot-password',
+    element: <AdminForgotPasswordPage />,
+  },
+  {
+    path: '/admin/reset-password',
+    element: <AdminResetPasswordPage />,
   },
   {
     path: '/admin/dashboard',
