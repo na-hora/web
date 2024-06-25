@@ -1,12 +1,20 @@
 import { useLoginUser } from '@/hooks/na-hora/user/use-login-user'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Checkbox, Form, Input, Row } from 'antd'
-import { setCookie } from 'nookies'
+import { parseCookies, setCookie } from 'nookies'
 import React, { useEffect } from 'react'
 
 export const AdminLoginPage: React.FC = () => {
   const { mutate, isPending, data } = useLoginUser()
   const [form] = Form.useForm()
+
+  useEffect(() => {
+    const accessCookie = parseCookies()['access-token@na-hora']
+
+    if (accessCookie) {
+      window.location.href = '/admin/dashboard/home'
+    }
+  }, [])
 
   useEffect(() => {
     if (!data) {
@@ -15,7 +23,7 @@ export const AdminLoginPage: React.FC = () => {
     setCookie(null, 'access-token@na-hora', data?.token, {
       path: '/',
     })
-    // window.location.href = '/admin/dashboard/home'
+    window.location.href = '/admin/dashboard/home'
   }, [data])
 
   const loginUser = () => {
