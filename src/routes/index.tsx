@@ -8,7 +8,7 @@ import { Dashboard } from '@/pages/dashboard'
 import { NotFoundPage } from '@/pages/errors/not-found'
 import { Home } from '@/pages/home'
 import { createBrowserRouter } from 'react-router-dom'
-import RouteGuard from './guards/auth-guard'
+import { AuthGuard } from './guards/auth-guard'
 
 export const router = createBrowserRouter([
   {
@@ -49,9 +49,9 @@ export const router = createBrowserRouter([
   {
     path: '/admin/dashboard',
     element: (
-      <RouteGuard>
+      <AuthGuard>
         <Dashboard />
-      </RouteGuard>
+      </AuthGuard>
     ),
     children: [
       {
