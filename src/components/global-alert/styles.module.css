@@ -1,0 +1,12 @@
+.alert {
+  position: fixed;
+  z-index: 999999;
+  top: 70px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 640px;
+  border-radius: 6px;
+  padding: 9px 16px;
+}

@@ -1,20 +1,22 @@
-import http from '@/adapters/http'
-import { Suspense, useState } from 'react'
+import { useGlobalAlertContext } from '@/contexts/global-alert-context'
+import { useLoadNaHoraStates } from '@/hooks/na-hora/address/use-load-states'
+import { Suspense, useEffect, useState } from 'react'
 
 export const DashboardHome = () => {
   const [states, setStates] = useState([])
-  console.log('states: ', states)
-  const getData = async () => {
-    const response = await http.get('http://localhost:3333/api/v1/states/')
+  const { triggerAlert } = useGlobalAlertContext()
 
-    setStates(response.data.states)
-  }
+  const { data } = useLoadNaHoraStates()
 
-  // useEffect(() => {
-  //   getData()
-  // }, [])
+  useEffect(() => {
+    if (data) {
+      triggerAlert({
+        type: 'success',
+        message: 'Estados carregados com sucesso',
+      })
+    }
+  }, [data])
 
-  getData()
   return (
     <Suspense fallback='Carregando...'>
       <Component states={states} />
