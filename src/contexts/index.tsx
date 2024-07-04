@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { GlobalAlertProvider } from './global-alert-context'
 
 export const ApplicationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -6,6 +7,8 @@ export const ApplicationProvider: React.FC<{ children: React.ReactNode }> = ({
   const queryClient = new QueryClient()
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <GlobalAlertProvider>{children}</GlobalAlertProvider>
+    </QueryClientProvider>
   )
 }
