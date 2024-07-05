@@ -1,5 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from 'axios'
-import { destroyCookie, parseCookies } from 'nookies'
+import { parseCookies } from 'nookies'
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -27,19 +27,19 @@ axiosInstance.interceptors.request.use(
   },
 )
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const unauthorizedRoute = error.response.status === 401
-    // const isLoginPage = window.location.pathname === ROUTES.PAGES.LOGIN
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     const unauthorizedRoute = error.response.status === 401
+//     const isLoginPage = window.location.pathname === ROUTES.PAGES.LOGIN
 
-    if (unauthorizedRoute) {
-      destroyCookie(null, 'access-token@na-hora')
-      window.location.href = '/admin/login'
-    }
+//     if (unauthorizedRoute) {
+//       destroyCookie(null, 'access-token@na-hora')
+//       window.location.href = '/admin/login'
+//     }
 
-    return Promise.reject(error)
-  },
-)
+//     return Promise.reject(error)
+//   },
+// )
 
 export default axiosInstance
