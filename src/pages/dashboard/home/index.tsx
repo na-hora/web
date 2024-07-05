@@ -10,6 +10,7 @@ export const DashboardHome = () => {
 
   useEffect(() => {
     if (data) {
+      setStates(data.states)
       triggerAlert({
         type: 'success',
         message: 'Estados carregados com sucesso',
