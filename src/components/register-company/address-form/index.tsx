@@ -1,6 +1,6 @@
+import { useLoadViaCepCep } from '@/hooks/providers/viacep/use-load-cep'
 import { useRegisterCompanyContext } from '@/pages/company/contexts/register-company-provider'
 import { Button, Form, Input } from 'antd'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { PatternFormat } from 'react-number-format'
 import { Link } from 'react-router-dom'
@@ -21,13 +21,41 @@ type ViaCEPResponse = {
 
 export const RegisterCompanyAddressForm = () => {
   const [zipCode, setZipCode] = useState('')
-  const [address, setAddress] = useState<ViaCEPResponse>(null)
-  const { form, registerCompanyFormData, setRegisterCompanyFormData } =
-    useRegisterCompanyContext()
+  const {
+    form,
+    registerCompanyFormData,
+    setRegisterCompanyFormData,
+    setZipCodeToSearch,
+  } = useRegisterCompanyContext()
+  const { data: address, error } = useLoadViaCepCep()
 
   useEffect(() => {
     form.setFieldValue('zipCode', registerCompanyFormData.zipCode)
   }, [form, registerCompanyFormData.zipCode])
+
+  useEffect(() => {
+    if (address) {
+      fillFormWithAddress(address)
+
+      setRegisterCompanyFormData((prev) => ({
+        ...prev,
+        cityIbge: address.ibge,
+      }))
+    }
+  }, [address])
+
+  useEffect(() => {
+    if (error) {
+      form.setFields([
+        {
+          name: 'zipCode',
+          errors: ['CEP inválido'],
+        },
+      ])
+
+      form.resetFields(['state', 'cityIbge', 'neighborhood', 'street'])
+    }
+  }, [error])
 
   const fillFormWithAddress = (addressData: ViaCEPResponse) => {
     form.setFieldsValue({
@@ -38,37 +66,10 @@ export const RegisterCompanyAddressForm = () => {
     })
   }
 
-  const fetchAddress = async () => {
-    try {
-      const response = await axios.get(
-        `https://viacep.com.br/ws/${zipCode.replace(/\D/g, '')}/json/`,
-      )
-
-      if (response.data?.erro) {
-        throw new Error('CEP inválido')
-      }
-
-      setAddress(response.data)
-      fillFormWithAddress(response.data)
-      setRegisterCompanyFormData((prev) => ({
-        ...prev,
-        cityIbge: response.data.ibge,
-      }))
-    } catch (error) {
-      form.setFields([
-        {
-          name: 'zipCode',
-          errors: ['CEP inválido'],
-        },
-      ])
-      form.resetFields(['state', 'cityIbge', 'neighborhood', 'street'])
-    }
-  }
-
   const searchOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault()
-      fetchAddress()
+      setZipCodeToSearch(zipCode.replace(/\D/g, ''))
     }
   }
 
@@ -100,7 +101,7 @@ export const RegisterCompanyAddressForm = () => {
           addonAfter={
             <Button
               type='primary'
-              onClick={fetchAddress}
+              onClick={() => setZipCodeToSearch(zipCode.replace(/\D/g, ''))}
               className={styles.button}
             >
               Buscar endereço
