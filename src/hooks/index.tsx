@@ -3,7 +3,15 @@ import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { useQuery } from '@tanstack/react-query'
 export const useHooks = () => {
   const { triggerAlert } = useGlobalAlertContext()
-  const useGetData = ({ url, options }: { url: string; options?: any }) => {
+  const useGetData = ({
+    url,
+    options,
+    enabled = true,
+  }: {
+    url: string
+    options?: any
+    enabled?: boolean
+  }) => {
     return useQuery({
       queryKey: [url],
       queryFn: async () => {
@@ -23,6 +31,7 @@ export const useHooks = () => {
           })
         }
       },
+      enabled,
     })
   }
 

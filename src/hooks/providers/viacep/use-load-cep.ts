@@ -1,6 +1,6 @@
+import { useHooks } from '@/hooks'
 import { useRegisterCompanyContext } from '@/pages/company/contexts/register-company-provider'
-import { UseQueryResult, useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { UseQueryResult } from '@tanstack/react-query'
 
 type UseLoadCepResult = {
   bairro: string
@@ -17,21 +17,10 @@ type UseLoadCepResult = {
 
 export const useLoadViaCepCep = (): UseQueryResult<UseLoadCepResult> => {
   const { zipCodeToSearch } = useRegisterCompanyContext()
+  const { useGetData } = useHooks()
 
-  return useQuery({
-    queryFn: async () => {
-      const response = await axios.get(
-        `https://viacep.com.br/ws/${zipCodeToSearch}/json/`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-
-      return response.data
-    },
-    queryKey: ['via_cep'],
-    enabled: zipCodeToSearch.length === 8,
+  return useGetData({
+    url: `https://viacep.com.br/ws/${zipCodeToSearch}/json/`,
+    enabled: !!zipCodeToSearch,
   })
 }
