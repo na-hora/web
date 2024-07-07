@@ -5,6 +5,7 @@ import { Button, Form } from 'antd'
 import { useEffect } from 'react'
 import { RegisterCompanyAddressForm } from '../address-form'
 import { RegisterCompanyForm } from '../company-form'
+import { RegisterCompanyFormData } from './types'
 
 enum STEPS {
   COMPANY = 0,
@@ -60,7 +61,7 @@ export const CreateCompanyForm = () => {
     setCurrentStep(currentStep - 1)
   }
 
-  const formatFormValuesToSubmit = () => {
+  const formatFormValuesToSubmit = (): RegisterCompanyFormData => {
     const lastStepFields = form.getFieldsValue()
     return {
       name: registerCompanyFormData.name,
@@ -84,7 +85,11 @@ export const CreateCompanyForm = () => {
   const createCompany = () => {
     const formattedFormValues = formatFormValuesToSubmit()
 
-    mutate(formattedFormValues)
+    mutate(formattedFormValues, {
+      onSuccess: () => {
+        window.location.href = '/company/register/success'
+      },
+    })
   }
 
   const nextPageOrSubmit = () => {
@@ -95,7 +100,7 @@ export const CreateCompanyForm = () => {
     }
   }
 
-  const hidePrevStepButton = currentStep === STEPS.ADDRESS
+  const hidePrevStepButton = currentStep === STEPS.COMPANY
 
   return (
     <Form

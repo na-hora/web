@@ -1,8 +1,15 @@
 import axios from '@/adapters/http'
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
-import { useQuery } from '@tanstack/react-query'
+import {
+  InvalidateQueryFilters,
+  UseMutationResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 export const useHooks = () => {
   const { triggerAlert } = useGlobalAlertContext()
+  const queryClient = useQueryClient()
   const useGetData = ({
     url,
     options,
@@ -35,15 +42,19 @@ export const useHooks = () => {
     })
   }
 
-  const usePostData = ({ url, options }: { url: string; options?: any }) => {
-    return useQuery({
-      queryKey: [url],
-      queryFn: async () => {
+  const usePostData = <TData, TResponse>({
+    url,
+    options,
+    mutationKey,
+  }: {
+    url: string
+    options?: any
+    mutationKey?: string
+  }): UseMutationResult<TResponse, unknown, TData, unknown> => {
+    return useMutation<TResponse, unknown, TData>({
+      mutationFn: async (data: TData) => {
         try {
-          const response = await axios.post(url, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+          const response = await axios.post<TResponse>(url, data, {
             ...options,
           })
 
@@ -53,7 +64,15 @@ export const useHooks = () => {
             message: 'Ocorreu um erro inesperado',
             type: 'error',
           })
+
+          throw error
         }
+      },
+      mutationKey: [mutationKey || url],
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          mutationKey || url,
+        ] as InvalidateQueryFilters)
       },
     })
   }
@@ -64,9 +83,6 @@ export const useHooks = () => {
       queryFn: async () => {
         try {
           const response = await axios.put(url, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
             ...options,
           })
 
@@ -87,9 +103,6 @@ export const useHooks = () => {
       queryFn: async () => {
         try {
           const response = await axios.delete(url, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
             ...options,
           })
 
