@@ -1,7 +1,16 @@
+import { isValid } from '@/utils/validate-cnpj'
 import { Form, Input } from 'antd'
 import { PatternFormat } from 'react-number-format'
 
 export const RegisterCompanyForm = () => {
+  const validateCNPJ = (_: any, value: string) => {
+    const isCNPJValid = isValid(value)
+
+    if (!isCNPJValid) {
+      return Promise.reject(new Error('CNPJ inválido'))
+    }
+  }
+
   return (
     <>
       <h2>Vamos começar. Preencha os dados da sua empresa.</h2>
@@ -30,8 +39,9 @@ export const RegisterCompanyForm = () => {
         rules={[
           {
             required: true,
-            message: 'CNPJ obrigatório',
+            message: 'CNPJ inválido',
             pattern: /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
+            validator: validateCNPJ,
           },
         ]}
         required

@@ -77,12 +77,19 @@ export const useHooks = () => {
     })
   }
 
-  const usePutData = ({ url, options }: { url: string; options?: any }) => {
-    return useQuery({
-      queryKey: [url],
-      queryFn: async () => {
+  const usePutData = ({
+    url,
+    options,
+    mutationKey,
+  }: {
+    url: string
+    options?: any
+    mutationKey?: string
+  }) => {
+    return useMutation({
+      mutationFn: async (data: any) => {
         try {
-          const response = await axios.put(url, {
+          const response = await axios.put(url, data, {
             ...options,
           })
 
@@ -92,15 +99,29 @@ export const useHooks = () => {
             message: 'Ocorreu um erro inesperado',
             type: 'error',
           })
+
+          throw error
         }
+      },
+      mutationKey: [mutationKey || url],
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          mutationKey || url,
+        ] as InvalidateQueryFilters)
       },
     })
   }
-
-  const useDeleteData = ({ url, options }: { url: string; options?: any }) => {
-    return useQuery({
-      queryKey: [url],
-      queryFn: async () => {
+  const useDeleteData = ({
+    url,
+    options,
+    mutationKey,
+  }: {
+    url: string
+    options?: any
+    mutationKey?: string
+  }) => {
+    return useMutation({
+      mutationFn: async () => {
         try {
           const response = await axios.delete(url, {
             ...options,
@@ -112,7 +133,15 @@ export const useHooks = () => {
             message: 'Ocorreu um erro inesperado',
             type: 'error',
           })
+
+          throw error
         }
+      },
+      mutationKey: [mutationKey || url],
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          mutationKey || url,
+        ] as InvalidateQueryFilters)
       },
     })
   }
