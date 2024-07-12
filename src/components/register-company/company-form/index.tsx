@@ -1,5 +1,6 @@
 import { isValid } from '@/utils/validate-cnpj'
-import { Form, Input } from 'antd'
+import { QuestionCircleOutlined } from '@ant-design/icons'
+import { Form, Input, Tooltip } from 'antd'
 import { PatternFormat } from 'react-number-format'
 
 export const RegisterCompanyForm = () => {
@@ -20,7 +21,14 @@ export const RegisterCompanyForm = () => {
       <h2>Vamos começar. Preencha os dados da sua empresa.</h2>
 
       <Form.Item
-        label='Razão social'
+        label={
+          <Tooltip
+            title='Nome de registro da sua empresa utilizado em documentos legais'
+            placement='right'
+          >
+            Razão social <QuestionCircleOutlined />
+          </Tooltip>
+        }
         name='name'
         rules={requiredRules}
         required
@@ -29,7 +37,14 @@ export const RegisterCompanyForm = () => {
       </Form.Item>
 
       <Form.Item
-        label='Nome fantasia'
+        label={
+          <Tooltip
+            title='Nome que será exibido para os clientes'
+            placement='right'
+          >
+            Nome fantasia <QuestionCircleOutlined />
+          </Tooltip>
+        }
         name='fantasyName'
         rules={requiredRules}
         required
