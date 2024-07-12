@@ -19,8 +19,8 @@ export const SuccessCompanyRegister = () => {
         extra={
           <div>
             <p>
-              Acesse seu e-mail e clique no link de acesso para acessar sua
-              conta ou clique no botão abaixo para acessar o painel.
+              Enviamos um e-mail com um link de acesso para o portal. Ou, se
+              preferir, clique no botão abaixo.
             </p>
             <Button type='primary' key='console' href='/admin/login'>
               Ir para o painel

@@ -100,7 +100,7 @@ export const CreateCompanyForm = () => {
     }
   }
 
-  const hidePrevStepButton = currentStep === STEPS.COMPANY
+  const hidePrevStepButton = currentStep === STEPS.COMPANY ? 'none' : 'block'
 
   return (
     <Form
@@ -123,7 +123,7 @@ export const CreateCompanyForm = () => {
         <Button
           onClick={prevStep}
           style={{
-            display: `${hidePrevStepButton ? 'none' : 'block'}`,
+            display: hidePrevStepButton,
           }}
         >
           Voltar
