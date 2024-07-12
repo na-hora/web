@@ -9,16 +9,20 @@ export const RegisterCompanyForm = () => {
     if (!isCNPJValid) {
       return Promise.reject(new Error('CNPJ inválido'))
     }
+
+    return Promise.resolve()
   }
+
+  const requiredRules = [{ required: true, message: 'Campo obrigatório' }]
 
   return (
     <>
       <h2>Vamos começar. Preencha os dados da sua empresa.</h2>
 
       <Form.Item
-        label='Nome'
+        label='Razão social'
         name='name'
-        rules={[{ required: true, message: 'Nome obrigatório' }]}
+        rules={requiredRules}
         required
       >
         <Input placeholder='Digite o nome da sua empresa' />
@@ -27,7 +31,7 @@ export const RegisterCompanyForm = () => {
       <Form.Item
         label='Nome fantasia'
         name='fantasyName'
-        rules={[{ required: true, message: 'Nome fantasia obrigatório' }]}
+        rules={requiredRules}
         required
       >
         <Input placeholder='Digite o nome fantasia da sua empresa' />
@@ -57,13 +61,7 @@ export const RegisterCompanyForm = () => {
       <Form.Item
         label='Telefone'
         name='phone'
-        rules={[
-          {
-            required: true,
-            message: 'Telefone obrigatório',
-            pattern: /^(\(\d{2}\)) (\d{5})-(\d{4})$/,
-          },
-        ]}
+        rules={[...requiredRules, { pattern: /^(\(\d{2}\)) (\d{5})-(\d{4})$/ }]}
         required
       >
         <PatternFormat
