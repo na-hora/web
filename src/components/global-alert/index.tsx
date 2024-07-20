@@ -5,7 +5,6 @@ import styles from './styles.module.css'
 
 export const GlobalAlert: React.FC = () => {
   const { open, setOpen, message, type, duration } = useGlobalAlertContext()
-  console.log('open: ', open)
 
   useEffect(() => {
     if (open) {

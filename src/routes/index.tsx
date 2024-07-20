@@ -6,6 +6,7 @@ import { RegisterCompany } from '@/pages/company/register'
 import { SuccessCompanyPage } from '@/pages/company/register-success'
 import { Dashboard } from '@/pages/dashboard'
 import { DashboardHome } from '@/pages/dashboard/home'
+import { DashboardServices } from '@/pages/dashboard/services'
 import { NotFoundPage } from '@/pages/errors/not-found'
 import { Home } from '@/pages/home'
 import { createBrowserRouter } from 'react-router-dom'
@@ -61,7 +62,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/admin/dashboard/services',
-        element: <div>Services</div>,
+        element: <DashboardServices />,
       },
       {
         path: '/admin/dashboard/company',
