@@ -60,6 +60,10 @@ export const router = createBrowserRouter([
         element: <DashboardHome />,
       },
       {
+        path: '/admin/dashboard/services',
+        element: <div>Services</div>,
+      },
+      {
         path: '/admin/dashboard/company',
         element: <div>Company</div>,
       },

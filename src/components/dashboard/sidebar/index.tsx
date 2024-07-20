@@ -2,6 +2,7 @@ import {
   AppstoreOutlined,
   ProfileOutlined,
   UserOutlined,
+  BarsOutlined
 } from '@ant-design/icons'
 import { Menu } from 'antd'
 import Sider from 'antd/es/layout/Sider'
@@ -10,9 +11,10 @@ import { Link } from 'react-router-dom'
 
 const items = [
   { key: '1', icon: <AppstoreOutlined />, label: 'Home', link: 'home' },
-  { key: '2', icon: <ProfileOutlined />, label: 'Empresa', link: 'company' },
+  { key: '2', icon: <BarsOutlined />, label: 'Serviços', link: 'services' },
+  { key: '3', icon: <ProfileOutlined />, label: 'Empresa', link: 'company' },
   {
-    key: '3',
+    key: '4',
     icon: <UserOutlined />,
     label: 'Meu usuário',
     link: 'profile',
