@@ -2,8 +2,12 @@ import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { useLoadNaHoraStates } from '@/hooks/na-hora/address/use-load-states'
 import { Suspense, useEffect, useState } from 'react'
 
+type State = {
+  id: number, name: string, uf: string
+}
+
 export const DashboardHome = () => {
-  const [states, setStates] = useState([])
+  const [states, setStates] = useState<Array<State>>([])
   const { triggerAlert } = useGlobalAlertContext()
 
   const { data } = useLoadNaHoraStates()
@@ -25,7 +29,7 @@ export const DashboardHome = () => {
   )
 }
 
-const Component = ({ states }) => {
+const Component = ({ states }: { states: State[] }) => {
   return (
     <ul>
       {states?.map((state) => (
