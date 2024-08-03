@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Form, Input, Tooltip } from 'antd'
+import { Button, Form, Input, Radio, RadioChangeEvent, Tooltip } from 'antd'
 import { useState } from 'react'
 
 type Params = {
@@ -22,14 +22,11 @@ export const ServicesForm = ({
   parallelism,
 }: Params) => {
   const [form] = Form.useForm()
-  const [activeCheckbox, setActiveCheckbox] = useState(-1)
+  const [configurationRadio, setConfigurationRadio] = useState(0)
 
-  const toggleCheckbox = (current: number, checked: boolean) => {
-    if (checked === true) {
-      setActiveCheckbox(current)
-    } else {
-      setActiveCheckbox(-1)
-    }
+  const onChangeConfigurationRadio = (e: RadioChangeEvent) => {
+    console.log('radio checked', e.target.value)
+    setConfigurationRadio(e.target.value)
   }
 
   return (
@@ -94,23 +91,132 @@ export const ServicesForm = ({
         />
       </Form.Item>
 
-      <Checkbox
-        onChange={({ target }) => {
-          toggleCheckbox(0, target.checked)
-        }}
-        disabled={activeCheckbox !== 0 && activeCheckbox !== -1}
+      <Radio.Group
+        onChange={onChangeConfigurationRadio}
+        value={configurationRadio}
       >
-        Configuração única para todos os atendimentos
-      </Checkbox>
+        <Radio value={0}>Configuração única para todos os atendimentos</Radio>
 
-      <Checkbox
-        onChange={({ target }) => {
-          toggleCheckbox(1, target.checked)
-        }}
-        disabled={activeCheckbox !== 1 && activeCheckbox !== -1}
-      >
-        Configuração detalhada por combinação
-      </Checkbox>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '16px',
+            width: '100%',
+            maxWidth: '500px',
+          }}
+        >
+          <Form.Item
+            label={
+              <Tooltip
+                title='Duração em minutos em média do atendimento.'
+                placement='right'
+              >
+                <div
+                  style={{
+                    width: '200px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  Duração
+                  <QuestionCircleOutlined />
+                </div>
+              </Tooltip>
+            }
+            name='duration'
+          >
+            <Input placeholder='Duração' disabled={configurationRadio !== 0} />
+          </Form.Item>
+
+          <Form.Item
+            label={
+              <Tooltip
+                title='Preço em reais em média do atendimento (Este valor será exibido para os clientes como uma estimativa).'
+                placement='right'
+              >
+                <div
+                  style={{
+                    width: '200px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  Preço
+                  <QuestionCircleOutlined />
+                </div>
+              </Tooltip>
+            }
+            name='duration'
+          >
+            <Input
+              placeholder='Preço em reais'
+              disabled={configurationRadio !== 0}
+            />
+          </Form.Item>
+        </div>
+
+        <Radio value={1}>Configuração detalhada por combinação</Radio>
+
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '16px',
+            width: '100%',
+            maxWidth: '500px',
+          }}
+        >
+          <Form.Item
+            label={
+              <Tooltip
+                title='Duração em minutos em média do atendimento.'
+                placement='right'
+              >
+                <div
+                  style={{
+                    width: '200px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  Duração
+                  <QuestionCircleOutlined />
+                </div>
+              </Tooltip>
+            }
+            name='duration'
+          >
+            <Input placeholder='Duração' disabled={configurationRadio !== 1} />
+          </Form.Item>
+
+          <Form.Item
+            label={
+              <Tooltip
+                title='Preço em reais em média do atendimento (Este valor será exibido para os clientes como uma estimativa).'
+                placement='right'
+              >
+                <div
+                  style={{
+                    width: '200px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  Preço
+                  <QuestionCircleOutlined />
+                </div>
+              </Tooltip>
+            }
+            name='duration'
+          >
+            <Input
+              placeholder='Preço em reais'
+              disabled={configurationRadio !== 1}
+            />
+          </Form.Item>
+        </div>
+      </Radio.Group>
 
       <Form.Item style={{ textAlign: 'start' }}>
         <Button
