@@ -1,6 +1,6 @@
 import { ServicesForm } from '@/components/dashboard/services/services-form'
 import { PlusCircleOutlined } from '@ant-design/icons'
-import { Collapse, List } from 'antd'
+import { Col, Collapse, List, Row } from 'antd'
 import { Suspense } from 'react'
 
 type Service = {
@@ -25,7 +25,20 @@ export const DashboardServices = () => {
 
   return (
     <Suspense fallback='Carregando...'>
-      <Component services={services} />
+      <Row style={{ marginBottom: '20px' }}>
+        <Col>
+          <h1 style={{ marginBottom: '4px' }}>Serviços</h1>
+          <span>
+            Gerencie aqui os serviços da sua empresa que serão disponibilizados
+            ao público
+          </span>
+        </Col>
+      </Row>
+      <Row justify='center'>
+        <Col span={8}>
+          <Component services={services} />
+        </Col>
+      </Row>
     </Suspense>
   )
 }
@@ -34,11 +47,11 @@ const Component = ({ services }: { services: Service[] }) => {
   return (
     <>
       <Collapse
-        expandIcon={() => <PlusCircleOutlined />}
+        expandIcon={() => <PlusCircleOutlined style={{ color: 'white' }} />}
         items={[
           {
             key: '0',
-            label: <b style={{ color: 'white' }}>Novo serviço</b>,
+            label: <b style={{ color: 'white' }}>Adicionar novo serviço</b>,
             children: <ServicesForm id={0} />,
           },
         ]}
@@ -49,9 +62,16 @@ const Component = ({ services }: { services: Service[] }) => {
           textAlign: 'center',
         }}
       />
+
+      <h2>Serviços disponíveis</h2>
       <List
         size='large'
         dataSource={services}
+        style={{
+          padding: '10px',
+          borderRadius: '10px',
+          boxShadow: '0 0 10px #ccc',
+        }}
         renderItem={(service) => (
           <Collapse
             items={[
