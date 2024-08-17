@@ -1,5 +1,15 @@
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Radio, RadioChangeEvent, Tooltip } from 'antd'
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Radio,
+  RadioChangeEvent,
+  Row,
+  Select,
+  Tooltip,
+} from 'antd'
 import { useState } from 'react'
 
 type Params = {
@@ -15,17 +25,42 @@ type Params = {
   }[]
 }
 
+const sizes = [
+  { value: 1, label: 'Pequeno' },
+  { value: 2, label: 'Médio' },
+  { value: 3, label: 'Grande' },
+]
+
+const hairs = [
+  { value: 1, label: 'Curto' },
+  { value: 2, label: 'Médio' },
+  { value: 3, label: 'Longo' },
+]
+
+const sizeAndHairCombinations: {
+  size: { value: number; label: string }
+  hair: { value: number; label: string }
+}[] = []
+sizes.forEach((size) => {
+  hairs.forEach((hair) => {
+    sizeAndHairCombinations.push({
+      size: { value: size.value, label: size.label },
+      hair: { value: hair.value, label: hair.label },
+    })
+  })
+})
+
 export const ServicesForm = ({
   edition = false,
   id,
   name,
   parallelism,
-}: Params) => {
+}: // configurations = [],
+Params) => {
   const [form] = Form.useForm()
   const [configurationRadio, setConfigurationRadio] = useState(0)
 
   const onChangeConfigurationRadio = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value)
     setConfigurationRadio(e.target.value)
   }
 
@@ -33,7 +68,10 @@ export const ServicesForm = ({
     <Form
       form={form}
       name={`service_${id}`}
-      initialValues={{ remember: true }}
+      initialValues={{
+        name: edition ? name : '',
+        parallelism: edition ? parallelism : undefined,
+      }}
       style={{ width: '100%', maxWidth: '500px' }}
       layout='vertical'
     >
@@ -58,10 +96,7 @@ export const ServicesForm = ({
         name='name'
         rules={[{ required: true, message: 'Nome obrigatório.' }]}
       >
-        <Input
-          placeholder='Digite aqui o nome do serviço'
-          defaultValue={edition ? name : ''}
-        />
+        <Input placeholder='Digite aqui o nome do serviço' />
       </Form.Item>
       <Form.Item
         label={
@@ -87,7 +122,6 @@ export const ServicesForm = ({
         <Input
           type='number'
           placeholder='Digite aqui a simultaneidade do serviço'
-          defaultValue={edition ? parallelism : undefined}
         />
       </Form.Item>
 
@@ -97,125 +131,112 @@ export const ServicesForm = ({
       >
         <Radio value={0}>Configuração única para todos os atendimentos</Radio>
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '16px',
-            width: '100%',
-            maxWidth: '500px',
-          }}
-        >
-          <Form.Item
-            label={
-              <Tooltip
-                title='Duração em minutos em média do atendimento.'
-                placement='right'
+        {configurationRadio === 0 && (
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label={
+                  <Tooltip
+                    title='Duração em minutos em média do atendimento.'
+                    placement='right'
+                  >
+                    <div
+                      style={{
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      Duração
+                      <QuestionCircleOutlined />
+                    </div>
+                  </Tooltip>
+                }
+                name='duration'
               >
-                <div
-                  style={{
-                    width: '200px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  Duração
-                  <QuestionCircleOutlined />
-                </div>
-              </Tooltip>
-            }
-            name='duration'
-          >
-            <Input placeholder='Duração' disabled={configurationRadio !== 0} />
-          </Form.Item>
+                <Input placeholder='Duração' />
+              </Form.Item>
+            </Col>
 
-          <Form.Item
-            label={
-              <Tooltip
-                title='Preço em reais em média do atendimento (Este valor será exibido para os clientes como uma estimativa).'
-                placement='right'
+            <Col span={12}>
+              <Form.Item
+                label={
+                  <Tooltip
+                    title='Preço em reais em média do atendimento (Este valor será exibido para os clientes como uma estimativa).'
+                    placement='right'
+                  >
+                    <div
+                      style={{
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      Preço
+                      <QuestionCircleOutlined />
+                    </div>
+                  </Tooltip>
+                }
+                name='price'
               >
-                <div
-                  style={{
-                    width: '200px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  Preço
-                  <QuestionCircleOutlined />
-                </div>
-              </Tooltip>
-            }
-            name='duration'
-          >
-            <Input
-              placeholder='Preço em reais'
-              disabled={configurationRadio !== 0}
-            />
-          </Form.Item>
-        </div>
+                <Input placeholder='Preço' />
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
 
         <Radio value={1}>Configuração detalhada por combinação</Radio>
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '16px',
-            width: '100%',
-            maxWidth: '500px',
-          }}
-        >
-          <Form.Item
-            label={
-              <Tooltip
-                title='Duração em minutos em média do atendimento.'
-                placement='right'
-              >
-                <div
-                  style={{
-                    width: '200px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
+        {configurationRadio === 1 &&
+          sizeAndHairCombinations.map(({ size, hair }) => (
+            <Row gutter={16} key={`${size.label}-${hair.label}`}>
+              <Col span={6}>
+                <Form.Item
+                  label='Tamanho'
+                  name={`${size.value}-${hair.value}-size`}
+                  initialValue={size.label}
                 >
-                  Duração
-                  <QuestionCircleOutlined />
-                </div>
-              </Tooltip>
-            }
-            name='duration'
-          >
-            <Input placeholder='Duração' disabled={configurationRadio !== 1} />
-          </Form.Item>
+                  <Select
+                    options={sizes.map((s) => ({ label: s, value: s }))}
+                    value={size.label}
+                    disabled
+                  />
+                </Form.Item>
+              </Col>
 
-          <Form.Item
-            label={
-              <Tooltip
-                title='Preço em reais em média do atendimento (Este valor será exibido para os clientes como uma estimativa).'
-                placement='right'
-              >
-                <div
-                  style={{
-                    width: '200px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
+              <Col span={6}>
+                <Form.Item
+                  label='Pelagem'
+                  name={`${size.value}-${hair.value}-hair`}
+                  initialValue={hair.label}
                 >
-                  Preço
-                  <QuestionCircleOutlined />
-                </div>
-              </Tooltip>
-            }
-            name='duration'
-          >
-            <Input
-              placeholder='Preço em reais'
-              disabled={configurationRadio !== 1}
-            />
-          </Form.Item>
-        </div>
+                  <Select
+                    options={hairs.map((s) => ({ label: s, value: s }))}
+                    value={size.label}
+                    disabled
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={6}>
+                <Form.Item
+                  label='Duração'
+                  name={`${size.value}-${hair.value}-duration`}
+                >
+                  <Input placeholder='Duração' />
+                </Form.Item>
+              </Col>
+
+              <Col span={6}>
+                <Form.Item
+                  label='Preço'
+                  name={`${size.value}-${hair.value}-price`}
+                >
+                  <Input placeholder='Preço' />
+                </Form.Item>
+              </Col>
+            </Row>
+          ))}
       </Radio.Group>
 
       <Form.Item style={{ textAlign: 'start' }}>
@@ -224,8 +245,6 @@ export const ServicesForm = ({
           htmlType='submit'
           className='create-service-form-button'
           style={{ marginTop: '16px' }}
-          // loading={isPending}
-          // onClick={loginUser}
         >
           {edition ? 'Salvar' : 'Criar'}
         </Button>
