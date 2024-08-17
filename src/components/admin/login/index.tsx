@@ -23,6 +23,9 @@ export const AdminLoginPage: React.FC = () => {
     setCookie(null, 'access-token@na-hora', data?.token, {
       path: '/',
     })
+    setCookie(null, 'inf@na-hora', JSON.stringify(data?.company), {
+      path: '/',
+    })
     window.location.href = '/admin/dashboard/home'
   }, [data])
 
