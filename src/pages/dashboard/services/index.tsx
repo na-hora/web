@@ -35,7 +35,7 @@ export const DashboardServices = () => {
         </Col>
       </Row>
       <Row justify='center'>
-        <Col span={8}>
+        <Col span={16}>
           <Component services={services} />
         </Col>
       </Row>
