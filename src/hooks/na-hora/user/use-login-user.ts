@@ -1,8 +1,17 @@
 import { useHooks } from '@/hooks'
 
+type Company = {
+  id: string
+  fantasyName: string
+  avatarUrl: string
+  petSizes: Array<number>
+  petHairs: Array<number>
+}
+
 type UseLoginUserResult = {
   id: string
   token: string
+  company: Company
 }
 
 export type UseLoginUserParams = {
