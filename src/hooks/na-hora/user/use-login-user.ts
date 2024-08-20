@@ -4,11 +4,11 @@ type Company = {
   id: string
   fantasyName: string
   avatarUrl: string
-  petSizes: Array<number>
-  petHairs: Array<number>
+  petSizes: Array<{ id: number; name: string }>
+  petHairs: Array<{ id: number; name: string }>
 }
 
-type UseLoginUserResult = {
+export type UseLoginUserResult = {
   id: string
   token: string
   company: Company

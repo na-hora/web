@@ -1,3 +1,4 @@
+import { UseLoginUserResult } from '@/hooks/na-hora/user/use-login-user'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -10,6 +11,7 @@ import {
   Select,
   Tooltip,
 } from 'antd'
+import { parseCookies } from 'nookies'
 import { useState } from 'react'
 
 type Params = {
@@ -25,30 +27,62 @@ type Params = {
   }[]
 }
 
-const sizes = [
-  { value: 1, label: 'Pequeno' },
-  { value: 2, label: 'Médio' },
-  { value: 3, label: 'Grande' },
-]
-
-const hairs = [
-  { value: 1, label: 'Curto' },
-  { value: 2, label: 'Médio' },
-  { value: 3, label: 'Longo' },
-]
+const { petHairs, petSizes }: UseLoginUserResult['company'] = JSON.parse(
+  parseCookies()['inf@na-hora'],
+)
 
 const sizeAndHairCombinations: {
   size: { value: number; label: string }
   hair: { value: number; label: string }
 }[] = []
-sizes.forEach((size) => {
-  hairs.forEach((hair) => {
+petSizes.forEach((size: { id: number; name: string }) => {
+  petHairs.forEach((hair: { id: number; name: string }) => {
     sizeAndHairCombinations.push({
-      size: { value: size.value, label: size.label },
-      hair: { value: hair.value, label: hair.label },
+      size: { value: size.id, label: size.name },
+      hair: { value: hair.id, label: hair.name },
     })
   })
 })
+
+const savePetService = (data: any) => {
+  const treatedData = []
+
+  const currentObjectTreated = {
+    companyPetHairID: 0,
+    companyPetSizeID: 0,
+    executionTime: 0,
+    price: 0,
+  }
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (key.includes('hair')) {
+      currentObjectTreated['companyPetHairID'] = Number(value)
+    }
+    if (key.includes('size')) {
+      currentObjectTreated['companyPetSizeID'] = Number(value)
+    }
+    if (key.includes('duration')) {
+      currentObjectTreated['executionTime'] = Number(value)
+    }
+    if (key.includes('price')) {
+      currentObjectTreated['price'] = Number(value)
+    }
+
+    if (
+      currentObjectTreated['companyPetHairID'] !== 0 &&
+      currentObjectTreated['companyPetSizeID'] !== 0 &&
+      currentObjectTreated['executionTime'] !== 0 &&
+      currentObjectTreated['price'] !== 0
+    ) {
+      treatedData.push({ ...currentObjectTreated })
+      currentObjectTreated['companyPetHairID'] = 0
+      currentObjectTreated['companyPetSizeID'] = 0
+      currentObjectTreated['executionTime'] = 0
+      currentObjectTreated['price'] = 0
+    }
+  })
+  // console.log({ treatedData })
+}
 
 export const ServicesForm = ({
   edition = false,
@@ -73,6 +107,7 @@ export const ServicesForm = ({
       }}
       style={{ width: '100%', maxWidth: '600px' }}
       layout='vertical'
+      onFinish={savePetService}
     >
       <Form.Item
         label={
@@ -115,7 +150,7 @@ export const ServicesForm = ({
 
         {configurationRadio === 0 && (
           <Row gutter={[16, 16]}>
-            <Col xs={24} md={12}>
+            <Col xs={24} sm={12} md={6}>
               <Form.Item
                 label={
                   <div
@@ -169,14 +204,14 @@ export const ServicesForm = ({
                 <Form.Item
                   label='Tamanho'
                   name={`${size.value}-${hair.value}-size`}
-                  initialValue={size.label}
+                  initialValue={size.value}
                 >
                   <Select
-                    options={sizes.map((s) => ({
-                      label: s.label,
-                      value: s.value,
+                    options={petSizes.map((s) => ({
+                      value: s.id,
+                      label: s.name,
                     }))}
-                    value={size.label}
+                    value={size.value}
                     disabled
                   />
                 </Form.Item>
@@ -185,14 +220,14 @@ export const ServicesForm = ({
                 <Form.Item
                   label='Pelagem'
                   name={`${size.value}-${hair.value}-hair`}
-                  initialValue={hair.label}
+                  initialValue={hair.value}
                 >
                   <Select
-                    options={hairs.map((h) => ({
-                      label: h.label,
-                      value: h.value,
+                    options={petHairs.map((h) => ({
+                      value: h.id,
+                      label: h.name,
                     }))}
-                    value={hair.label}
+                    value={hair.value}
                     disabled
                   />
                 </Form.Item>
@@ -217,7 +252,12 @@ export const ServicesForm = ({
           ))}
       </Radio.Group>
       <Form.Item style={{ textAlign: 'right' }}>
-        <Button type='primary' htmlType='submit' style={{ marginTop: '16px' }}>
+        <Button
+          type='primary'
+          htmlType='submit'
+          style={{ marginTop: '16px' }}
+          // onClick={savePetService}
+        >
           {edition ? 'Salvar' : 'Criar'}
         </Button>
       </Form.Item>
