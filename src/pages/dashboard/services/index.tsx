@@ -1,30 +1,14 @@
-import { ServicesForm } from '@/components/dashboard/services/services-form'
+import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
 import { PlusCircleOutlined } from '@ant-design/icons'
 import { Col, Collapse, List, Row } from 'antd'
-import { Suspense } from 'react'
-
-type Service = {
-  id: number
-  name: string
-  parallelism: number
-  configurations: {
-    companyPetSizeId: number
-    companyPetHairId: number
-    value: number
-    executionTime: number
-  }[]
-}
+import { lazy } from 'react'
+const ServicesForm = lazy(
+  () => import('@/components/dashboard/services/services-form'),
+)
 
 export const DashboardServices = () => {
-  // const [form] = Form.useForm()
-  const services = [
-    { id: 1, name: 'Banho', parallelism: 1, configurations: [] },
-    { id: 2, name: 'Banho e tosa', parallelism: 2, configurations: [] },
-    { id: 3, name: 'Tosa', parallelism: 3, configurations: [] },
-  ]
-
   return (
-    <Suspense fallback='Carregando...'>
+    <>
       <Row style={{ marginBottom: '20px' }}>
         <Col>
           <h1 style={{ marginBottom: '4px' }}>Serviços</h1>
@@ -36,14 +20,16 @@ export const DashboardServices = () => {
       </Row>
       <Row justify='center'>
         <Col span={16}>
-          <Component services={services} />
+          <Component />
         </Col>
       </Row>
-    </Suspense>
+    </>
   )
 }
 
-const Component = ({ services }: { services: Service[] }) => {
+const Component = () => {
+  const { data: services } = useLoadPetServices()
+
   return (
     <>
       <Collapse
@@ -79,13 +65,7 @@ const Component = ({ services }: { services: Service[] }) => {
                 key: service.id,
                 label: <b>{service.name}</b>,
                 children: (
-                  <ServicesForm
-                    edition
-                    id={service.id}
-                    name={service.name}
-                    parallelism={service.parallelism}
-                    configurations={service.configurations}
-                  />
+                  <ServicesForm edition id={service.id} name={service.name} />
                 ),
               },
             ]}

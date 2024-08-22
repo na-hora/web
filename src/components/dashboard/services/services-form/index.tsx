@@ -81,15 +81,9 @@ const savePetService = (data: any) => {
       currentObjectTreated['price'] = 0
     }
   })
-  // console.log({ treatedData })
 }
 
-export const ServicesForm = ({
-  edition = false,
-  id,
-  name,
-  parallelism,
-}: Params) => {
+const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
   const [form] = Form.useForm()
   const [configurationRadio, setConfigurationRadio] = useState(0)
 
@@ -264,3 +258,5 @@ export const ServicesForm = ({
     </Form>
   )
 }
+
+export default ServicesForm
