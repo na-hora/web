@@ -15,7 +15,7 @@ axiosInstance.interceptors.request.use(
   ): InternalAxiosRequestConfig<unknown> => {
     const isLoginRoute = config.url?.endsWith('login')
 
-    if (!isLoginRoute) return config
+    if (isLoginRoute) return config
 
     const accessToken = parseCookies()['access-token@na-hora']
 
