@@ -1,4 +1,5 @@
 import { useHooks } from '@/hooks'
+import { TPostDataParams } from '@/hooks/types'
 
 type Company = {
   id: string
@@ -22,7 +23,7 @@ export type UseLoginUserParams = {
 export const useLoginUser = () => {
   const { usePostData } = useHooks()
 
-  return usePostData<UseLoginUserParams, UseLoginUserResult>({
+  return usePostData<TPostDataParams<UseLoginUserParams>, UseLoginUserResult>({
     url: `${import.meta.env.VITE_API_URL}/users/login`,
     mutationKey: 'na-hora:login-user',
   })

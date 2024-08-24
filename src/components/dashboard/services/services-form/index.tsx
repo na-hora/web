@@ -42,7 +42,7 @@ type Params = {
 const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
   const [form] = Form.useForm()
   const [configurationRadio, setConfigurationRadio] = useState(0)
-  const { mutate: createPetServiceMutation, isLoading } = useCreatePetServices()
+  const { mutate: createPetServiceMutation } = useCreatePetServices()
   const { petHairs, petSizes }: UseLoginUserResult['company'] = JSON.parse(
     parseCookies()['inf@na-hora'],
   )
@@ -75,7 +75,7 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
         ],
       }
 
-      createPetServiceMutation(formattedPetService)
+      createPetServiceMutation({ body: formattedPetService })
     }
 
     const treatedData = []
@@ -113,8 +113,6 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
         currentObjectTreated['executionTime'] = 0
         currentObjectTreated['price'] = 0
       }
-
-      console.log('aqui: ', treatedData)
     })
   }
   const onChangeConfigurationRadio = (e: RadioChangeEvent) => {

@@ -11,6 +11,7 @@ type UseLoadStatesResult = {
 
 export const useLoadNaHoraStates = (): UseQueryResult<UseLoadStatesResult> => {
   const { useGetData } = useHooks()
+
   return useGetData({
     url: `${import.meta.env.VITE_API_URL}/states`,
   })

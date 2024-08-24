@@ -5,7 +5,11 @@ import React, { useEffect, useState } from 'react'
 import styles from './styles.module.css'
 
 export const AdminResetPasswordPage: React.FC = () => {
-  const { mutate, isPending, isSuccess } = useResetPasswordUser()
+  const {
+    mutate: resetPasswordUserMutation,
+    isPending,
+    isSuccess,
+  } = useResetPasswordUser()
   const [form] = Form.useForm()
   const [showWaitMessage, setShowWaitMessage] = useState(false)
   const searchParams = new URLSearchParams(window.location.search)
@@ -19,10 +23,12 @@ export const AdminResetPasswordPage: React.FC = () => {
     }
 
     form.validateFields().then((values) => {
-      mutate({
-        email,
-        password: values.password,
-        validator,
+      resetPasswordUserMutation({
+        body: {
+          email,
+          password: values.password,
+          validator,
+        },
       })
     })
   }

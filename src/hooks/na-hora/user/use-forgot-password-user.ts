@@ -1,4 +1,5 @@
 import { useHooks } from '@/hooks'
+import { TPostDataParams } from '@/hooks/types'
 
 export type UseForgotPasswordUserParams = {
   email: string
@@ -7,7 +8,7 @@ export type UseForgotPasswordUserParams = {
 export const useForgotPasswordUser = () => {
   const { usePostData } = useHooks()
 
-  return usePostData<UseForgotPasswordUserParams, void>({
+  return usePostData<TPostDataParams<UseForgotPasswordUserParams>, void>({
     url: `${import.meta.env.VITE_API_URL}/users/forgot-password`,
     mutationKey: 'na-hora:forgot-password-user',
   })

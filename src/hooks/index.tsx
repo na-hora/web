@@ -7,6 +7,13 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import {
+  TDeleteDataParams,
+  TGetDataParams,
+  TPostDataParams,
+  TPutDataParams,
+} from './types'
+
 export const useHooks = () => {
   const formattedUrl = (
     url: string,
@@ -37,14 +44,19 @@ export const useHooks = () => {
   }) => {
     return useQuery({
       queryKey: [url],
-      queryFn: async () => {
+      queryFn: async (data) => {
         try {
-          const response = await axios.get(url, {
-            headers: {
-              'Content-Type': 'application/json',
+          const { dynamicRoute, queryParams } = data as TGetDataParams
+
+          const response = await axios.get(
+            formattedUrl(url, dynamicRoute, queryParams),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              ...options,
             },
-            ...options,
-          })
+          )
 
           return response.data
         } catch (error) {
@@ -70,9 +82,15 @@ export const useHooks = () => {
     return useMutation<TResponse, unknown, TData>({
       mutationFn: async (data: TData) => {
         try {
-          const response = await axios.post<TResponse>(url, data, {
-            ...options,
-          })
+          const { body, dynamicRoute, queryParams } =
+            data as TPostDataParams<TData>
+          const response = await axios.post<TResponse>(
+            formattedUrl(url, dynamicRoute, queryParams),
+            body,
+            {
+              ...options,
+            },
+          )
 
           return response.data
         } catch (error) {
@@ -93,7 +111,7 @@ export const useHooks = () => {
     })
   }
 
-  const usePutData = ({
+  const usePutData = <TData, TResponse>({
     url,
     options,
     mutationKey,
@@ -101,13 +119,19 @@ export const useHooks = () => {
     url: string
     options?: any
     mutationKey?: string
-  }) => {
-    return useMutation({
+  }): UseMutationResult<TResponse, unknown, TData, unknown> => {
+    return useMutation<TResponse, unknown, TData>({
       mutationFn: async (data: any) => {
         try {
-          const response = await axios.put(url, data, {
-            ...options,
-          })
+          const { body, dynamicRoute, queryParams } =
+            data as TPutDataParams<TData>
+          const response = await axios.put(
+            formattedUrl(url, dynamicRoute, queryParams),
+            body,
+            {
+              ...options,
+            },
+          )
 
           return response.data
         } catch (error) {
@@ -128,11 +152,7 @@ export const useHooks = () => {
     })
   }
 
-  type Teste = {
-    dynamicRoute?: string
-    queryParams?: string
-  }
-  const useDeleteData = <_, TResponse>({
+  const useDeleteData = <TData, TResponse>({
     url,
     options,
     mutationKey,
@@ -140,12 +160,14 @@ export const useHooks = () => {
     url: string
     options?: any
     mutationKey?: string
-  }): UseMutationResult<TResponse, unknown, Teste, unknown> => {
-    return useMutation<TResponse, unknown, Teste, unknown>({
-      mutationFn: async (data: Teste) => {
+  }): UseMutationResult<TResponse, unknown, TData, unknown> => {
+    return useMutation<TResponse, unknown, TData, unknown>({
+      mutationFn: async (data) => {
         try {
+          const { dynamicRoute, queryParams } = data as TDeleteDataParams
+
           const response = await axios.delete(
-            formattedUrl(url, data.dynamicRoute, data.queryParams),
+            formattedUrl(url, dynamicRoute, queryParams),
             {
               ...options,
             },
