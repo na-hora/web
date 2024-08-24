@@ -5,7 +5,7 @@ import { parseCookies, setCookie } from 'nookies'
 import React, { useEffect } from 'react'
 
 export const AdminLoginPage: React.FC = () => {
-  const { mutate, isPending, data } = useLoginUser()
+  const { mutate: loginUserMutation, isPending, data } = useLoginUser()
   const [form] = Form.useForm()
 
   useEffect(() => {
@@ -31,9 +31,11 @@ export const AdminLoginPage: React.FC = () => {
 
   const loginUser = () => {
     form.validateFields().then((values) => {
-      mutate({
-        username: values.username,
-        password: values.password,
+      loginUserMutation({
+        body: {
+          username: values.username,
+          password: values.password,
+        },
       })
     })
   }

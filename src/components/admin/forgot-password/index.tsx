@@ -5,14 +5,20 @@ import React, { useEffect, useState } from 'react'
 import styles from './styles.module.css'
 
 export const AdminForgotPasswordPage: React.FC = () => {
-  const { mutate, isPending, isSuccess } = useForgotPasswordUser()
+  const {
+    mutate: forgotPasswordUserMutation,
+    isPending,
+    isSuccess,
+  } = useForgotPasswordUser()
   const [form] = Form.useForm()
   const [showWaitMessage, setShowWaitMessage] = useState(false)
 
   const forgotPassUser = () => {
     form.validateFields().then((values) => {
-      mutate({
-        email: values.email,
+      forgotPasswordUserMutation({
+        body: {
+          email: values.email,
+        },
       })
     })
   }

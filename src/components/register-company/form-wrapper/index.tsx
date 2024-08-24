@@ -24,7 +24,8 @@ export const CreateCompanyForm = () => {
     setIsRegisteringCompany,
   } = useRegisterCompanyContext()
 
-  const { mutate, isPending } = useCreateCompanyAndAddress()
+  const { mutate: createCompanyAndAddressMutation, isPending } =
+    useCreateCompanyAndAddress()
 
   useEffect(() => {
     setIsRegisteringCompany(false)
@@ -85,11 +86,14 @@ export const CreateCompanyForm = () => {
   const createCompany = () => {
     const formattedFormValues = formatFormValuesToSubmit()
 
-    mutate(formattedFormValues, {
-      onSuccess: () => {
-        window.location.href = '/company/register/success'
+    createCompanyAndAddressMutation(
+      { body: formattedFormValues },
+      {
+        onSuccess: () => {
+          window.location.href = '/company/register/success'
+        },
       },
-    })
+    )
   }
 
   const nextPageOrSubmit = () => {
