@@ -8,6 +8,22 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 export const useHooks = () => {
+  const formattedUrl = (
+    url: string,
+    dynamicRoute?: string,
+    queryParams?: string,
+  ) => {
+    if (dynamicRoute) {
+      url = `${url}/${dynamicRoute}`
+    }
+
+    if (queryParams) {
+      url = `${url}?${queryParams}`
+    }
+
+    return url
+  }
+
   const { triggerAlert } = useGlobalAlertContext()
   const queryClient = useQueryClient()
   const useGetData = ({
@@ -111,7 +127,12 @@ export const useHooks = () => {
       },
     })
   }
-  const useDeleteData = ({
+
+  type Teste = {
+    dynamicRoute?: string
+    queryParams?: string
+  }
+  const useDeleteData = <_, TResponse>({
     url,
     options,
     mutationKey,
@@ -119,13 +140,16 @@ export const useHooks = () => {
     url: string
     options?: any
     mutationKey?: string
-  }) => {
-    return useMutation({
-      mutationFn: async () => {
+  }): UseMutationResult<TResponse, unknown, Teste, unknown> => {
+    return useMutation<TResponse, unknown, Teste, unknown>({
+      mutationFn: async (data: Teste) => {
         try {
-          const response = await axios.delete(url, {
-            ...options,
-          })
+          const response = await axios.delete(
+            formattedUrl(url, data.dynamicRoute, data.queryParams),
+            {
+              ...options,
+            },
+          )
 
           return response.data
         } catch (error) {

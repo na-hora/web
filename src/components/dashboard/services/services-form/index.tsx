@@ -1,3 +1,4 @@
+import { useCreatePetServices } from '@/hooks/na-hora/pet-services/use-create-pet-services'
 import { UseLoginUserResult } from '@/hooks/na-hora/user/use-login-user'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import {
@@ -14,6 +15,17 @@ import {
 import { parseCookies } from 'nookies'
 import { useState } from 'react'
 
+export type CreatePetServicePayload = {
+  name: string
+  paralellism: number
+  configurations: {
+    price: number
+    executionTime: number
+    companyPetSizeID: number
+    companyPetHairID: number
+  }[]
+}
+
 type Params = {
   id: number
   edition?: boolean
@@ -27,66 +39,84 @@ type Params = {
   }[]
 }
 
-const { petHairs, petSizes }: UseLoginUserResult['company'] = JSON.parse(
-  parseCookies()['inf@na-hora'],
-)
-
-const sizeAndHairCombinations: {
-  size: { value: number; label: string }
-  hair: { value: number; label: string }
-}[] = []
-petSizes.forEach((size: { id: number; name: string }) => {
-  petHairs.forEach((hair: { id: number; name: string }) => {
-    sizeAndHairCombinations.push({
-      size: { value: size.id, label: size.name },
-      hair: { value: hair.id, label: hair.name },
-    })
-  })
-})
-
-const savePetService = (data: any) => {
-  const treatedData = []
-
-  const currentObjectTreated = {
-    companyPetHairID: 0,
-    companyPetSizeID: 0,
-    executionTime: 0,
-    price: 0,
-  }
-
-  Object.entries(data).forEach(([key, value]) => {
-    if (key.includes('hair')) {
-      currentObjectTreated['companyPetHairID'] = Number(value)
-    }
-    if (key.includes('size')) {
-      currentObjectTreated['companyPetSizeID'] = Number(value)
-    }
-    if (key.includes('duration')) {
-      currentObjectTreated['executionTime'] = Number(value)
-    }
-    if (key.includes('price')) {
-      currentObjectTreated['price'] = Number(value)
-    }
-
-    if (
-      currentObjectTreated['companyPetHairID'] !== 0 &&
-      currentObjectTreated['companyPetSizeID'] !== 0 &&
-      currentObjectTreated['executionTime'] !== 0 &&
-      currentObjectTreated['price'] !== 0
-    ) {
-      treatedData.push({ ...currentObjectTreated })
-      currentObjectTreated['companyPetHairID'] = 0
-      currentObjectTreated['companyPetSizeID'] = 0
-      currentObjectTreated['executionTime'] = 0
-      currentObjectTreated['price'] = 0
-    }
-  })
-}
-
 const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
   const [form] = Form.useForm()
   const [configurationRadio, setConfigurationRadio] = useState(0)
+  const { mutate: createPetServiceMutation, isLoading } = useCreatePetServices()
+  const { petHairs, petSizes }: UseLoginUserResult['company'] = JSON.parse(
+    parseCookies()['inf@na-hora'],
+  )
 
+  const sizeAndHairCombinations: {
+    size: { value: number; label: string }
+    hair: { value: number; label: string }
+  }[] = []
+  petSizes.forEach((size: { id: number; name: string }) => {
+    petHairs.forEach((hair: { id: number; name: string }) => {
+      sizeAndHairCombinations.push({
+        size: { value: size.id, label: size.name },
+        hair: { value: hair.id, label: hair.name },
+      })
+    })
+  })
+
+  const savePetService = (serviceDetails: any) => {
+    if (serviceDetails.duration) {
+      const formattedPetService = {
+        name: serviceDetails.name,
+        paralellism: Number(serviceDetails.parallelism),
+        configurations: [
+          {
+            price: parseFloat(Number(serviceDetails.price).toFixed(2)),
+            executionTime: Number(serviceDetails.duration),
+            companyPetSizeID: 1,
+            companyPetHairID: 1,
+          },
+        ],
+      }
+
+      createPetServiceMutation(formattedPetService)
+    }
+
+    const treatedData = []
+
+    const currentObjectTreated = {
+      companyPetHairID: 0,
+      companyPetSizeID: 0,
+      executionTime: 0,
+      price: 0,
+    }
+
+    Object.entries(serviceDetails).forEach(([key, value]) => {
+      if (key.includes('hair')) {
+        currentObjectTreated['companyPetHairID'] = Number(value)
+      }
+      if (key.includes('size')) {
+        currentObjectTreated['companyPetSizeID'] = Number(value)
+      }
+      if (key.includes('duration')) {
+        currentObjectTreated['executionTime'] = Number(value)
+      }
+      if (key.includes('price')) {
+        currentObjectTreated['price'] = Number(value)
+      }
+
+      if (
+        currentObjectTreated['companyPetHairID'] !== 0 &&
+        currentObjectTreated['companyPetSizeID'] !== 0 &&
+        currentObjectTreated['executionTime'] !== 0 &&
+        currentObjectTreated['price'] !== 0
+      ) {
+        treatedData.push({ ...currentObjectTreated })
+        currentObjectTreated['companyPetHairID'] = 0
+        currentObjectTreated['companyPetSizeID'] = 0
+        currentObjectTreated['executionTime'] = 0
+        currentObjectTreated['price'] = 0
+      }
+
+      console.log('aqui: ', treatedData)
+    })
+  }
   const onChangeConfigurationRadio = (e: RadioChangeEvent) => {
     setConfigurationRadio(e.target.value)
   }
@@ -127,11 +157,13 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
           </div>
         }
         name='parallelism'
-        rules={[{ required: true, message: 'Simultaneidade obrigatória.' }]}
+        rules={[
+          { required: true, message: 'Atendimentos simultâneos obrigatórios.' },
+        ]}
       >
         <Input
           type='number'
-          placeholder='Digite aqui a simultaneidade do serviço'
+          placeholder='Digite aqui a quantidade de atendimentos simultâneos.'
         />
       </Form.Item>
       <Radio.Group
