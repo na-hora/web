@@ -30,16 +30,9 @@ type Params = {
   id: number
   edition?: boolean
   name?: string
-  parallelism?: number
-  configurations?: {
-    companyPetSizeId: number
-    companyPetHairId: number
-    value: number
-    executionTime: number
-  }[]
 }
 
-const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
+const ServicesForm = ({ edition = false, id, name }: Params) => {
   const [form] = Form.useForm()
   const [configurationRadio, setConfigurationRadio] = useState(0)
   const { mutate: createPetServiceMutation } = useCreatePetServices()
@@ -60,25 +53,30 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
     })
   })
 
-  const savePetService = (serviceDetails: any) => {
-    if (serviceDetails.duration) {
-      const formattedPetService = {
-        name: serviceDetails.name,
-        paralellism: Number(serviceDetails.parallelism),
-        configurations: [
-          {
-            price: parseFloat(Number(serviceDetails.price).toFixed(2)),
-            executionTime: Number(serviceDetails.duration),
-            companyPetSizeID: 1,
-            companyPetHairID: 1,
-          },
-        ],
-      }
+  const formatSimpleConfigurations = (serviceDetails: any) => {
+    serviceDetails.configurations = []
 
-      createPetServiceMutation({ body: formattedPetService })
+    for (const sizeAndHair of sizeAndHairCombinations) {
+      serviceDetails.configurations?.push({
+        price: parseFloat(Number(serviceDetails.price).toFixed(2)),
+        executionTime: Number(serviceDetails.executionTime),
+        companyPetSizeID: sizeAndHair.size.value,
+        companyPetHairID: sizeAndHair.hair.value,
+      })
     }
 
-    const treatedData = []
+    delete serviceDetails.executionTime
+    delete serviceDetails.price
+
+    return {
+      name: serviceDetails.name,
+      paralellism: Number(serviceDetails.parallelism),
+      configurations: serviceDetails.configurations,
+    }
+  }
+
+  const formatDetailedConfigurations = (serviceDetails: any) => {
+    const treatedData: any[] = []
 
     const currentObjectTreated = {
       companyPetHairID: 0,
@@ -94,7 +92,7 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
       if (key.includes('size')) {
         currentObjectTreated['companyPetSizeID'] = Number(value)
       }
-      if (key.includes('duration')) {
+      if (key.includes('executionTime')) {
         currentObjectTreated['executionTime'] = Number(value)
       }
       if (key.includes('price')) {
@@ -114,7 +112,27 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
         currentObjectTreated['price'] = 0
       }
     })
+
+    return {
+      name: serviceDetails.name,
+      paralellism: Number(serviceDetails.parallelism),
+      configurations: treatedData,
+    }
   }
+
+  const savePetService = (serviceDetails: any) => {
+    let formattedPetService: any
+    if (serviceDetails.executionTime && serviceDetails.price) {
+      formattedPetService = formatSimpleConfigurations(serviceDetails)
+    } else {
+      formattedPetService = formatDetailedConfigurations(serviceDetails)
+    }
+
+    createPetServiceMutation({ body: formattedPetService })
+
+    form.resetFields()
+  }
+
   const onChangeConfigurationRadio = (e: RadioChangeEvent) => {
     setConfigurationRadio(e.target.value)
   }
@@ -125,7 +143,6 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
       name={`service_${id}`}
       initialValues={{
         name: edition ? name : '',
-        parallelism: edition ? parallelism : undefined,
       }}
       style={{ width: '100%', maxWidth: '600px' }}
       layout='vertical'
@@ -181,7 +198,7 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
+                      gap: '4px',
                     }}
                   >
                     Duração
@@ -190,7 +207,8 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
                     </Tooltip>
                   </div>
                 }
-                name='duration'
+                name='executionTime'
+                rules={[{ required: true, message: 'Duração obrigatória.' }]}
               >
                 <Input placeholder='Duração' />
               </Form.Item>
@@ -212,6 +230,7 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
                   </div>
                 }
                 name='price'
+                rules={[{ required: true, message: 'Preço obrigatório.' }]}
               >
                 <Input placeholder='Preço' />
               </Form.Item>
@@ -229,6 +248,7 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
                   label='Tamanho'
                   name={`${size.value}-${hair.value}-size`}
                   initialValue={size.value}
+                  rules={[{ required: true, message: 'Tamanho obrigatório.' }]}
                 >
                   <Select
                     options={petSizes.map((s) => ({
@@ -245,6 +265,7 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
                   label='Pelagem'
                   name={`${size.value}-${hair.value}-hair`}
                   initialValue={hair.value}
+                  rules={[{ required: true, message: 'Pelagem obrigatória.' }]}
                 >
                   <Select
                     options={petHairs.map((h) => ({
@@ -259,7 +280,8 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
               <Col xs={24} sm={12} md={6}>
                 <Form.Item
                   label='Duração'
-                  name={`${size.value}-${hair.value}-duration`}
+                  name={`${size.value}-${hair.value}-executionTime`}
+                  rules={[{ required: true, message: 'Duração obrigatória.' }]}
                 >
                   <Input placeholder='Duração' />
                 </Form.Item>
@@ -268,6 +290,7 @@ const ServicesForm = ({ edition = false, id, name, parallelism }: Params) => {
                 <Form.Item
                   label='Preço'
                   name={`${size.value}-${hair.value}-price`}
+                  rules={[{ required: true, message: 'Preço obrigatório.' }]}
                 >
                   <Input placeholder='Preço' />
                 </Form.Item>
