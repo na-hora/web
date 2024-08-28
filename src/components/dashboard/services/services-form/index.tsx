@@ -40,7 +40,7 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
   const { petHairs, petSizes }: UseLoginUserResult['company'] = JSON.parse(
     parseCookies()['inf@na-hora'],
   )
-  const { data: serviceDetails } = useLoadPetServiceDetails(id)
+  const { data: petServiceDetailed } = useLoadPetServiceDetails(id)
 
   const sizeAndHairCombinations: {
     size: { value: number; label: string }
@@ -146,13 +146,13 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
   const detailedConfigurationForAllServices = configurationRadio === 1
 
   useEffect(() => {
-    if (edition && serviceDetails) {
+    if (edition && petServiceDetailed) {
       form.setFieldsValue({
-        name: serviceDetails.name,
-        paralellism: serviceDetails.paralellism,
+        name: petServiceDetailed.name,
+        paralellism: petServiceDetailed.paralellism,
       })
 
-      const configurations = serviceDetails.configurations
+      const configurations = petServiceDetailed.configurations
       const allSamePrice = configurations.every(
         (config) => config.price === configurations[0].price,
       )
@@ -183,7 +183,7 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
         })
       }
     }
-  }, [edition, serviceDetails, form])
+  }, [edition, petServiceDetailed, form])
 
   return (
     <Form
