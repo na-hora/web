@@ -16,17 +16,6 @@ import {
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 
-export type CreatePetServicePayload = {
-  name: string
-  paralellism: number
-  configurations: {
-    price: number
-    executionTime: number
-    companyPetSizeID: number
-    companyPetHairID: number
-  }[]
-}
-
 type Params = {
   id: number
   edition?: boolean
