@@ -57,43 +57,55 @@ export const DashboardServices = () => {
               boxShadow: '0 0 10px #ccc',
             }}
             renderItem={(service) => (
-              <Collapse
-                items={[
-                  {
-                    key: service.id,
-                    label: (
-                      <>
-                        <Row justify='space-between'>
-                          <Col span={12}>{service.name}</Col>
-                          <Col span={4}>
-                            <Tooltip title='Desativar serviço'>
-                              <Popconfirm
-                                title='Tem certeza que deseja desativar este serviço?'
-                                onConfirm={() => deletePetService(service.id)}
-                              >
-                                <Button>
-                                  <DeleteOutlined />
-                                </Button>
-                              </Popconfirm>
-                            </Tooltip>
-                          </Col>
+              <Row justify='space-between' align='top'>
+                <Collapse
+                  items={[
+                    {
+                      key: service.id,
+                      label: (
+                        <Row>
+                          <Col>{service.name}</Col>
                         </Row>
-                      </>
-                    ),
-                    children: (
-                      <ServicesForm
-                        edition
-                        id={service.id}
-                        name={service.name}
-                      />
-                    ),
-                  },
-                ]}
-                bordered
-                style={{
-                  margin: '10px 0px',
-                }}
-              />
+                      ),
+                      children: (
+                        <ServicesForm
+                          edition
+                          id={service.id}
+                          name={service.name}
+                        />
+                      ),
+                    },
+                  ]}
+                  bordered
+                  style={{
+                    margin: '10px 0px',
+                    width: '95%',
+                  }}
+                />
+
+                <Col>
+                  <Tooltip
+                    title={`Desativar ${service.name}`}
+                    placement='right'
+                  >
+                    <Popconfirm
+                      title='Tem certeza que deseja desativar este serviço?'
+                      onConfirm={() => deletePetService(service.id)}
+                    >
+                      <Button
+                        style={{
+                          height: '50px',
+                          border: 'none',
+                          boxShadow: 'none',
+                          marginTop: '8px',
+                        }}
+                      >
+                        <DeleteOutlined />
+                      </Button>
+                    </Popconfirm>
+                  </Tooltip>
+                </Col>
+              </Row>
             )}
           />
         </Col>
