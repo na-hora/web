@@ -183,6 +183,12 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
     }
   }, [edition, petServiceDetailed, form])
 
+  useEffect(() => {
+    form.setFieldsValue({
+      configurationType: 0,
+    })
+  }, [])
+
   return (
     <Form
       form={form}
