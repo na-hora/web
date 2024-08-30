@@ -1,15 +1,8 @@
 import { useHooks } from '@/hooks'
 import { UseQueryResult } from '@tanstack/react-query'
+import { LoadStatesResponse } from './types/list.type'
 
-type UseLoadStatesResult = {
-  states: {
-    id: number
-    name: string
-    uf: string
-  }[]
-}
-
-export const useLoadNaHoraStates = (): UseQueryResult<UseLoadStatesResult> => {
+export const useLoadNaHoraStates = (): UseQueryResult<LoadStatesResponse> => {
   const { useGetData } = useHooks()
 
   return useGetData({
