@@ -1,13 +1,9 @@
 import { useHooks } from '@/hooks'
 import { UseQueryResult } from '@tanstack/react-query'
-
-type UseLoadPetServicesResponse = Array<{
-  id: number
-  name: string
-}>
+import { LoadPetServicesResponse } from './types/list.type'
 
 export const useLoadPetServices =
-  (): UseQueryResult<UseLoadPetServicesResponse> => {
+  (): UseQueryResult<LoadPetServicesResponse> => {
     const { useGetData } = useHooks()
     return useGetData({
       url: `${import.meta.env.VITE_API_URL}/services/pet`,
