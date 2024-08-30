@@ -3,9 +3,9 @@ import { TPutDataParams } from '@/hooks/types'
 import { UpdatePetServiceRequestBody } from './types/update.type'
 
 export const useUpdatePetServices = () => {
-  const { usePostData } = useHooks()
+  const { usePutData } = useHooks()
 
-  return usePostData<TPutDataParams<UpdatePetServiceRequestBody>, string>({
+  return usePutData<TPutDataParams<UpdatePetServiceRequestBody>, string>({
     url: `${import.meta.env.VITE_API_URL}/services/pet`,
   })
 }
