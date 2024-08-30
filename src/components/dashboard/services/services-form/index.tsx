@@ -1,6 +1,7 @@
 import { useCreatePetServices } from '@/hooks/na-hora/pet-services/use-create-pet-services'
 import { useLoadPetServiceDetails } from '@/hooks/na-hora/pet-services/use-load-pet-service-details'
-import { UseLoginUserResult } from '@/hooks/na-hora/user/use-login-user'
+import { useUpdatePetServices } from '@/hooks/na-hora/pet-services/use-update-pet-services'
+import { LoginUserResponse } from '@/hooks/na-hora/user/types/login.type'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -26,7 +27,8 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
   const [form] = Form.useForm()
   const [configurationRadio, setConfigurationRadio] = useState(0)
   const { mutate: createPetServiceMutation } = useCreatePetServices()
-  const { petHairs, petSizes }: UseLoginUserResult['company'] = JSON.parse(
+  const { mutate: updatePetServiceMutation } = useUpdatePetServices()
+  const { petHairs, petSizes }: LoginUserResponse['company'] = JSON.parse(
     parseCookies()['inf@na-hora'],
   )
   const { data: petServiceDetailed } = useLoadPetServiceDetails(id)
@@ -122,7 +124,14 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
       formattedPetService = formatDetailedConfigurations(serviceDetails)
     }
 
-    createPetServiceMutation({ body: formattedPetService })
+    if (edition) {
+      updatePetServiceMutation({
+        body: formattedPetService,
+        dynamicRoute: id.toString(),
+      })
+    } else {
+      createPetServiceMutation({ body: formattedPetService })
+    }
 
     form.resetFields()
   }
@@ -210,11 +219,15 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
         }
         name='paralellism'
         rules={[
-          { required: true, message: 'Atendimentos simultâneos obrigatórios.' },
+          {
+            required: true,
+            message: 'Atendimentos simultâneos obrigatórios.',
+          },
         ]}
       >
         <Input
           type='number'
+          min={1}
           placeholder='Digite aqui a quantidade de atendimentos simultâneos.'
         />
       </Form.Item>
