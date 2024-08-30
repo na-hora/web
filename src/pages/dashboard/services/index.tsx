@@ -79,7 +79,7 @@ export const DashboardServices = () => {
                   bordered
                   style={{
                     margin: '10px 0px',
-                    width: '95%',
+                    width: '90%',
                   }}
                 />
 
