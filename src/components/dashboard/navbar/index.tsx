@@ -5,6 +5,7 @@ import { destroyCookie } from 'nookies'
 export const NavbarDashboard = () => {
   const companyDashboardLogout = () => {
     destroyCookie(null, 'access-token@na-hora', { path: '/' })
+    destroyCookie(null, 'inf@na-hora', { path: '/' })
 
     window.location.href = '/admin/login'
   }

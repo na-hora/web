@@ -2,10 +2,11 @@ import { useLoginUser } from '@/hooks/na-hora/user/use-login-user'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Checkbox, Form, Input, Row } from 'antd'
 import { parseCookies, setCookie } from 'nookies'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export const AdminLoginPage: React.FC = () => {
   const { mutate: loginUserMutation, isPending, data } = useLoginUser()
+  const [rememberMe, setRememberMe] = useState(false)
   const [form] = Form.useForm()
 
   useEffect(() => {
@@ -20,12 +21,16 @@ export const AdminLoginPage: React.FC = () => {
     if (!data) {
       return
     }
+
     setCookie(null, 'access-token@na-hora', data?.token, {
       path: '/',
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : null,
     })
     setCookie(null, 'inf@na-hora', JSON.stringify(data?.company), {
       path: '/',
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : null,
     })
+
     window.location.href = '/admin/dashboard/home'
   }, [data])
 
@@ -74,8 +79,13 @@ export const AdminLoginPage: React.FC = () => {
           />
         </Form.Item>
         <Row justify='space-between' align='middle'>
-          <Form.Item name='remember' valuePropName='checked' noStyle>
-            <Checkbox>Lembrar de mim</Checkbox>
+          <Form.Item name='remember' noStyle>
+            <Checkbox
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            >
+              Lembrar de mim
+            </Checkbox>
           </Form.Item>
           <a className='login-form-forgot' href='/admin/forgot-password'>
             Esqueci minha senha
