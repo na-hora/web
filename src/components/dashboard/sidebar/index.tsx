@@ -1,6 +1,6 @@
 import {
-  AppstoreOutlined,
   BarsOutlined,
+  CalendarOutlined,
   ProfileOutlined,
   UserOutlined,
 } from '@ant-design/icons'
@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom'
 const items = [
   {
     key: '1',
-    icon: <AppstoreOutlined />,
+    icon: <CalendarOutlined />,
     label: 'Agenda',
     link: 'appointments',
   },
