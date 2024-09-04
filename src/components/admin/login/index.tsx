@@ -31,7 +31,7 @@ export const AdminLoginPage: React.FC = () => {
       maxAge: rememberMe ? 30 * 24 * 60 * 60 : null,
     })
 
-    window.location.href = '/admin/dashboard/home'
+    window.location.href = '/admin/dashboard/appointments'
   }, [data])
 
   const loginUser = () => {
