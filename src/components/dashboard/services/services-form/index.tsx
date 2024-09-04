@@ -28,10 +28,11 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
   const [configurationRadio, setConfigurationRadio] = useState(0)
   const { mutate: createPetServiceMutation } = useCreatePetServices()
   const { mutate: updatePetServiceMutation } = useUpdatePetServices()
+  const { data: petServiceDetailed, isFetching: petServiceDetailedFetching } =
+    useLoadPetServiceDetails(id)
   const { petHairs, petSizes }: LoginUserResponse['company'] = JSON.parse(
     parseCookies()['inf@na-hora'],
   )
-  const { data: petServiceDetailed } = useLoadPetServiceDetails(id)
 
   const sizeAndHairCombinations: {
     size: { value: number; label: string }
@@ -144,44 +145,44 @@ const ServicesForm = ({ edition = false, id, name }: Params) => {
   const detailedConfigurationForAllServices = configurationRadio === 1
 
   useEffect(() => {
-    if (edition && petServiceDetailed) {
+    if (!edition || !petServiceDetailed || petServiceDetailedFetching) return
+
+    form.setFieldsValue({
+      name: petServiceDetailed.name,
+      paralellism: petServiceDetailed.paralellism,
+    })
+
+    const configurations = petServiceDetailed.configurations
+    const allSamePrice = configurations.every(
+      (config) => config.price === configurations[0].price,
+    )
+    const allSameExecutionTime = configurations.every(
+      (config) => config.executionTime === configurations[0].executionTime,
+    )
+
+    if (allSamePrice && allSameExecutionTime) {
+      setConfigurationRadio(0)
       form.setFieldsValue({
-        name: petServiceDetailed.name,
-        paralellism: petServiceDetailed.paralellism,
+        configurationType: 0,
+        price: configurations[0].price,
+        executionTime: configurations[0].executionTime,
       })
+    } else {
+      setConfigurationRadio(1)
 
-      const configurations = petServiceDetailed.configurations
-      const allSamePrice = configurations.every(
-        (config) => config.price === configurations[0].price,
-      )
-      const allSameExecutionTime = configurations.every(
-        (config) => config.executionTime === configurations[0].executionTime,
-      )
-
-      if (allSamePrice && allSameExecutionTime) {
-        setConfigurationRadio(0)
+      form.setFieldsValue({
+        configurationType: 1,
+      })
+      configurations.forEach((config) => {
         form.setFieldsValue({
-          configurationType: 0,
-          price: configurations[0].price,
-          executionTime: configurations[0].executionTime,
+          [`${config.companyPetSizeId}-${config.companyPetHairId}-price`]:
+            config.price,
+          [`${config.companyPetSizeId}-${config.companyPetHairId}-executionTime`]:
+            config.executionTime,
         })
-      } else {
-        setConfigurationRadio(1)
-
-        form.setFieldsValue({
-          configurationType: 1,
-        })
-        configurations.forEach((config) => {
-          form.setFieldsValue({
-            [`${config.companyPetSizeId}-${config.companyPetHairId}-price`]:
-              config.price,
-            [`${config.companyPetSizeId}-${config.companyPetHairId}-executionTime`]:
-              config.executionTime,
-          })
-        })
-      }
+      })
     }
-  }, [edition, petServiceDetailed, form])
+  }, [edition, petServiceDetailed, form, petServiceDetailedFetching])
 
   useEffect(() => {
     form.setFieldsValue({

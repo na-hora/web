@@ -5,7 +5,7 @@ import { Admin } from '@/pages/admin'
 import { RegisterCompany } from '@/pages/company/register'
 import { SuccessCompanyPage } from '@/pages/company/register-success'
 import { Dashboard } from '@/pages/dashboard'
-import { DashboardHome } from '@/pages/dashboard/home'
+import { DashboardAppointments } from '@/pages/dashboard/appointments'
 import { DashboardServices } from '@/pages/dashboard/services'
 import { NotFoundPage } from '@/pages/errors/not-found'
 import { Home } from '@/pages/home'
@@ -57,8 +57,8 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        path: '/admin/dashboard/home',
-        element: <DashboardHome />,
+        path: '/admin/dashboard/appointments',
+        element: <DashboardAppointments />,
       },
       {
         path: '/admin/dashboard/services',

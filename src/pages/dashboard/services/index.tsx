@@ -2,10 +2,10 @@ import { useDeletePetServices } from '@/hooks/na-hora/pet-services/use-delete-pe
 import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import { Button, Col, Collapse, List, Popconfirm, Row, Tooltip } from 'antd'
-import { lazy, Suspense } from 'react'
-const ServicesForm = lazy(
-  () => import('@/components/dashboard/services/services-form'),
-)
+// const ServicesForm = lazy(
+//   () => import('@/components/dashboard/services/services-form'),
+// )
+import ServicesForm from '@/components/dashboard/services/services-form'
 
 export const DashboardServices = () => {
   const { data: services } = useLoadPetServices()
@@ -18,7 +18,7 @@ export const DashboardServices = () => {
   }
 
   return (
-    <Suspense fallback='carregando'>
+    <>
       <Row style={{ marginBottom: '20px' }}>
         <Col>
           <h1 style={{ marginBottom: '4px' }}>Serviços</h1>
@@ -110,6 +110,6 @@ export const DashboardServices = () => {
           />
         </Col>
       </Row>
-    </Suspense>
+    </>
   )
 }
