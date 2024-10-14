@@ -1,4 +1,6 @@
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { AppointmentCalendar } from '@/components/dashboard/appointments/calendar'
+import { CalendarHeader } from '@/components/dashboard/appointments/calendar-header'
+import { addDate, addHours, subtractDate } from '@/utils/time'
 import type {
   EventObject,
   ExternalEventTypes,
@@ -7,27 +9,11 @@ import type {
 import { TZDate } from '@toast-ui/calendar'
 import '@toast-ui/calendar/dist/toastui-calendar.min.css' // Stylesheet for calendar
 import Calendar from '@toast-ui/react-calendar'
-import { Button, Row, Select, theme } from 'antd'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { addDate, addHours, subtractDate } from './utils'
 
 type ViewType = 'month' | 'week' | 'day'
 
 const today = new TZDate()
-const viewModeOptions = [
-  {
-    title: 'Mês',
-    value: 'month',
-  },
-  {
-    title: 'Semana',
-    value: 'week',
-  },
-  {
-    title: 'Dia',
-    value: 'day',
-  },
-]
 
 export const DashboardAppointments = ({
   view = 'week',
@@ -35,6 +21,7 @@ export const DashboardAppointments = ({
   view: ViewType
 }) => {
   const calendarRef = useRef<typeof Calendar>(null)
+
   const [selectedDateRangeText, setSelectedDateRangeText] = useState('')
   const [selectedView, setSelectedView] = useState(view)
   const initialCalendars: Options['calendars'] = [
@@ -155,33 +142,9 @@ export const DashboardAppointments = ({
     updateRenderRangeText()
   }, [selectedView, updateRenderRangeText])
 
-  const onAfterRenderEvent: ExternalEventTypes['afterRenderEvent'] = (res) => {
-    console.group('onAfterRenderEvent')
-    console.log('Event Info : ', res.title)
-    console.groupEnd()
-  }
-
-  const onBeforeDeleteEvent: ExternalEventTypes['beforeDeleteEvent'] = (
-    res,
-  ) => {
-    console.group('onBeforeDeleteEvent')
-    console.log('Event Info : ', res.title)
-    console.groupEnd()
-
-    const { id, calendarId } = res
-
-    getCalInstance().deleteEvent(id, calendarId)
-  }
-
   const onChangeSelect = (value: ViewType) => {
     setSelectedView(value)
     getCalInstance().changeView(value)
-  }
-
-  const onClickDayName: ExternalEventTypes['clickDayName'] = (res) => {
-    console.group('onClickDayName')
-    console.log('Date : ', res.date)
-    console.groupEnd()
   }
 
   const onClickNavi = (ev: React.MouseEvent<HTMLButtonElement>) => {
@@ -195,144 +158,30 @@ export const DashboardAppointments = ({
     }
   }
 
-  const onClickEvent: ExternalEventTypes['clickEvent'] = (res) => {
-    console.group('onClickEvent')
-    console.log('MouseEvent : ', res.nativeEvent)
-    console.log('Event Info : ', res.event)
-    console.groupEnd()
-  }
-
-  const onClickTimezonesCollapseBtn: ExternalEventTypes['clickTimezonesCollapseBtn'] =
-    (timezoneCollapsed) => {
-      console.group('onClickTimezonesCollapseBtn')
-      console.log('Is Timezone Collapsed?: ', timezoneCollapsed)
-      console.groupEnd()
-
-      const newTheme = {
-        'week.daygridLeft.width': '100px',
-        'week.timegridLeft.width': '100px',
-      }
-
-      getCalInstance().setTheme(newTheme)
-    }
-
-  const onBeforeUpdateEvent: ExternalEventTypes['beforeUpdateEvent'] = (
-    updateData,
-  ) => {
-    console.group('onBeforeUpdateEvent')
-    console.log(updateData)
-    console.groupEnd()
-
-    const targetEvent = updateData.event
-    const changes = { ...updateData.changes }
-
-    getCalInstance().updateEvent(
-      targetEvent.id,
-      targetEvent.calendarId,
-      changes,
-    )
-  }
-
-  const onBeforeCreateEvent: ExternalEventTypes['beforeCreateEvent'] = (
-    eventData,
-  ) => {
-    const event = {
-      calendarId: eventData.calendarId || '',
-      id: String(Math.random()),
-      title: eventData.title,
-      isAllday: eventData.isAllday,
-      start: eventData.start,
-      end: eventData.end,
-      category: eventData.isAllday ? 'allday' : 'time',
-      dueDateClass: '',
-      location: eventData.location,
-      state: eventData.state,
-      isPrivate: eventData.isPrivate,
-    }
-
-    getCalInstance().createEvents([event])
+  const openCreateEventModal: ExternalEventTypes['clickEvent'] = ({
+    start,
+    end,
+  }: EventObject) => {
+    console.log({ start, end })
   }
 
   return (
     <>
       <h1>📅 Agendamentos</h1>
 
-      <Row align='middle' style={{ marginBottom: 16, gap: 10 }}>
-        <Select
-          style={{ width: 120 }}
-          value={selectedView}
-          onChange={(value: ViewType) => onChangeSelect(value)}
-        >
-          {viewModeOptions.map((option, index) => (
-            <Select.Option value={option.value} key={index}>
-              {option.title}
-            </Select.Option>
-          ))}
-        </Select>
+      <CalendarHeader
+        selectedView={selectedView}
+        selectedDateRangeText={selectedDateRangeText}
+        onChangeSelect={onChangeSelect}
+        onClickNavi={onClickNavi}
+      />
 
-        <Button data-action='move-today' onClick={onClickNavi}>
-          Hoje
-        </Button>
-
-        <Button data-action='move-prev' onClick={onClickNavi}>
-          <LeftOutlined />
-        </Button>
-
-        <span className='render-range'>{selectedDateRangeText}</span>
-
-        <Button data-action='move-next' onClick={onClickNavi}>
-          <RightOutlined />
-        </Button>
-      </Row>
-
-      <Calendar
-        height='60vh'
-        calendars={initialCalendars}
-        month={{ startDayOfWeek: 1 }}
-        events={initialEvents}
-        template={
-          {
-            // milestone(event) {
-            //   return `<span style="color: #fff; background-color: ${event.backgroundColor};">${event.title}</span>`
-            // },
-            // allday(event) {
-            //   return `[All day] ${event.title}`
-            // },
-          }
-        }
-        theme={theme}
-        timezone={{
-          zones: [
-            {
-              timezoneName: 'America/Sao_Paulo',
-              displayLabel: 'São Paulo',
-              tooltip: 'UTC+03:00',
-            },
-          ],
-        }}
-        useDetailPopup={true}
-        useFormPopup={true}
-        view={selectedView}
-        week={{
-          showTimezoneCollapseButton: true,
-          timezonesCollapsed: false,
-          eventView: ['time'],
-          taskView: false,
-          startDayOfWeek: 1,
-          dayNames: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-          hourStart: 8,
-          hourEnd: 18,
-        }}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        ref={calendarRef}
-        onAfterRenderEvent={onAfterRenderEvent}
-        onBeforeDeleteEvent={onBeforeDeleteEvent}
-        onClickDayname={onClickDayName}
-        onClickEvent={onClickEvent}
-        onClickTimezonesCollapseBtn={onClickTimezonesCollapseBtn}
-        onBeforeUpdateEvent={onBeforeUpdateEvent}
-        onBeforeCreateEvent={onBeforeCreateEvent}
+      <AppointmentCalendar
+        calendarRef={calendarRef}
+        initialCalendars={initialCalendars}
+        initialEvents={initialEvents}
+        selectedView={selectedView}
+        openCreateEventModal={openCreateEventModal}
       />
     </>
   )
