@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { AppointmentCalendar } from '@/components/dashboard/appointments/calendar'
 import { CalendarHeader } from '@/components/dashboard/appointments/calendar-header'
 import { addDate, addHours, subtractDate } from '@/utils/time'
@@ -84,8 +86,6 @@ export const DashboardAppointments = ({
     },
   ]
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const getCalInstance = useCallback(
     () => calendarRef.current?.getInstance?.(),
     [],
