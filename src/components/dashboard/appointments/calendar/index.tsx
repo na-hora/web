@@ -55,6 +55,12 @@ export const AppointmentCalendar = ({
         dayNames: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
         hourStart: 8,
         hourEnd: 18,
+        minuteStep: 15,
+        timeGrid: {
+          timeInterval: '10',
+          displayTime: true,
+          minHeight: 10,
+        },
       }}
       onSelectDateTime={openCreateEventModal}
     />
