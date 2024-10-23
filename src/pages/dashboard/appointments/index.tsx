@@ -12,10 +12,12 @@ import '@toast-ui/calendar/dist/toastui-calendar.min.css' // Stylesheet for cale
 import Calendar from '@toast-ui/react-calendar'
 import { notification } from 'antd'
 import { addMinutes } from 'date-fns'
+import { parseCookies } from 'nookies'
 import { useCallback, useEffect, useRef, useState } from 'react'
 type ViewType = 'month' | 'week' | 'day'
 
 const today = new TZDate()
+const authToken = parseCookies()['access-token@na-hora']
 
 const initialCalendars: Options['calendars'] = [
   {
@@ -193,12 +195,9 @@ export const DashboardAppointments = ({
     updateRenderRangeText()
   }, [selectedView, updateRenderRangeText])
 
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzAyMzEyNjUsImlhdCI6MTcyOTYyNjQ2NSwiaXNzIjoiTmEgSG9yYSIsInN1YiI6IjBjYmNmNzljLWE4MDUtNDdiZi1hZmE4LWJiZDhlOTNiNTRkNSIsInVzZXJuYW1lIjoidGVzdGUxQHRlc3RlLmNvbSJ9.CSfZqkBwiwJk7dls-hxhBDIWn-rTFGV4PgCUNUx3xNE'
-
   useEffect(() => {
     const eventSource = new EventSource(
-      `http://localhost:3333/api/v1/appointments/notifications?token=${token}`,
+      `http://localhost:3333/api/v1/appointments/notifications?token=${authToken}`,
     )
 
     eventSource.onmessage = (event) => {
