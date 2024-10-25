@@ -5,6 +5,7 @@ import { LoadAppointmentsResponse } from './types/load'
 export const useLoadAppointments =
   (): UseQueryResult<LoadAppointmentsResponse> => {
     const { useGetData } = useHooks()
+    // const { selectedDateRangeText } = useAppointmentsContext()
 
     return useGetData({
       url: `${

@@ -1,5 +1,8 @@
+import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import Calendar from '@toast-ui/react-calendar'
 import { Button, Row, Select } from 'antd'
+import { useCallback, useEffect } from 'react'
 
 type ViewType = 'month' | 'week' | 'day'
 
@@ -19,16 +22,84 @@ const viewModeOptions = [
 ]
 
 export const CalendarHeader = ({
-  selectedView,
-  selectedDateRangeText,
-  onChangeSelect,
-  onClickNavi,
+  calendarRef,
 }: {
-  selectedView: ViewType
-  selectedDateRangeText: string
-  onChangeSelect: (value: ViewType) => void
-  onClickNavi: (ev: React.MouseEvent<HTMLButtonElement>) => void
+  calendarRef: React.RefObject<typeof Calendar>
 }) => {
+  const {
+    selectedDateRangeText,
+    setSelectedDateRangeText,
+    selectedView,
+    setSelectedView,
+  } = useAppointmentsContext()
+  const getCallInstance = useCallback(
+    () => calendarRef.current?.getInstance?.(),
+    [],
+  )
+
+  const updateRenderRangeText = useCallback(() => {
+    const calInstance = getCallInstance()
+    if (!calInstance) {
+      setSelectedDateRangeText('')
+    }
+
+    const viewName = calInstance.getViewName()
+    const calDate = calInstance.getDate()
+    const rangeStart = calInstance.getDateRangeStart()
+    const rangeEnd = calInstance.getDateRangeEnd()
+
+    const year = calDate.getFullYear()
+    const month = calDate.getMonth() + 1
+    const date = calDate.getDate()
+    let dateRangeText: string
+
+    switch (viewName) {
+      case 'month': {
+        dateRangeText = `${month}-${year}`
+        break
+      }
+      case 'week': {
+        const startDate = `${rangeStart
+          .getDate()
+          .toString()
+          .padStart(2, '0')}/${(rangeStart.getMonth() + 1)
+          .toString()
+          .padStart(2, '0')}/${rangeStart.getFullYear()}`
+        const endDate = `${rangeEnd.getDate().toString().padStart(2, '0')}/${(
+          rangeEnd.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, '0')}/${rangeEnd.getFullYear()}`
+        dateRangeText = `${startDate} - ${endDate}`
+        break
+      }
+      default:
+        dateRangeText = `${year}-${month}-${date}`
+    }
+
+    setSelectedDateRangeText(dateRangeText)
+  }, [])
+
+  const onClickNavi = (ev: React.MouseEvent<HTMLButtonElement>) => {
+    if (ev.currentTarget.tagName === 'BUTTON') {
+      const button = ev.currentTarget
+      const actionName = (
+        button.getAttribute('data-action') ?? 'month'
+      ).replace('move-', '')
+      getCallInstance()[actionName]()
+      updateRenderRangeText()
+    }
+  }
+
+  const onChangeSelect = (value: ViewType) => {
+    setSelectedView(value)
+    getCallInstance().changeView(value)
+  }
+
+  useEffect(() => {
+    updateRenderRangeText()
+  }, [selectedView, updateRenderRangeText])
+
   return (
     <Row align='middle' style={{ marginBottom: 16, gap: 10 }}>
       <Select
