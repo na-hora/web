@@ -1,21 +1,21 @@
 import { AppointmentCalendar } from '@/components/dashboard/appointments/calendar'
 import { CalendarHeader } from '@/components/dashboard/appointments/calendar-header'
 import { CreateAppointmentModal } from '@/components/dashboard/appointments/create-appointment-modal'
-import { addDate, addHours, subtractDate } from '@/utils/time'
+import { Appointment } from '@/hooks/na-hora/appointments/types/load'
+import { useLoadAppointments } from '@/hooks/na-hora/appointments/use-load-appointments'
 import type {
   EventObject,
   ExternalEventTypes,
   Options,
 } from '@toast-ui/calendar'
 import { TZDate } from '@toast-ui/calendar'
-import '@toast-ui/calendar/dist/toastui-calendar.min.css' // Stylesheet for calendar
+import '@toast-ui/calendar/dist/toastui-calendar.min.css'
 import Calendar from '@toast-ui/react-calendar'
 import { notification } from 'antd'
 import { addMinutes } from 'date-fns'
+import { parseCookies } from 'nookies'
 import { useCallback, useEffect, useRef, useState } from 'react'
 type ViewType = 'month' | 'week' | 'day'
-
-const today = new TZDate()
 
 const initialCalendars: Options['calendars'] = [
   {
@@ -40,42 +40,6 @@ const initialCalendars: Options['calendars'] = [
     dragBackgroundColor: '#ff6b6b',
   },
 ]
-const initialEvents: Partial<EventObject>[] = [
-  {
-    id: '1',
-    calendarId: '0',
-    title: 'TOAST UI Calendar Study',
-    category: 'time',
-    start: today,
-    end: addHours(today, 3),
-  },
-  {
-    id: '2',
-    calendarId: '0',
-    title: 'Practice',
-    category: 'milestone',
-    start: addDate(today, 1),
-    end: addDate(today, 1),
-    isReadOnly: false,
-  },
-  {
-    id: '3',
-    calendarId: '0',
-    title: 'FE Workshop',
-    category: 'allday',
-    start: subtractDate(today, 2),
-    end: subtractDate(today, 1),
-    isReadOnly: true,
-  },
-  {
-    id: '4',
-    calendarId: '0',
-    title: 'Report',
-    category: 'time',
-    start: today,
-    end: addHours(today, 1),
-  },
-]
 
 export const DashboardAppointments = ({
   view = 'week',
@@ -90,46 +54,38 @@ export const DashboardAppointments = ({
     useState<TZDate>(null)
   const [isCreateAppointmentModalOpen, setIsCreateAppointmentModalOpen] =
     useState(false)
-  const [initialEvents, setInitialEvents] = useState([
-    {
-      id: '1',
-      calendarId: '0',
-      title: 'TOAST UI Calendar Study',
-      category: 'time',
-      start: today,
-      end: addHours(today, 3),
-    },
-    {
-      id: '2',
-      calendarId: '0',
-      title: 'Practice',
-      category: 'milestone',
-      start: addDate(today, 1),
-      end: addDate(today, 1),
-      isReadOnly: false,
-    },
-    {
-      id: '3',
-      calendarId: '0',
-      title: 'FE Workshop',
-      category: 'allday',
-      start: subtractDate(today, 2),
-      end: subtractDate(today, 1),
-      isReadOnly: true,
-    },
-    {
-      id: '4',
-      calendarId: '0',
-      title: 'Report',
-      category: 'time',
-      start: today,
-      end: addHours(today, 1),
-    },
-  ])
+  const [appointments, setAppointments] = useState<Partial<EventObject>[]>([])
 
   const [api, contextHolder] = notification.useNotification()
+  const { data: initialAppointments } = useLoadAppointments()
 
-  const openNotification = (description) => {
+  const formatAppointment = (appointment: Appointment) => {
+    return {
+      id: appointment.id,
+      calendarId: '1',
+      title: appointment.serviceName || 'banho no peludo',
+      category: 'time',
+      isReadOnly: false,
+      start: new Date(appointment.startTime),
+      end: addMinutes(new Date(appointment.startTime), appointment.totalTime),
+    }
+  }
+
+  useEffect(() => {
+    if (!initialAppointments) return
+
+    const { appointments } = initialAppointments
+
+    const parsedAppointments = appointments.map((appointment: Appointment) => {
+      return formatAppointment(appointment)
+    })
+
+    setAppointments(parsedAppointments)
+  }, [initialAppointments])
+
+  const accessToken = parseCookies()['access-token@na-hora']
+
+  const openNotification = (description = 'Confira seu agendamento') => {
     api.success({
       message: `Novo atendimento`,
       description: `${description}`,
@@ -193,32 +149,20 @@ export const DashboardAppointments = ({
     updateRenderRangeText()
   }, [selectedView, updateRenderRangeText])
 
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzAyMzEyNjUsImlhdCI6MTcyOTYyNjQ2NSwiaXNzIjoiTmEgSG9yYSIsInN1YiI6IjBjYmNmNzljLWE4MDUtNDdiZi1hZmE4LWJiZDhlOTNiNTRkNSIsInVzZXJuYW1lIjoidGVzdGUxQHRlc3RlLmNvbSJ9.CSfZqkBwiwJk7dls-hxhBDIWn-rTFGV4PgCUNUx3xNE'
-
   useEffect(() => {
     const eventSource = new EventSource(
-      `http://localhost:3333/api/v1/appointments/notifications?token=${token}`,
+      `${
+        import.meta.env.VITE_API_URL
+      }/appointments/notifications?token=${accessToken}`,
     )
 
     eventSource.onmessage = (event) => {
       const parsedAppointment = JSON.parse(event.data)
-      const bla = {
-        id: parsedAppointment.id,
-        calendarId: '1',
-        title: 'banho no peludo',
-        category: 'time',
-        isReadOnly: false,
-        start: new Date(parsedAppointment.startTime),
-        end: addMinutes(
-          new Date(parsedAppointment.startTime),
-          parsedAppointment.totalTime,
-        ),
-      }
+      const formattedAppointment = formatAppointment(parsedAppointment)
 
-      setInitialEvents((prevMessages) => [...prevMessages, bla])
+      setAppointments((prevMessages) => [...prevMessages, formattedAppointment])
 
-      openNotification('banho no peludo')
+      openNotification(formattedAppointment.title)
     }
 
     // Fechar a conexão SSE ao desmontar o componente
@@ -267,7 +211,7 @@ export const DashboardAppointments = ({
       <AppointmentCalendar
         calendarRef={calendarRef}
         initialCalendars={initialCalendars}
-        initialEvents={initialEvents}
+        initialEvents={appointments}
         selectedView={selectedView}
         openCreateEventModal={openCreateEventModal}
       />
