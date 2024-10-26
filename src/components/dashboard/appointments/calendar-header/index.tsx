@@ -1,6 +1,5 @@
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
-import Calendar from '@toast-ui/react-calendar'
 import { Button, Row, Select } from 'antd'
 import { useCallback, useEffect } from 'react'
 
@@ -21,16 +20,13 @@ const viewModeOptions = [
   },
 ]
 
-export const CalendarHeader = ({
-  calendarRef,
-}: {
-  calendarRef: React.RefObject<typeof Calendar>
-}) => {
+export const CalendarHeader = () => {
   const {
     selectedDateRangeText,
     setSelectedDateRangeText,
     selectedView,
     setSelectedView,
+    calendarRef,
   } = useAppointmentsContext()
   const getCallInstance = useCallback(
     () => calendarRef.current?.getInstance?.(),
