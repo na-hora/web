@@ -55,7 +55,7 @@ export const AppointmentCalendar = () => {
     return {
       id: appointment.id,
       calendarId: '1',
-      title: appointment.serviceName || 'banho no peludo',
+      title: appointment.serviceName,
       category: 'time',
       isReadOnly: false,
       start: new Date(appointment.startTime),
@@ -93,7 +93,7 @@ export const AppointmentCalendar = () => {
     )
 
     eventSource.onmessage = (event) => {
-      const parsedAppointment = JSON.parse(event.data)
+      const parsedAppointment: Appointment = JSON.parse(event.data)
       const formattedAppointment = formatAppointment(parsedAppointment)
 
       setAppointments((prevMessages) => [...prevMessages, formattedAppointment])
@@ -125,23 +125,18 @@ export const AppointmentCalendar = () => {
         calendars={initialCalendars}
         month={{ startDayOfWeek: 1 }}
         events={appointments}
-        template={{}}
-        theme={theme}
-        timezone={{
-          zones: [
-            {
-              timezoneName: 'America/Sao_Paulo',
-              displayLabel: 'São Paulo',
-              tooltip: 'UTC+03:00',
-            },
-          ],
+        template={{
+          timegridDisplayPrimaryTime: function ({ time }: any) {
+            return `${time.getHours()}h`
+          },
         }}
+        theme={theme}
         useDetailPopup={true}
         useFormPopup={false}
         useCreationPopup={true}
         view={selectedView}
         week={{
-          showTimezoneCollapseButton: true,
+          showTimezoneCollapseButton: false,
           timezonesCollapsed: false,
           eventView: ['time'],
           taskView: false,
