@@ -42,3 +42,9 @@ export function convertDateToISOString(dateStr: string) {
 
   return isoStringWithTimezone
 }
+
+export function fullMonthAndYearDate<T>(month: T, year: T): string {
+  const date = new Date(`${year}-${month}-01`)
+  const monthName = date.toLocaleString('pt-BR', { month: 'long' })
+  return `${monthName} de ${year}`
+}

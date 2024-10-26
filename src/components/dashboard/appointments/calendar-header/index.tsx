@@ -1,4 +1,5 @@
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
+import { fullMonthAndYearDate } from '@/utils/time'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Row, Select } from 'antd'
 import { useCallback, useEffect } from 'react'
@@ -51,7 +52,7 @@ export const CalendarHeader = () => {
 
     switch (viewName) {
       case 'month': {
-        dateRangeText = `${month}-${year}`
+        dateRangeText = fullMonthAndYearDate<string>(month, year)
         break
       }
       case 'week': {
@@ -70,7 +71,7 @@ export const CalendarHeader = () => {
         break
       }
       default:
-        dateRangeText = `${year}-${month}-${date}`
+        dateRangeText = `${date}/${month}/${year}`
     }
 
     setSelectedDateRangeText(dateRangeText)
