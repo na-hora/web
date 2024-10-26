@@ -14,7 +14,7 @@ import Calendar from '@toast-ui/react-calendar'
 import { notification } from 'antd'
 import { addMinutes } from 'date-fns'
 import { parseCookies } from 'nookies'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAppointmentsContext } from './contexts/appointments-provider'
 type ViewType = 'month' | 'week' | 'day'
 
@@ -88,11 +88,6 @@ export const Appointments = () => {
       placement: 'bottomRight',
     })
   }
-
-  const getCallInstance = useCallback(
-    () => calendarRef.current?.getInstance?.(),
-    [],
-  )
 
   useEffect(() => {
     const eventSource = new EventSource(

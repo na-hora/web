@@ -24,3 +24,21 @@ export function subtractDate(d: TZDate, steps: number) {
 
   return date
 }
+
+export function convertDateToISOString(dateStr: string) {
+  const [day, month, year] = dateStr.split('/')
+
+  const date = new Date(`${year}-${month}-${day}T00:00:00`)
+
+  const timeZoneOffset = date.getTimezoneOffset()
+  const offsetHours = String(
+    Math.abs(Math.floor(timeZoneOffset / 60)),
+  ).padStart(2, '0')
+  const offsetMinutes = String(Math.abs(timeZoneOffset % 60)).padStart(2, '0')
+  const sign = timeZoneOffset > 0 ? '-' : '+'
+
+  const isoStringWithTimezone =
+    date.toISOString().slice(0, -5) + `${sign}${offsetHours}:${offsetMinutes}`
+
+  return isoStringWithTimezone
+}
