@@ -1,15 +1,14 @@
+import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import { Button, Form, Input, Modal } from 'antd'
 
-type Props = {
-  isOpen: boolean
-  setIsOpen: (open: boolean) => void
-  dates: any
-}
-export const CreateAppointmentModal = ({ isOpen, setIsOpen, dates }: Props) => {
-  console.log('dates: ', dates)
-  console.log('dates: ', new Date(dates.start).toLocaleDateString('pt-BR'))
+export const CreateAppointmentModal = () => {
+  const {
+    isCreateAppointmentModalOpen,
+    setIsCreateAppointmentModalOpen,
+    selectedDateFromCalendar,
+  } = useAppointmentsContext()
 
-  const formatDate = (date) => {
+  const formatDate = (date: string) => {
     const data = new Date(date)
 
     const dia = String(data.getUTCDate()).padStart(2, '0')
@@ -30,10 +29,14 @@ export const CreateAppointmentModal = ({ isOpen, setIsOpen, dates }: Props) => {
   return (
     <Modal
       title='Agendamento'
-      open={isOpen}
+      open={isCreateAppointmentModalOpen}
+      onCancel={() => setIsCreateAppointmentModalOpen(false)}
       centered
       footer={[
-        <Button key='back' onClick={() => setIsOpen(false)}>
+        <Button
+          key='back'
+          onClick={() => setIsCreateAppointmentModalOpen(false)}
+        >
           Cancelar
         </Button>,
         <Button key='submit' type='primary' onClick={submitForm}>
@@ -48,7 +51,10 @@ export const CreateAppointmentModal = ({ isOpen, setIsOpen, dates }: Props) => {
           rules={[{ required: true, message: 'Cidade obrigatória' }]}
           required
         >
-          <Input disabled defaultValue={formatDate(dates.start)} />
+          <Input
+            disabled
+            defaultValue={formatDate(selectedDateFromCalendar.start)}
+          />
         </Form.Item>
 
         <Form.Item
@@ -57,7 +63,10 @@ export const CreateAppointmentModal = ({ isOpen, setIsOpen, dates }: Props) => {
           rules={[{ required: true, message: 'Cidade obrigatória' }]}
           required
         >
-          <Input disabled defaultValue={formatDate(dates.end)} />
+          <Input
+            disabled
+            defaultValue={formatDate(selectedDateFromCalendar.end)}
+          />
         </Form.Item>
       </Form>
     </Modal>
