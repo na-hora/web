@@ -12,6 +12,8 @@ export type Params = {
   isCreateAppointmentModalOpen: boolean
   setIsCreateAppointmentModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   calendarRef: React.RefObject<typeof Calendar>
+  petServiceIdFilter: string
+  setPetServiceIdFilter: React.Dispatch<React.SetStateAction<string>>
 }
 
 type ViewType = 'month' | 'week' | 'day'
@@ -27,6 +29,7 @@ export const AppointmentsProvider: React.FC<{
     useState<TZDate>(null)
   const [isCreateAppointmentModalOpen, setIsCreateAppointmentModalOpen] =
     useState(false)
+  const [petServiceIdFilter, setPetServiceIdFilter] = useState('')
 
   const calendarRef = useRef<typeof Calendar>(null)
 
@@ -43,6 +46,8 @@ export const AppointmentsProvider: React.FC<{
           isCreateAppointmentModalOpen,
           setIsCreateAppointmentModalOpen,
           calendarRef,
+          petServiceIdFilter,
+          setPetServiceIdFilter,
         } as Params
       }
     >

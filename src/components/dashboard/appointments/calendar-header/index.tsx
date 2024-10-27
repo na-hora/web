@@ -21,13 +21,27 @@ const viewModeOptions = [
   },
 ]
 
-export const CalendarHeader = () => {
+type FormattedServices = {
+  id: string
+  name: string
+  backgroundColor: string
+  borderColor: string
+  dragBackgroundColor: string
+}[]
+
+type Props = {
+  services: FormattedServices
+}
+
+export const CalendarHeader = ({ services }: Props) => {
   const {
     selectedDateRangeText,
     setSelectedDateRangeText,
     selectedView,
     setSelectedView,
     calendarRef,
+    petServiceIdFilter,
+    setPetServiceIdFilter,
   } = useAppointmentsContext()
   const getCallInstance = useCallback(
     () => calendarRef.current?.getInstance?.(),
@@ -97,6 +111,15 @@ export const CalendarHeader = () => {
     updateRenderRangeText()
   }, [selectedView, updateRenderRangeText])
 
+  const petServiceFilter = (id: string) => {
+    if (id === petServiceIdFilter) {
+      setPetServiceIdFilter('')
+      return
+    }
+
+    setPetServiceIdFilter(id)
+  }
+
   return (
     <Row align='middle' style={{ marginBottom: 16, gap: 10 }}>
       <Select
@@ -124,6 +147,29 @@ export const CalendarHeader = () => {
       <Button data-action='move-next' onClick={onClickNavi}>
         <RightOutlined />
       </Button>
+
+      {services.map(({ id, name, backgroundColor }) => (
+        <Button
+          key={name}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            borderColor: `${petServiceIdFilter === id ? '#03fc24' : ''}`,
+          }}
+          onClick={() => petServiceFilter(id)}
+        >
+          <span>{name}</span>
+          <div
+            style={{
+              backgroundColor,
+              height: '20px',
+              width: '20px',
+              borderRadius: '50%',
+            }}
+          ></div>
+        </Button>
+      ))}
     </Row>
   )
 }
