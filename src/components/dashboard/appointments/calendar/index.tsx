@@ -1,45 +1,27 @@
 import { Appointment } from '@/hooks/na-hora/appointments/types/load'
 import { useLoadAppointments } from '@/hooks/na-hora/appointments/use-load-appointments'
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
-import type {
-  EventObject,
-  ExternalEventTypes,
-  Options,
-} from '@toast-ui/calendar'
-import '@toast-ui/calendar/dist/toastui-calendar.min.css' // Stylesheet for calendar
+import type { EventObject, ExternalEventTypes } from '@toast-ui/calendar'
+import '@toast-ui/calendar/dist/toastui-calendar.min.css'
 import Calendar from '@toast-ui/react-calendar'
 import { notification, theme } from 'antd'
 import { addMinutes } from 'date-fns'
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 
-// type ViewType = 'month' | 'week' | 'day'
+type FormattedServices = {
+  id: string
+  name: string
+  backgroundColor: string
+  borderColor: string
+  dragBackgroundColor: string
+}[]
 
-const initialCalendars: Options['calendars'] = [
-  {
-    id: '0',
-    name: 'Banho',
-    backgroundColor: '#9e5fff',
-    borderColor: '#9e5fff',
-    dragBackgroundColor: '#9e5fff',
-  },
-  {
-    id: '1',
-    name: 'Tosa',
-    backgroundColor: '#00a9ff',
-    borderColor: '#00a9ff',
-    dragBackgroundColor: '#00a9ff',
-  },
-  {
-    id: '2',
-    name: 'Banho e Tosa',
-    backgroundColor: '#ff6b6b',
-    borderColor: '#ff6b6b',
-    dragBackgroundColor: '#ff6b6b',
-  },
-]
+type Props = {
+  services: FormattedServices
+}
 
-export const AppointmentCalendar = () => {
+export const AppointmentCalendar = ({ services }: Props) => {
   const [appointments, setAppointments] = useState<Partial<EventObject>[]>([])
   const [api, contextHolder] = notification.useNotification()
 
@@ -48,13 +30,14 @@ export const AppointmentCalendar = () => {
     setSelectedDateFromCalendar,
     setIsCreateAppointmentModalOpen,
     calendarRef,
+    petServiceIdFilter,
   } = useAppointmentsContext()
   const { data: initialAppointments } = useLoadAppointments()
 
   const formatAppointment = (appointment: Appointment) => {
     return {
       id: appointment.id,
-      calendarId: '1',
+      calendarId: `${appointment.serviceName === 'banho' ? 1 : 2}`, // TODO
       title: appointment.serviceName,
       category: 'time',
       isReadOnly: false,
@@ -115,6 +98,14 @@ export const AppointmentCalendar = () => {
     setIsCreateAppointmentModalOpen(true)
   }
 
+  const filterAppointments = () => {
+    if (petServiceIdFilter === '') return appointments
+
+    return appointments.filter((appointment) => {
+      return appointment.calendarId === petServiceIdFilter
+    })
+  }
+
   return (
     <>
       {contextHolder}
@@ -122,9 +113,9 @@ export const AppointmentCalendar = () => {
       <Calendar
         ref={calendarRef}
         height='60vh'
-        calendars={initialCalendars}
+        calendars={services}
         month={{ startDayOfWeek: 1 }}
-        events={appointments}
+        events={filterAppointments()}
         template={{
           timegridDisplayPrimaryTime: function ({ time }: any) {
             return `${time.getHours()}h`
