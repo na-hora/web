@@ -47,7 +47,7 @@ export const DashboardServices = () => {
             }}
           />
 
-          <h2>Serviços disponíveis</h2>
+          {/* <h2>Serviços disponíveis</h2> */}
           <List
             size='large'
             dataSource={services}
