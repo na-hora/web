@@ -1,14 +1,20 @@
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { useCreatePetType } from '@/hooks/na-hora/pet-type/use-create-pet-type'
+import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import { Button, Form, Input, List, Modal, Popconfirm, Tooltip } from 'antd'
+import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 
 export const AnimalsTab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { triggerAlert } = useGlobalAlertContext()
+  const companyCookie = parseCookies()['inf@na-hora']
+  const { id: companyId } = JSON.parse(companyCookie)
 
   const [form] = Form.useForm()
+
+  const { data: petTypes } = useLoadPetTypes(companyId)
 
   const {
     mutate: createPetTypeMutation,
@@ -52,8 +58,8 @@ export const AnimalsTab = () => {
       </Button>
 
       <List
-        // dataSource={services}
-        renderItem={() => (
+        dataSource={petTypes}
+        renderItem={(service) => (
           <List.Item
             actions={[
               <Popconfirm
@@ -66,8 +72,7 @@ export const AnimalsTab = () => {
               </Popconfirm>,
             ]}
           >
-            {/* {service.name} */}
-            eita
+            {service.name}
           </List.Item>
         )}
       />
