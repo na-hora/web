@@ -1,4 +1,3 @@
-import { Breadcrumbs } from '@/components/dashboard/breadcrumb'
 import { NavbarDashboard } from '@/components/dashboard/navbar'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Layout, theme } from 'antd'
@@ -18,7 +17,6 @@ export const Dashboard = () => {
         <Layout>
           <Sidebar />
           <Layout style={{ padding: '0 24px 24px' }}>
-            <Breadcrumbs />
             <Content
               style={{
                 padding: 24,
