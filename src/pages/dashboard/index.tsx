@@ -20,7 +20,7 @@ export const Dashboard = () => {
             <Content
               style={{
                 padding: 24,
-                margin: 0,
+                margin: 20,
                 minHeight: 280,
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
