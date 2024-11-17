@@ -1,8 +1,18 @@
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { useCreatePetType } from '@/hooks/na-hora/pet-type/use-create-pet-type'
+import { useDeletePetType } from '@/hooks/na-hora/pet-type/use-delete-pet-type'
 import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
-import { Button, Form, Input, List, Modal, Popconfirm, Tooltip } from 'antd'
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  List,
+  Modal,
+  Popconfirm,
+  Tooltip,
+} from 'antd'
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 
@@ -22,6 +32,14 @@ export const AnimalsTab = () => {
     isError,
   } = useCreatePetType()
 
+  const { mutate: deletePetTypeMutation } = useDeletePetType()
+
+  const deletePetType = (petServiceId: number) => {
+    deletePetTypeMutation({
+      dynamicRoute: petServiceId.toString(),
+    })
+  }
+
   const createPetType = () => {
     form.validateFields().then((values) => {
       createPetTypeMutation({
@@ -39,6 +57,8 @@ export const AnimalsTab = () => {
         message: 'Animal cadastrado com sucesso',
         type: 'success',
       })
+
+      form.resetFields()
     }
 
     if (isError) {
@@ -57,25 +77,29 @@ export const AnimalsTab = () => {
         Cadastrar novo animal <PlusCircleOutlined />
       </Button>
 
-      <List
-        dataSource={petTypes}
-        renderItem={(service) => (
-          <List.Item
-            actions={[
-              <Popconfirm
-                title='Tem certeza que deseja excluir esse serviço?'
-                // onConfirm={() => deletePetService(service.id)}
-              >
-                <Tooltip title='Excluir'>
-                  <DeleteOutlined />
-                </Tooltip>
-              </Popconfirm>,
-            ]}
-          >
-            {service.name}
-          </List.Item>
-        )}
-      />
+      <Col span={8}>
+        <h3>Animais cadastrados</h3>
+        <List
+          dataSource={petTypes}
+          renderItem={(service) => (
+            <List.Item
+              actions={[
+                <Button type='link'>Editar</Button>,
+                <Popconfirm
+                  title='Tem certeza que deseja excluir esse serviço?'
+                  onConfirm={() => deletePetType(service.id)}
+                >
+                  <Tooltip title='Excluir'>
+                    <DeleteOutlined />
+                  </Tooltip>
+                </Popconfirm>,
+              ]}
+            >
+              {service.name}
+            </List.Item>
+          )}
+        />
+      </Col>
 
       <Modal
         title='Cadastrar animal'
