@@ -1,8 +1,10 @@
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
+import { PetType } from '@/hooks/na-hora/pet-type/types/load.type'
 import { useCreatePetType } from '@/hooks/na-hora/pet-type/use-create-pet-type'
 import { useDeletePetType } from '@/hooks/na-hora/pet-type/use-delete-pet-type'
 import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
-import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
+import { useUpdatePetType } from '@/hooks/na-hora/pet-type/use-update-pet-type'
+import { PlusCircleOutlined } from '@ant-design/icons'
 import {
   Button,
   Col,
@@ -11,27 +13,38 @@ import {
   List,
   Modal,
   Popconfirm,
-  Tooltip,
+  Row,
+  Typography,
 } from 'antd'
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 
 export const AnimalsTab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [currentPetType, setCurrentPetType] = useState<PetType | null>(null)
   const { triggerAlert } = useGlobalAlertContext()
   const companyCookie = parseCookies()['inf@na-hora']
   const { id: companyId } = JSON.parse(companyCookie)
 
   const [form] = Form.useForm()
 
-  const { data: petTypes } = useLoadPetTypes(companyId)
+  const { data: petTypes, isLoading: petTypesLoading } =
+    useLoadPetTypes(companyId)
 
   const {
     mutate: createPetTypeMutation,
-    isSuccess,
-    isError,
+    isPending: createPending,
+    isSuccess: createSuccess,
+    isError: createError,
   } = useCreatePetType()
 
+  const {
+    mutate: updatePetTypeMutation,
+    isPending: updatePending,
+    isSuccess: updateSuccess,
+    isError: updateError,
+  } = useUpdatePetType()
   const { mutate: deletePetTypeMutation } = useDeletePetType()
 
   const deletePetType = (petServiceId: number) => {
@@ -50,48 +63,92 @@ export const AnimalsTab = () => {
     })
   }
 
+  const updatePetType = () => {
+    form.validateFields().then((values) => {
+      updatePetTypeMutation({
+        body: {
+          name: values.name,
+        },
+        dynamicRoute: currentPetType?.id.toString(),
+      })
+    })
+  }
+
+  const handleEdit = (petType: PetType) => {
+    setCurrentPetType(petType)
+    setIsEditMode(true)
+    form.setFieldsValue({
+      name: petType.name,
+    })
+    setIsModalOpen(true)
+  }
+
+  const handleCreate = () => {
+    setIsEditMode(false)
+    setCurrentPetType(null)
+    form.resetFields()
+    setIsModalOpen(true)
+  }
+
   useEffect(() => {
-    if (isSuccess) {
+    if (createSuccess || updateSuccess) {
       setIsModalOpen(false)
       triggerAlert({
-        message: 'Animal cadastrado com sucesso',
+        message: isEditMode
+          ? 'Animal atualizado com sucesso'
+          : 'Animal cadastrado com sucesso',
         type: 'success',
       })
-
       form.resetFields()
     }
 
-    if (isError) {
+    if (createError || updateError) {
       triggerAlert({
         message: 'Ocorreu um erro inesperado',
         type: 'error',
       })
     }
-  }, [isSuccess, isError])
+  }, [createSuccess, createError, updateSuccess, updateError])
+
+  const handleOk = () => {
+    if (isEditMode) {
+      updatePetType()
+    } else {
+      createPetType()
+    }
+  }
+
+  const onCloseModal = () => {
+    setIsModalOpen(false)
+    form.resetFields()
+  }
 
   return (
-    <>
-      <p>Cadastre os animais que serão atendidos</p>
+    <Col span={8}>
+      <Row justify='start'>
+        <Button type='primary' onClick={handleCreate}>
+          Cadastrar novo pet <PlusCircleOutlined />
+        </Button>
+      </Row>
 
-      <Button type='primary' onClick={() => setIsModalOpen(true)}>
-        Cadastrar novo animal <PlusCircleOutlined />
-      </Button>
-
-      <Col span={8}>
-        <h3>Animais cadastrados</h3>
+      <Col span={24}>
+        <Typography.Title level={4}>Pets cadastrados</Typography.Title>
         <List
           dataSource={petTypes}
+          loading={petTypesLoading}
           renderItem={(service) => (
             <List.Item
               actions={[
-                <Button type='link'>Editar</Button>,
+                <Button type='link' onClick={() => handleEdit(service)}>
+                  Editar
+                </Button>,
                 <Popconfirm
                   title='Tem certeza que deseja excluir esse serviço?'
                   onConfirm={() => deletePetType(service.id)}
                 >
-                  <Tooltip title='Excluir'>
-                    <DeleteOutlined />
-                  </Tooltip>
+                  <Button type='link' danger>
+                    Excluir
+                  </Button>
                 </Popconfirm>,
               ]}
             >
@@ -102,11 +159,22 @@ export const AnimalsTab = () => {
       </Col>
 
       <Modal
-        title='Cadastrar animal'
+        title={isEditMode ? 'Editar pet' : 'Cadastrar pet'}
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCancel={() => setIsModalOpen(false)}
-        onOk={createPetType}
+        onCancel={onCloseModal}
+        footer={[
+          <Button key='back' onClick={onCloseModal}>
+            Cancelar
+          </Button>,
+          <Button
+            key='submit'
+            type='primary'
+            loading={createPending || updatePending}
+            onClick={handleOk}
+          >
+            {isEditMode ? 'Atualizar' : 'Cadastrar'}
+          </Button>,
+        ]}
       >
         <Form form={form}>
           <Form.Item label='Nome' required name='name'>
@@ -118,6 +186,6 @@ export const AnimalsTab = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </Col>
   )
 }
