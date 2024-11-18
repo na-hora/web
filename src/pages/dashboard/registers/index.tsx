@@ -1,6 +1,7 @@
-import { AnimalsTab } from '@/components/dashboard/services/register-tabs/animals'
-import { SizesTab } from '@/components/dashboard/services/register-tabs/sizes'
-import ServicesForm from '@/components/dashboard/services/services-form'
+import { AnimalsTab } from '@/components/dashboard/register/register-tabs/animals'
+import { HairsTab } from '@/components/dashboard/register/register-tabs/hairs'
+import { SizesTab } from '@/components/dashboard/register/register-tabs/sizes'
+import ServicesForm from '@/components/dashboard/register/services-form'
 import { useDeletePetServices } from '@/hooks/na-hora/pet-services/use-delete-pet-services'
 import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
 import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
@@ -15,7 +16,7 @@ import {
   Tooltip,
 } from 'antd'
 
-export const DashboardServices = () => {
+export const DashboardRegisters = () => {
   const { data: services } = useLoadPetServices()
   const { mutate: deletePetServiceMutation } = useDeletePetServices()
 
@@ -31,8 +32,8 @@ export const DashboardServices = () => {
         <Col>
           <h1 style={{ marginBottom: '4px' }}>Cadastro</h1>
           <span>
-            Gerencie aqui os serviços da sua empresa que serão disponibilizados
-            ao público
+            Gerencie aqui os dados da sua empresa que serão disponibilizados ao
+            público
           </span>
         </Col>
       </Row>
@@ -47,9 +48,7 @@ export const DashboardServices = () => {
         </Tabs.TabPane>
 
         <Tabs.TabPane tab='Pelagens' key='3'>
-          <p>
-            Cadastre os tipos de pelagem que serão atendidos para cada animal
-          </p>
+          <HairsTab />
         </Tabs.TabPane>
 
         <Tabs.TabPane tab='Serviços' key='4'>
