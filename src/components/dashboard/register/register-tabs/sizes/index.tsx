@@ -5,7 +5,11 @@ import { useDeletePetSize } from '@/hooks/na-hora/pet-size/use-delete-pet-size'
 import { useLoadPetSizes } from '@/hooks/na-hora/pet-size/use-load-pet-sizes'
 import { useUpdatePetSize } from '@/hooks/na-hora/pet-size/use-update-pet-size'
 import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
-import { PlusCircleOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons'
 import {
   Button,
   Col,
@@ -179,6 +183,7 @@ export const SizesTab = () => {
                             <Button
                               type='link'
                               onClick={() => handleEdit(size)}
+                              icon={<EditOutlined />}
                             >
                               Editar
                             </Button>,
@@ -186,7 +191,11 @@ export const SizesTab = () => {
                               title='Tem certeza que deseja excluir esse porte?'
                               onConfirm={() => deletePetSize(size.id)}
                             >
-                              <Button type='link' danger>
+                              <Button
+                                type='link'
+                                danger
+                                icon={<DeleteOutlined />}
+                              >
                                 Excluir
                               </Button>
                             </Popconfirm>,
