@@ -6,7 +6,11 @@ import { useLoadPetHairs } from '@/hooks/na-hora/pet-hair/use-load-pet-hairs'
 
 import { useUpdatePetHair } from '@/hooks/na-hora/pet-hair/use-update-pet-hair'
 import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
-import { PlusCircleOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons'
 import {
   Button,
   Col,
@@ -180,6 +184,7 @@ export const HairsTab = () => {
                             <Button
                               type='link'
                               onClick={() => handleEdit(hair)}
+                              icon={<EditOutlined />}
                             >
                               Editar
                             </Button>,
@@ -187,7 +192,11 @@ export const HairsTab = () => {
                               title='Tem certeza que deseja excluir essa pelagem?'
                               onConfirm={() => deletePetHair(hair.id)}
                             >
-                              <Button type='link' danger>
+                              <Button
+                                type='link'
+                                danger
+                                icon={<DeleteOutlined />}
+                              >
                                 Excluir
                               </Button>
                             </Popconfirm>,

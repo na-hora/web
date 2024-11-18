@@ -4,7 +4,11 @@ import { useCreatePetType } from '@/hooks/na-hora/pet-type/use-create-pet-type'
 import { useDeletePetType } from '@/hooks/na-hora/pet-type/use-delete-pet-type'
 import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
 import { useUpdatePetType } from '@/hooks/na-hora/pet-type/use-update-pet-type'
-import { PlusCircleOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons'
 import {
   Button,
   Col,
@@ -148,14 +152,18 @@ export const AnimalsTab = () => {
               renderItem={(animal) => (
                 <List.Item
                   actions={[
-                    <Button type='link' onClick={() => handleEdit(animal)}>
+                    <Button
+                      type='link'
+                      onClick={() => handleEdit(animal)}
+                      icon={<EditOutlined />}
+                    >
                       Editar
                     </Button>,
                     <Popconfirm
                       title='Tem certeza que deseja excluir esse tipo de animal?'
                       onConfirm={() => deletePetType(animal.id)}
                     >
-                      <Button type='link' danger>
+                      <Button type='link' danger icon={<DeleteOutlined />}>
                         Excluir
                       </Button>
                     </Popconfirm>,
