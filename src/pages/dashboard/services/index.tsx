@@ -1,4 +1,5 @@
 import { AnimalsTab } from '@/components/dashboard/services/register-tabs/animals'
+import { SizesTab } from '@/components/dashboard/services/register-tabs/sizes'
 import ServicesForm from '@/components/dashboard/services/services-form'
 import { useDeletePetServices } from '@/hooks/na-hora/pet-services/use-delete-pet-services'
 import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
@@ -13,9 +14,6 @@ import {
   Tabs,
   Tooltip,
 } from 'antd'
-// const ServicesForm = lazy(
-//   () => import('@/components/dashboard/services/services-form'),
-// )
 
 export const DashboardServices = () => {
   const { data: services } = useLoadPetServices()
@@ -40,12 +38,12 @@ export const DashboardServices = () => {
       </Row>
 
       <Tabs defaultActiveKey='1'>
-        <Tabs.TabPane tab='Animais' key='1'>
+        <Tabs.TabPane tab='Pets' key='1'>
           <AnimalsTab />
         </Tabs.TabPane>
 
         <Tabs.TabPane tab='Portes' key='2'>
-          <p>Cadastre os portes que serão atendidos para cada animal</p>
+          <SizesTab />
         </Tabs.TabPane>
 
         <Tabs.TabPane tab='Pelagens' key='3'>
