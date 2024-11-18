@@ -6,7 +6,7 @@ import { RegisterCompany } from '@/pages/company/register'
 import { SuccessCompanyPage } from '@/pages/company/register-success'
 import { Dashboard } from '@/pages/dashboard'
 import { DashboardAppointments } from '@/pages/dashboard/appointments'
-import { DashboardServices } from '@/pages/dashboard/services'
+import { DashboardRegisters } from '@/pages/dashboard/registers'
 import { NotFoundPage } from '@/pages/errors/not-found'
 import { Home } from '@/pages/home'
 import { createBrowserRouter } from 'react-router-dom'
@@ -61,8 +61,8 @@ export const router = createBrowserRouter([
         element: <DashboardAppointments />,
       },
       {
-        path: '/admin/dashboard/services',
-        element: <DashboardServices />,
+        path: '/admin/dashboard/registers',
+        element: <DashboardRegisters />,
       },
       {
         path: '/admin/dashboard/company',

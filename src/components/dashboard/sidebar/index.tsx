@@ -16,7 +16,7 @@ const items = [
     label: 'Agenda',
     link: 'appointments',
   },
-  { key: '2', icon: <BarsOutlined />, label: 'Serviços', link: 'services' },
+  { key: '2', icon: <BarsOutlined />, label: 'Cadastros', link: 'registers' },
   { key: '3', icon: <ProfileOutlined />, label: 'Empresa', link: 'company' },
   {
     key: '4',

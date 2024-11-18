@@ -1,8 +1,10 @@
 import { Button, Popconfirm } from 'antd'
 import { Header } from 'antd/es/layout/layout'
-import { destroyCookie } from 'nookies'
+import { destroyCookie, parseCookies } from 'nookies'
 
 export const NavbarDashboard = () => {
+  const companyCookie = parseCookies()['inf@na-hora']
+  const { fantasyName: companyName } = JSON.parse(companyCookie)
   const companyDashboardLogout = () => {
     destroyCookie(null, 'access-token@na-hora', { path: '/' })
     destroyCookie(null, 'inf@na-hora', { path: '/' })
@@ -24,7 +26,7 @@ export const NavbarDashboard = () => {
       >
         <img src='/logo.svg' alt='' style={{ width: '50px' }} />
       </div>
-      <h2 style={{ color: '#ffffff98' }}>Na Hora</h2>
+      <h2 style={{ color: '#ffffff98' }}>{companyName}</h2>
       <Popconfirm
         title='Tem certeza que deseja sair?'
         okText='Sim'
