@@ -161,38 +161,43 @@ export const SizesTab = () => {
                 flexDirection: 'column',
               }}
             >
-              {petTypes?.map((petType) => (
-                <Collapse.Panel header={petType.name} key={petType.id}>
-                  <List
-                    locale={{
-                      emptyText: 'Nenhum porte cadastrado para esse pet',
-                    }}
-                    dataSource={petSizes?.filter(
-                      (size) => size.companyPetTypeId === petType.id,
-                    )}
-                    loading={petSizesLoading}
-                    renderItem={(size) => (
-                      <List.Item
-                        actions={[
-                          <Button type='link' onClick={() => handleEdit(size)}>
-                            Editar
-                          </Button>,
-                          <Popconfirm
-                            title='Tem certeza que deseja excluir esse porte?'
-                            onConfirm={() => deletePetSize(size.id)}
-                          >
-                            <Button type='link' danger>
-                              Excluir
-                            </Button>
-                          </Popconfirm>,
-                        ]}
-                      >
-                        {size.name}
-                      </List.Item>
-                    )}
-                  />
-                </Collapse.Panel>
-              ))}
+              {petTypes
+                ?.sort((a, b) => a.name.localeCompare(b.name))
+                ?.map((petType) => (
+                  <Collapse.Panel header={petType.name} key={petType.id}>
+                    <List
+                      locale={{
+                        emptyText: 'Nenhum porte cadastrado para esse pet',
+                      }}
+                      dataSource={petSizes?.filter(
+                        (size) => size.companyPetTypeId === petType.id,
+                      )}
+                      loading={petSizesLoading}
+                      renderItem={(size) => (
+                        <List.Item
+                          actions={[
+                            <Button
+                              type='link'
+                              onClick={() => handleEdit(size)}
+                            >
+                              Editar
+                            </Button>,
+                            <Popconfirm
+                              title='Tem certeza que deseja excluir esse porte?'
+                              onConfirm={() => deletePetSize(size.id)}
+                            >
+                              <Button type='link' danger>
+                                Excluir
+                              </Button>
+                            </Popconfirm>,
+                          ]}
+                        >
+                          {size.name}
+                        </List.Item>
+                      )}
+                    />
+                  </Collapse.Panel>
+                ))}
             </Collapse>
           </Col>
 
