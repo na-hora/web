@@ -45,11 +45,15 @@ export const AnimalsTab = () => {
     isSuccess: updateSuccess,
     isError: updateError,
   } = useUpdatePetType()
-  const { mutate: deletePetTypeMutation } = useDeletePetType()
+  const {
+    mutate: deletePetTypeMutation,
+    isSuccess: deleteSuccess,
+    isError: deleteError,
+  } = useDeletePetType()
 
-  const deletePetType = (petServiceId: number) => {
+  const deletePetType = (petTypeId: number) => {
     deletePetTypeMutation({
-      dynamicRoute: petServiceId.toString(),
+      dynamicRoute: petTypeId.toString(),
     })
   }
 
@@ -91,24 +95,24 @@ export const AnimalsTab = () => {
   }
 
   useEffect(() => {
-    if (createSuccess || updateSuccess) {
+    if (createSuccess || updateSuccess || deleteSuccess) {
       setIsModalOpen(false)
       triggerAlert({
-        message: isEditMode
-          ? 'Animal atualizado com sucesso'
-          : 'Animal cadastrado com sucesso',
+        message: 'Operação realizada com sucesso',
         type: 'success',
       })
       form.resetFields()
     }
+  }, [createSuccess, updateSuccess, deleteSuccess])
 
-    if (createError || updateError) {
+  useEffect(() => {
+    if (createError || updateError || deleteError) {
       triggerAlert({
-        message: 'Ocorreu um erro inesperado',
+        message: 'Ocorreu um erro inesperado na operação',
         type: 'error',
       })
     }
-  }, [createSuccess, createError, updateSuccess, updateError])
+  }, [createError, updateError, deleteError])
 
   const handleOk = () => {
     if (isEditMode) {
@@ -124,68 +128,75 @@ export const AnimalsTab = () => {
   }
 
   return (
-    <Col span={8}>
-      <Row justify='start'>
-        <Button type='primary' onClick={handleCreate}>
-          Cadastrar novo pet <PlusCircleOutlined />
-        </Button>
-      </Row>
+    <Col span={24}>
+      <Row justify='center'>
+        <Col span={16}>
+          <Col span={24}>
+            <Row justify='space-between' align='middle'>
+              <Typography.Title level={4} style={{ marginBottom: '24px' }}>
+                Pets cadastrados
+              </Typography.Title>
 
-      <Col span={24}>
-        <Typography.Title level={4}>Pets cadastrados</Typography.Title>
-        <List
-          dataSource={petTypes}
-          loading={petTypesLoading}
-          renderItem={(service) => (
-            <List.Item
-              actions={[
-                <Button type='link' onClick={() => handleEdit(service)}>
-                  Editar
-                </Button>,
-                <Popconfirm
-                  title='Tem certeza que deseja excluir esse serviço?'
-                  onConfirm={() => deletePetType(service.id)}
+              <Button type='primary' onClick={handleCreate}>
+                Cadastrar novo pet <PlusCircleOutlined />
+              </Button>
+            </Row>
+            <List
+              locale={{ emptyText: 'Nenhum pet cadastrado' }}
+              dataSource={petTypes}
+              loading={petTypesLoading}
+              renderItem={(animal) => (
+                <List.Item
+                  actions={[
+                    <Button type='link' onClick={() => handleEdit(animal)}>
+                      Editar
+                    </Button>,
+                    <Popconfirm
+                      title='Tem certeza que deseja excluir esse tipo de animal?'
+                      onConfirm={() => deletePetType(animal.id)}
+                    >
+                      <Button type='link' danger>
+                        Excluir
+                      </Button>
+                    </Popconfirm>,
+                  ]}
                 >
-                  <Button type='link' danger>
-                    Excluir
-                  </Button>
-                </Popconfirm>,
-              ]}
-            >
-              {service.name}
-            </List.Item>
-          )}
-        />
-      </Col>
-
-      <Modal
-        title={isEditMode ? 'Editar pet' : 'Cadastrar pet'}
-        open={isModalOpen}
-        onCancel={onCloseModal}
-        footer={[
-          <Button key='back' onClick={onCloseModal}>
-            Cancelar
-          </Button>,
-          <Button
-            key='submit'
-            type='primary'
-            loading={createPending || updatePending}
-            onClick={handleOk}
-          >
-            {isEditMode ? 'Atualizar' : 'Cadastrar'}
-          </Button>,
-        ]}
-      >
-        <Form form={form}>
-          <Form.Item label='Nome' required name='name'>
-            <Input
-              name='name'
-              type='text'
-              placeholder='Digite o nome do animal. Ex: Cachorro'
+                  {animal.name}
+                </List.Item>
+              )}
             />
-          </Form.Item>
-        </Form>
-      </Modal>
+          </Col>
+
+          <Modal
+            title={isEditMode ? 'Editar pet' : 'Cadastrar pet'}
+            open={isModalOpen}
+            onCancel={onCloseModal}
+            footer={[
+              <Button key='back' onClick={onCloseModal}>
+                Cancelar
+              </Button>,
+              <Button
+                key='submit'
+                type='primary'
+                loading={createPending || updatePending}
+                onClick={handleOk}
+              >
+                {isEditMode ? 'Atualizar' : 'Cadastrar'}
+              </Button>,
+            ]}
+          >
+            <Form form={form} layout='vertical'>
+              <Form.Item label='Nome' required name='name'>
+                <Input
+                  name='name'
+                  type='text'
+                  placeholder='Digite o nome do pet. Ex: Cachorro'
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
+        </Col>
+      </Row>
     </Col>
   )
 }
