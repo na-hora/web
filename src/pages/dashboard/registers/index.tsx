@@ -1,30 +1,20 @@
 import { AnimalsTab } from '@/components/dashboard/register/register-tabs/animals'
 import { HairsTab } from '@/components/dashboard/register/register-tabs/hairs'
+import { ServicesTab } from '@/components/dashboard/register/register-tabs/services'
 import { SizesTab } from '@/components/dashboard/register/register-tabs/sizes'
-import ServicesForm from '@/components/dashboard/register/services-form'
-import { useDeletePetServices } from '@/hooks/na-hora/pet-services/use-delete-pet-services'
-import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
-import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
-import {
-  Button,
-  Col,
-  Collapse,
-  List,
-  Popconfirm,
-  Row,
-  Tabs,
-  Tooltip,
-} from 'antd'
+// import { useDeletePetServices } from '@/hooks/na-hora/pet-services/use-delete-pet-services'
+// import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
+import { Col, Row, Tabs } from 'antd'
 
 export const DashboardRegisters = () => {
-  const { data: services } = useLoadPetServices()
-  const { mutate: deletePetServiceMutation } = useDeletePetServices()
+  // const { data: services } = useLoadPetServices()
+  // const { mutate: deletePetServiceMutation } = useDeletePetServices()
 
-  const deletePetService = (petServiceId: number) => {
-    deletePetServiceMutation({
-      dynamicRoute: petServiceId.toString(),
-    })
-  }
+  // const deletePetService = (petServiceId: number) => {
+  //   deletePetServiceMutation({
+  //     dynamicRoute: petServiceId.toString(),
+  //   })
+  // }
 
   return (
     <>
@@ -52,7 +42,8 @@ export const DashboardRegisters = () => {
         </Tabs.TabPane>
 
         <Tabs.TabPane tab='Serviços' key='4'>
-          <p>Cadastre os serviços oferecidos</p>
+          <ServicesTab />
+          {/* <p>Cadastre os serviços oferecidos</p>
           <Row justify='center'>
             <Col span={16}>
               <Collapse
@@ -137,7 +128,7 @@ export const DashboardRegisters = () => {
                 )}
               />
             </Col>
-          </Row>
+          </Row> */}
         </Tabs.TabPane>
       </Tabs>
     </>

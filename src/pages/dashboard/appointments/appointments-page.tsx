@@ -5,6 +5,7 @@ import { LoadPetServicesResponse } from '@/hooks/na-hora/pet-services/types/list
 import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
 import { colors } from '@/utils/colors'
 import '@toast-ui/calendar/dist/toastui-calendar.min.css'
+import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 import { useAppointmentsContext } from './contexts/appointments-provider'
 
@@ -21,8 +22,10 @@ export const Appointments = () => {
   const [formattedServices, setFormattedServices] = useState<FormattedServices>(
     [],
   )
+  const companyCookie = parseCookies()['inf@na-hora']
+  const { id: companyId } = JSON.parse(companyCookie)
 
-  const { data: petServices } = useLoadPetServices()
+  const { data: petServices } = useLoadPetServices(companyId)
 
   const formatServices = (services: LoadPetServicesResponse) => {
     return services.map((service, index) => {

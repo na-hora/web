@@ -1,9 +1,8 @@
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
-import { PetType } from '@/hooks/na-hora/pet-type/types/load.type'
-import { useCreatePetType } from '@/hooks/na-hora/pet-type/use-create-pet-type'
-import { useDeletePetType } from '@/hooks/na-hora/pet-type/use-delete-pet-type'
-import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
-import { useUpdatePetType } from '@/hooks/na-hora/pet-type/use-update-pet-type'
+import { useCreatePetServices } from '@/hooks/na-hora/pet-services/use-create-pet-services'
+import { useDeletePetServices } from '@/hooks/na-hora/pet-services/use-delete-pet-services'
+import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
+import { useUpdatePetServices } from '@/hooks/na-hora/pet-services/use-update-pet-services'
 import {
   DeleteOutlined,
   EditOutlined,
@@ -23,77 +22,100 @@ import {
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 
-export const AnimalsTab = () => {
+export const ServicesTab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [currentPetType, setCurrentPetType] = useState<PetType | null>(null)
+  const [currentPetService, setCurrentPetService] = useState<{
+    id: number
+    name: string
+  } | null>(null)
   const { triggerAlert } = useGlobalAlertContext()
   const companyCookie = parseCookies()['inf@na-hora']
   const { id: companyId } = JSON.parse(companyCookie)
 
   const [form] = Form.useForm()
 
-  const { data: petTypes, isLoading: petTypesLoading } =
-    useLoadPetTypes(companyId)
+  const { data: petServices, isLoading: petServicesLoading } =
+    useLoadPetServices(companyId)
 
   const {
-    mutate: createPetTypeMutation,
+    mutate: createPetServiceMutation,
     isPending: createPending,
     isSuccess: createSuccess,
     isError: createError,
-  } = useCreatePetType()
+  } = useCreatePetServices()
 
   const {
-    mutate: updatePetTypeMutation,
+    mutate: updatePetServiceMutation,
     isPending: updatePending,
     isSuccess: updateSuccess,
     isError: updateError,
-  } = useUpdatePetType()
+  } = useUpdatePetServices()
   const {
-    mutate: deletePetTypeMutation,
+    mutate: deletePetServiceMutation,
     isSuccess: deleteSuccess,
     isError: deleteError,
-  } = useDeletePetType()
+  } = useDeletePetServices()
 
-  const deletePetType = (petTypeId: number) => {
-    deletePetTypeMutation({
-      dynamicRoute: petTypeId.toString(),
+  const deletePetService = (petServiceId: number) => {
+    deletePetServiceMutation({
+      dynamicRoute: petServiceId.toString(),
     })
   }
 
-  const createPetType = () => {
+  const createPetService = () => {
     form.validateFields().then((values) => {
-      createPetTypeMutation({
+      createPetServiceMutation({
         body: {
-          name: values.name,
+          // name: values.name,
+          configurations: [
+            {
+              companyPetHairID: 1,
+              companyPetSizeID: 1,
+              executionTime: 10,
+              price: 10,
+            },
+          ],
+          name: 'teste',
+          paralellism: 1,
         },
       })
     })
   }
 
-  const updatePetType = () => {
+  const updatePetService = () => {
     form.validateFields().then((values) => {
-      updatePetTypeMutation({
+      updatePetServiceMutation({
         body: {
-          name: values.name,
+          configurations: [
+            {
+              companyPetHairID: 1,
+              companyPetSizeID: 1,
+              executionTime: 10,
+              price: 10,
+            },
+          ],
+          name: 'teste',
+          paralellism: 1,
         },
-        dynamicRoute: currentPetType?.id.toString(),
+        dynamicRoute: currentPetService?.id.toString(),
       })
     })
   }
 
-  const handleEdit = (petType: PetType) => {
-    setCurrentPetType(petType)
+  const handleEdit = (petService: { id: number; name: string }) => {
+    setCurrentPetService(petService)
     setIsEditMode(true)
     form.setFieldsValue({
-      name: petType.name,
+      name: petService.name,
+      paralellism: 9999,
     })
     setIsModalOpen(true)
   }
 
   const handleCreate = () => {
     setIsEditMode(false)
-    setCurrentPetType(null)
+    setCurrentPetService(null)
     form.resetFields()
     setIsModalOpen(true)
   }
@@ -120,9 +142,9 @@ export const AnimalsTab = () => {
 
   const handleOk = () => {
     if (isEditMode) {
-      updatePetType()
+      updatePetService()
     } else {
-      createPetType()
+      createPetService()
     }
   }
 
@@ -138,17 +160,17 @@ export const AnimalsTab = () => {
           <Col span={24}>
             <Row justify='space-between' align='middle'>
               <Typography.Title level={4} style={{ marginBottom: '24px' }}>
-                Pets cadastrados
+                Serviços cadastrados
               </Typography.Title>
 
               <Button type='primary' onClick={handleCreate}>
-                Cadastrar novo pet <PlusCircleOutlined />
+                Cadastrar novo serviço <PlusCircleOutlined />
               </Button>
             </Row>
             <List
-              locale={{ emptyText: 'Nenhum pet cadastrado' }}
-              dataSource={petTypes}
-              loading={petTypesLoading}
+              locale={{ emptyText: 'Nenhum serviço cadastrado' }}
+              dataSource={petServices}
+              loading={petServicesLoading}
               renderItem={(animal) => (
                 <List.Item
                   actions={[
@@ -160,8 +182,8 @@ export const AnimalsTab = () => {
                       Editar
                     </Button>,
                     <Popconfirm
-                      title='Tem certeza que deseja excluir esse pet?'
-                      onConfirm={() => deletePetType(animal.id)}
+                      title='Tem certeza que deseja excluir esse serviço?'
+                      onConfirm={() => deletePetService(animal.id)}
                     >
                       <Button type='link' danger icon={<DeleteOutlined />}>
                         Excluir
@@ -176,7 +198,7 @@ export const AnimalsTab = () => {
           </Col>
 
           <Modal
-            title={isEditMode ? 'Editar pet' : 'Cadastrar pet'}
+            title={isEditMode ? 'Editar serviço' : 'Cadastrar serviço'}
             open={isModalOpen}
             onCancel={onCloseModal}
             footer={[
@@ -198,7 +220,18 @@ export const AnimalsTab = () => {
                 <Input
                   name='name'
                   type='text'
-                  placeholder='Digite o nome do pet. Ex: Cachorro'
+                  placeholder='Digite o nome do serviço. Ex: Banho'
+                />
+              </Form.Item>
+              <Form.Item
+                label='Atendimentos simultâneos'
+                required
+                name='paralellism'
+              >
+                <Input
+                  name='paralellism'
+                  type='number'
+                  placeholder='Digite a quantidade de atendimentos possíveis simultaneamente.'
                 />
               </Form.Item>
             </Form>
