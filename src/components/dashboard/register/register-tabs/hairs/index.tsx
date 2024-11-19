@@ -72,6 +72,7 @@ export const HairsTab = () => {
       createPetHairMutation({
         body: {
           name: values.name,
+          description: values.description,
           companyPetTypeId: values.petTypeId,
         },
       })
@@ -83,6 +84,7 @@ export const HairsTab = () => {
       updatePetHairMutation({
         body: {
           name: values.name,
+          description: values.description,
           companyPetTypeId: 1,
         },
         dynamicRoute: currentPetHair?.id.toString(),
@@ -95,6 +97,7 @@ export const HairsTab = () => {
     setIsEditMode(true)
     form.setFieldsValue({
       name: petHair.name,
+      description: petHair.description,
       petTypeId: {
         key: petHair.companyPetTypeId,
         label: petHair.companyPetTypeName,
@@ -235,6 +238,13 @@ export const HairsTab = () => {
                   name='name'
                   type='text'
                   placeholder='Digite a pelagem. Ex: Longa'
+                />
+              </Form.Item>
+              <Form.Item label='Descrição' name='description'>
+                <Input
+                  name='description'
+                  type='text'
+                  placeholder='Descreva a pelagem. Ex: Até 5cm'
                 />
               </Form.Item>
               <Form.Item label='Pet' required name='petTypeId'>

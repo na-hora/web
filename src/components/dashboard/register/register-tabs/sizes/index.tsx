@@ -71,6 +71,7 @@ export const SizesTab = () => {
       createPetSizeMutation({
         body: {
           name: values.name,
+          description: values.description,
           companyPetTypeId: values.petTypeId,
         },
       })
@@ -82,6 +83,7 @@ export const SizesTab = () => {
       updatePetSizeMutation({
         body: {
           name: values.name,
+          description: values.description,
           companyPetTypeId: 1,
         },
         dynamicRoute: currentPetSize?.id.toString(),
@@ -94,6 +96,7 @@ export const SizesTab = () => {
     setIsEditMode(true)
     form.setFieldsValue({
       name: petSize.name,
+      description: petSize.description,
       petTypeId: {
         key: petSize.companyPetTypeId,
         label: petSize.companyPetTypeName,
@@ -234,6 +237,13 @@ export const SizesTab = () => {
                   name='name'
                   type='text'
                   placeholder='Digite o porte. Ex: Pequeno'
+                />
+              </Form.Item>
+              <Form.Item label='Descrição' name='description'>
+                <Input
+                  name='description'
+                  type='text'
+                  placeholder='Descreva o porte. Ex: Até 5kg'
                 />
               </Form.Item>
               <Form.Item label='Pet' required name='petTypeId'>
