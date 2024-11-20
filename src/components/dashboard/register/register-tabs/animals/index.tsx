@@ -33,8 +33,11 @@ export const AnimalsTab = () => {
 
   const [form] = Form.useForm()
 
-  const { data: petTypes, isLoading: petTypesLoading } =
-    useLoadPetTypes(companyId)
+  const {
+    data: petTypes,
+    isLoading: petTypesLoading,
+    isRefetching: petTypesRefetching,
+  } = useLoadPetTypes(companyId)
 
   const {
     mutate: createPetTypeMutation,
@@ -148,7 +151,7 @@ export const AnimalsTab = () => {
             <List
               locale={{ emptyText: 'Nenhum pet cadastrado' }}
               dataSource={petTypes}
-              loading={petTypesLoading}
+              loading={petTypesLoading || petTypesRefetching}
               renderItem={(animal) => (
                 <List.Item
                   actions={[
@@ -194,7 +197,11 @@ export const AnimalsTab = () => {
             ]}
           >
             <Form form={form} layout='vertical'>
-              <Form.Item label='Nome' required name='name'>
+              <Form.Item
+                label='Nome'
+                rules={[{ required: true, message: 'Nome obrigatório' }]}
+                name='name'
+              >
                 <Input
                   name='name'
                   type='text'
