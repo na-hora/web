@@ -221,7 +221,13 @@ export const HairsTab = () => {
                             </Popconfirm>,
                           ]}
                         >
-                          {hair.name}
+                          <Col>
+                            <Typography.Text>{hair.name}</Typography.Text>
+                            <br />
+                            <Typography.Text type='secondary'>
+                              {hair.description}
+                            </Typography.Text>
+                          </Col>
                         </List.Item>
                       )}
                     />
