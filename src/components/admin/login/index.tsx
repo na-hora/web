@@ -13,7 +13,7 @@ export const AdminLoginPage: React.FC = () => {
     const accessCookie = parseCookies()['access-token@na-hora']
 
     if (accessCookie) {
-      window.location.href = '/admin/dashboard/home'
+      window.location.href = '/admin/dashboard/appointments'
     }
   }, [])
 
