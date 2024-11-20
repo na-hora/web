@@ -36,8 +36,11 @@ export const SizesTab = () => {
 
   const [form] = Form.useForm()
 
-  const { data: petSizes, isLoading: petSizesLoading } =
-    useLoadPetSizes(companyId)
+  const {
+    data: petSizes,
+    isLoading: petSizesLoading,
+    isRefetching: petSizesRefetching,
+  } = useLoadPetSizes(companyId)
 
   const { data: petTypes } = useLoadPetTypes(companyId)
 
@@ -194,7 +197,7 @@ export const SizesTab = () => {
                       dataSource={petSizes?.filter(
                         (size) => size.companyPetTypeId === petType.id,
                       )}
-                      loading={petSizesLoading}
+                      loading={petSizesLoading || petSizesRefetching}
                       renderItem={(size) => (
                         <List.Item
                           actions={[
