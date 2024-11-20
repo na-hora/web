@@ -164,79 +164,87 @@ export const HairsTab = () => {
               </Button>
             </Row>
 
-            <Collapse
-              defaultActiveKey={['1']}
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              {petTypes
-                ?.sort((a, b) => a.name.localeCompare(b.name))
-                ?.map((petType) => (
-                  <Collapse.Panel
-                    header={
-                      <Row justify='space-between'>
-                        <Typography.Text>{petType.name}</Typography.Text>
-                        <Typography.Text type='secondary'>
-                          {
-                            petHairs?.filter(
-                              (petHair) =>
-                                petHair.companyPetTypeId === petType.id,
-                            ).length
-                          }{' '}
-                          portes cadastrados
-                        </Typography.Text>
-                      </Row>
-                    }
-                    key={petType.id}
-                  >
-                    <List
-                      locale={{
-                        emptyText: 'Nenhuma pelagem cadastrada para esse pet',
-                      }}
-                      dataSource={petHairs?.filter(
-                        (hair) => hair.companyPetTypeId === petType.id,
-                      )}
-                      loading={petHairsLoading || petHairsRefetching}
-                      renderItem={(hair) => (
-                        <List.Item
-                          actions={[
-                            <Button
-                              type='link'
-                              onClick={() => handleEdit(hair)}
-                              icon={<EditOutlined />}
-                            >
-                              Editar
-                            </Button>,
-                            <Popconfirm
-                              title='Tem certeza que deseja excluir essa pelagem?'
-                              onConfirm={() => deletePetHair(hair.id)}
-                            >
+            {petHairs && petHairs?.length > 0 ? (
+              <Collapse
+                defaultActiveKey={['1']}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {petTypes
+                  ?.sort((a, b) => a.name.localeCompare(b.name))
+                  ?.map((petType) => (
+                    <Collapse.Panel
+                      header={
+                        <Row justify='space-between'>
+                          <Typography.Text>{petType.name}</Typography.Text>
+                          <Typography.Text type='secondary'>
+                            {
+                              petHairs?.filter(
+                                (petHair) =>
+                                  petHair.companyPetTypeId === petType.id,
+                              ).length
+                            }{' '}
+                            portes cadastrados
+                          </Typography.Text>
+                        </Row>
+                      }
+                      key={petType.id}
+                    >
+                      <List
+                        locale={{
+                          emptyText: 'Nenhuma pelagem cadastrada para esse pet',
+                        }}
+                        dataSource={petHairs?.filter(
+                          (hair) => hair.companyPetTypeId === petType.id,
+                        )}
+                        loading={petHairsLoading || petHairsRefetching}
+                        renderItem={(hair) => (
+                          <List.Item
+                            actions={[
                               <Button
                                 type='link'
-                                danger
-                                icon={<DeleteOutlined />}
+                                onClick={() => handleEdit(hair)}
+                                icon={<EditOutlined />}
                               >
-                                Excluir
-                              </Button>
-                            </Popconfirm>,
-                          ]}
-                        >
-                          <Col>
-                            <Typography.Text>{hair.name}</Typography.Text>
-                            <br />
-                            <Typography.Text type='secondary'>
-                              {hair.description}
-                            </Typography.Text>
-                          </Col>
-                        </List.Item>
-                      )}
-                    />
-                  </Collapse.Panel>
-                ))}
-            </Collapse>
+                                Editar
+                              </Button>,
+                              <Popconfirm
+                                title='Tem certeza que deseja excluir essa pelagem?'
+                                onConfirm={() => deletePetHair(hair.id)}
+                              >
+                                <Button
+                                  type='link'
+                                  danger
+                                  icon={<DeleteOutlined />}
+                                >
+                                  Excluir
+                                </Button>
+                              </Popconfirm>,
+                            ]}
+                          >
+                            <Col>
+                              <Typography.Text>{hair.name}</Typography.Text>
+                              <br />
+                              <Typography.Text type='secondary'>
+                                {hair.description}
+                              </Typography.Text>
+                            </Col>
+                          </List.Item>
+                        )}
+                      />
+                    </Collapse.Panel>
+                  ))}
+              </Collapse>
+            ) : (
+              <Row justify='center'>
+                <Typography.Text type='secondary'>
+                  Nenhuma pelagem cadastrada
+                </Typography.Text>
+              </Row>
+            )}
           </Col>
 
           <Modal
@@ -258,7 +266,11 @@ export const HairsTab = () => {
             ]}
           >
             <Form form={form} layout='vertical'>
-              <Form.Item label='Nome' required name='name'>
+              <Form.Item
+                label='Nome'
+                rules={[{ required: true, message: 'Nome obrigatório' }]}
+                name='name'
+              >
                 <Input
                   name='name'
                   type='text'
@@ -272,7 +284,11 @@ export const HairsTab = () => {
                   placeholder='Descreva a pelagem. Ex: Até 5cm'
                 />
               </Form.Item>
-              <Form.Item label='Pet' required name='petTypeId'>
+              <Form.Item
+                label='Pet'
+                rules={[{ required: true, message: 'Pet obrigatório' }]}
+                name='petTypeId'
+              >
                 <Select placeholder='Escolha o pet' disabled={isEditMode}>
                   {petTypes?.map((type) => (
                     <Select.Option key={type.id} value={type.id}>

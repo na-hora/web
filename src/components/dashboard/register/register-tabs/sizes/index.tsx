@@ -163,78 +163,86 @@ export const SizesTab = () => {
               </Button>
             </Row>
 
-            <Collapse
-              defaultActiveKey={['1']}
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              {petTypes
-                ?.sort((a, b) => a.name.localeCompare(b.name))
-                ?.map((petType) => (
-                  <Collapse.Panel
-                    header={
-                      <Row justify='space-between'>
-                        <Typography.Text>{petType.name}</Typography.Text>
-                        <Typography.Text type='secondary'>
-                          {
-                            petSizes?.filter(
-                              (size) => size.companyPetTypeId === petType.id,
-                            ).length
-                          }{' '}
-                          portes cadastrados
-                        </Typography.Text>
-                      </Row>
-                    }
-                    key={petType.id}
-                  >
-                    <List
-                      locale={{
-                        emptyText: 'Nenhum porte cadastrado para esse pet',
-                      }}
-                      dataSource={petSizes?.filter(
-                        (size) => size.companyPetTypeId === petType.id,
-                      )}
-                      loading={petSizesLoading || petSizesRefetching}
-                      renderItem={(size) => (
-                        <List.Item
-                          actions={[
-                            <Button
-                              type='link'
-                              onClick={() => handleEdit(size)}
-                              icon={<EditOutlined />}
-                            >
-                              Editar
-                            </Button>,
-                            <Popconfirm
-                              title='Tem certeza que deseja excluir esse porte?'
-                              onConfirm={() => deletePetSize(size.id)}
-                            >
+            {petSizes && petSizes.length > 0 ? (
+              <Collapse
+                defaultActiveKey={['1']}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {petTypes
+                  ?.sort((a, b) => a.name.localeCompare(b.name))
+                  ?.map((petType) => (
+                    <Collapse.Panel
+                      header={
+                        <Row justify='space-between'>
+                          <Typography.Text>{petType.name}</Typography.Text>
+                          <Typography.Text type='secondary'>
+                            {
+                              petSizes?.filter(
+                                (size) => size.companyPetTypeId === petType.id,
+                              ).length
+                            }{' '}
+                            portes cadastrados
+                          </Typography.Text>
+                        </Row>
+                      }
+                      key={petType.id}
+                    >
+                      <List
+                        locale={{
+                          emptyText: 'Nenhum porte cadastrado para esse pet',
+                        }}
+                        dataSource={petSizes?.filter(
+                          (size) => size.companyPetTypeId === petType.id,
+                        )}
+                        loading={petSizesLoading || petSizesRefetching}
+                        renderItem={(size) => (
+                          <List.Item
+                            actions={[
                               <Button
                                 type='link'
-                                danger
-                                icon={<DeleteOutlined />}
+                                onClick={() => handleEdit(size)}
+                                icon={<EditOutlined />}
                               >
-                                Excluir
-                              </Button>
-                            </Popconfirm>,
-                          ]}
-                        >
-                          <Col>
-                            <Typography.Text>{size.name}</Typography.Text>
-                            <br />
-                            <Typography.Text type='secondary'>
-                              {size.description}
-                            </Typography.Text>
-                          </Col>
-                        </List.Item>
-                      )}
-                    />
-                  </Collapse.Panel>
-                ))}
-            </Collapse>
+                                Editar
+                              </Button>,
+                              <Popconfirm
+                                title='Tem certeza que deseja excluir esse porte?'
+                                onConfirm={() => deletePetSize(size.id)}
+                              >
+                                <Button
+                                  type='link'
+                                  danger
+                                  icon={<DeleteOutlined />}
+                                >
+                                  Excluir
+                                </Button>
+                              </Popconfirm>,
+                            ]}
+                          >
+                            <Col>
+                              <Typography.Text>{size.name}</Typography.Text>
+                              <br />
+                              <Typography.Text type='secondary'>
+                                {size.description}
+                              </Typography.Text>
+                            </Col>
+                          </List.Item>
+                        )}
+                      />
+                    </Collapse.Panel>
+                  ))}
+              </Collapse>
+            ) : (
+              <Row justify='center'>
+                <Typography.Text type='secondary'>
+                  Nenhum porte cadastrado
+                </Typography.Text>
+              </Row>
+            )}
           </Col>
 
           <Modal
@@ -256,7 +264,11 @@ export const SizesTab = () => {
             ]}
           >
             <Form form={form} layout='vertical'>
-              <Form.Item label='Nome' required name='name'>
+              <Form.Item
+                label='Nome'
+                rules={[{ required: true, message: 'Nome obrigatório' }]}
+                name='name'
+              >
                 <Input
                   name='name'
                   type='text'
@@ -270,7 +282,11 @@ export const SizesTab = () => {
                   placeholder='Descreva o porte. Ex: Até 5kg'
                 />
               </Form.Item>
-              <Form.Item label='Pet' required name='petTypeId'>
+              <Form.Item
+                label='Pet'
+                rules={[{ required: true, message: 'Pet obrigatório' }]}
+                name='petTypeId'
+              >
                 <Select placeholder='Escolha o pet' disabled={isEditMode}>
                   {petTypes?.map((type) => (
                     <Select.Option key={type.id} value={type.id}>
