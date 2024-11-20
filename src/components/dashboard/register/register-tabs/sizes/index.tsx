@@ -219,7 +219,13 @@ export const SizesTab = () => {
                             </Popconfirm>,
                           ]}
                         >
-                          {size.name}
+                          <Col>
+                            <Typography.Text>{size.name}</Typography.Text>
+                            <br />
+                            <Typography.Text type='secondary'>
+                              {size.description}
+                            </Typography.Text>
+                          </Col>
                         </List.Item>
                       )}
                     />
