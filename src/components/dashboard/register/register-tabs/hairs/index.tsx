@@ -37,8 +37,11 @@ export const HairsTab = () => {
 
   const [form] = Form.useForm()
 
-  const { data: petHairs, isLoading: petHairsLoading } =
-    useLoadPetHairs(companyId)
+  const {
+    data: petHairs,
+    isLoading: petHairsLoading,
+    isRefetching: petHairsRefetching,
+  } = useLoadPetHairs(companyId)
 
   const { data: petTypes } = useLoadPetTypes(companyId)
 
@@ -196,7 +199,7 @@ export const HairsTab = () => {
                       dataSource={petHairs?.filter(
                         (hair) => hair.companyPetTypeId === petType.id,
                       )}
-                      loading={petHairsLoading}
+                      loading={petHairsLoading || petHairsRefetching}
                       renderItem={(hair) => (
                         <List.Item
                           actions={[
