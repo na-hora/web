@@ -5,6 +5,7 @@ import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-se
 import { useUpdatePetServices } from '@/hooks/na-hora/pet-services/use-update-pet-services'
 import {
   DeleteOutlined,
+  DollarCircleOutlined,
   EditOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons'
@@ -67,7 +68,9 @@ export const ServicesTab = () => {
     form.validateFields().then((values) => {
       createPetServiceMutation({
         body: {
-          // name: values.name,
+          name: values.name,
+          paralellism: Number(values.paralellism),
+          // TODO: setar valores dinamicamente
           configurations: [
             {
               companyPetHairID: 1,
@@ -76,8 +79,6 @@ export const ServicesTab = () => {
               price: 10,
             },
           ],
-          name: 'teste',
-          paralellism: 1,
         },
       })
     })
@@ -87,6 +88,8 @@ export const ServicesTab = () => {
     form.validateFields().then((values) => {
       updatePetServiceMutation({
         body: {
+          name: values.name,
+          paralellism: Number(values.paralellism),
           configurations: [
             {
               companyPetHairID: 1,
@@ -95,8 +98,6 @@ export const ServicesTab = () => {
               price: 10,
             },
           ],
-          name: 'teste',
-          paralellism: 1,
         },
         dynamicRoute: currentPetService?.id.toString(),
       })
@@ -174,6 +175,13 @@ export const ServicesTab = () => {
               renderItem={(animal) => (
                 <List.Item
                   actions={[
+                    <Button
+                      type='link'
+                      onClick={() => {}}
+                      icon={<DollarCircleOutlined />}
+                    >
+                      Definir valores
+                    </Button>,
                     <Button
                       type='link'
                       onClick={() => handleEdit(animal)}
