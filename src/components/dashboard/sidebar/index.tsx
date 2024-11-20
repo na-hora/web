@@ -33,6 +33,16 @@ const menuItems = items.map((item) => ({
 }))
 
 export const Sidebar = () => {
+  const MapOptions: Record<string, string> = {
+    '/admin/dashboard/appointments': '1',
+    '/admin/dashboard/registers': '2',
+    '/admin/dashboard/hours': '3',
+    '/admin/dashboard/profile': '4',
+  }
+
+  const currentPage = window.location.pathname
+  const defaultSelectKey = MapOptions[currentPage]
+
   const [collapsed, setCollapsed] = useState(false)
   return (
     <Sider
@@ -44,7 +54,7 @@ export const Sidebar = () => {
       <Menu
         theme='dark'
         mode='inline'
-        defaultSelectedKeys={['1']}
+        defaultSelectedKeys={[defaultSelectKey]}
         items={menuItems}
       />
     </Sider>
