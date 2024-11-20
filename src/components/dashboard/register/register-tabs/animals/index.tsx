@@ -196,7 +196,7 @@ export const AnimalsTab = () => {
               </Button>,
             ]}
           >
-            <Form form={form} layout='vertical'>
+            <Form form={form} layout='vertical' onFinish={handleOk}>
               <Form.Item
                 label='Nome'
                 rules={[{ required: true, message: 'Nome obrigatório' }]}
