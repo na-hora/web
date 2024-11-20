@@ -38,14 +38,15 @@ export const Home = () => {
           Bem-vindo ao Na Hora!
         </h1>
         <p style={{ fontSize: '1.2rem', marginBottom: '2rem' }}>
-          Agende o melhor cuidado para o seu pet de forma simples e rápida.
+          Disponibilize o melhor sistema de agendamento para petshops para seus
+          clientes.
         </p>
         <Button
           type='primary'
           size='large'
-          onClick={() => (window.location.href = '/appointment/new')}
+          onClick={() => (window.location.href = 'https://wa.me/5547984975804')}
         >
-          Agendar horário
+          Entrar em contato
         </Button>
       </div>
     </>
