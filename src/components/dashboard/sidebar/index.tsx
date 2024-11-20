@@ -1,7 +1,7 @@
 import {
   BarsOutlined,
   CalendarOutlined,
-  ProfileOutlined,
+  ClockCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons'
 import { Menu } from 'antd'
@@ -17,7 +17,7 @@ const items = [
     link: 'appointments',
   },
   { key: '2', icon: <BarsOutlined />, label: 'Cadastros', link: 'registers' },
-  { key: '3', icon: <ProfileOutlined />, label: 'Empresa', link: 'company' },
+  { key: '3', icon: <ClockCircleOutlined />, label: 'Horários', link: 'hours' },
   {
     key: '4',
     icon: <UserOutlined />,

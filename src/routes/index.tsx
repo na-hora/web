@@ -65,12 +65,12 @@ export const router = createBrowserRouter([
         element: <DashboardRegisters />,
       },
       {
-        path: '/admin/dashboard/company',
-        element: <div>Company</div>,
+        path: '/admin/dashboard/hours',
+        element: <div>Cadastro de horários da empresa</div>,
       },
       {
         path: '/admin/dashboard/profile',
-        element: <div>Profile</div>,
+        element: <div>Exibir dados do perfil</div>,
       },
     ],
   },
