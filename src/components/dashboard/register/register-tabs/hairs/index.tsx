@@ -172,7 +172,23 @@ export const HairsTab = () => {
               {petTypes
                 ?.sort((a, b) => a.name.localeCompare(b.name))
                 ?.map((petType) => (
-                  <Collapse.Panel header={petType.name} key={petType.id}>
+                  <Collapse.Panel
+                    header={
+                      <Row justify='space-between'>
+                        <Typography.Text>{petType.name}</Typography.Text>
+                        <Typography.Text type='secondary'>
+                          {
+                            petHairs?.filter(
+                              (petHair) =>
+                                petHair.companyPetTypeId === petType.id,
+                            ).length
+                          }{' '}
+                          portes cadastrados
+                        </Typography.Text>
+                      </Row>
+                    }
+                    key={petType.id}
+                  >
                     <List
                       locale={{
                         emptyText: 'Nenhuma pelagem cadastrada para esse pet',
