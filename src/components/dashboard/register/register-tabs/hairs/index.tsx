@@ -164,7 +164,7 @@ export const HairsTab = () => {
               </Button>
             </Row>
 
-            {petHairs && petHairs?.length > 0 ? (
+            {petTypes && petTypes?.length > 0 ? (
               <Collapse
                 defaultActiveKey={['1']}
                 style={{
@@ -265,7 +265,11 @@ export const HairsTab = () => {
               </Button>,
             ]}
           >
-            <Form form={form} layout='vertical'>
+            <Form
+              form={form}
+              layout='vertical'
+              onKeyUp={(e) => e.key === 'Enter' && handleOk()}
+            >
               <Form.Item
                 label='Nome'
                 rules={[{ required: true, message: 'Nome obrigatório' }]}
