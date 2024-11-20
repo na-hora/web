@@ -171,7 +171,22 @@ export const SizesTab = () => {
               {petTypes
                 ?.sort((a, b) => a.name.localeCompare(b.name))
                 ?.map((petType) => (
-                  <Collapse.Panel header={petType.name} key={petType.id}>
+                  <Collapse.Panel
+                    header={
+                      <Row justify='space-between'>
+                        <Typography.Text>{petType.name}</Typography.Text>
+                        <Typography.Text type='secondary'>
+                          {
+                            petSizes?.filter(
+                              (size) => size.companyPetTypeId === petType.id,
+                            ).length
+                          }{' '}
+                          portes cadastrados
+                        </Typography.Text>
+                      </Row>
+                    }
+                    key={petType.id}
+                  >
                     <List
                       locale={{
                         emptyText: 'Nenhum porte cadastrado para esse pet',
