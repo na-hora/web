@@ -6,4 +6,6 @@ export type PetTypeCombination = {
 export type LoadPetTypeCombinationsResponse = Array<{
   hair: PetTypeCombination
   size: PetTypeCombination
+  price: number
+  executionTime: number
 }>
