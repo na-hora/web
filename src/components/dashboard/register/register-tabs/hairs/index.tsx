@@ -187,7 +187,7 @@ export const HairsTab = () => {
                                   petHair.companyPetTypeId === petType.id,
                               ).length
                             }{' '}
-                            portes cadastrados
+                            pelagens cadastradas
                           </Typography.Text>
                         </Row>
                       }

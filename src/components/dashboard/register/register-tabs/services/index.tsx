@@ -79,7 +79,7 @@ export const ServicesTab = () => {
       createPetServiceMutation({
         body: {
           name: values.name,
-          paralellism: Number(values.paralellism),
+          paralellism: Number(values.paralellism) || 1,
           petTypes: values.petTypes,
         },
       })
@@ -241,29 +241,22 @@ export const ServicesTab = () => {
                   placeholder='Digite o nome do serviço. Ex: Banho'
                 />
               </Form.Item>
-              <Form.Item
-                label='Atendimentos simultâneos'
-                rules={[
-                  {
-                    required: true,
-                    message: 'Atendimentos simultâneos obrigatórios',
-                  },
-                ]}
-                name='paralellism'
-              >
+              <Form.Item label='Atendimentos simultâneos' name='paralellism'>
                 <Input
                   name='paralellism'
                   type='number'
+                  min={1}
+                  defaultValue={1}
                   placeholder='Digite a quantidade de atendimentos possíveis simultaneamente.'
                 />
               </Form.Item>
               <Form.Item
                 name='petTypes'
-                label='Pets por atendimento'
+                label='Pets atendidos por esse serviço'
                 rules={[
                   {
                     required: true,
-                    message: 'Pets por atendimento obrigatórios',
+                    message: 'Pets atendidos obrigatórios',
                   },
                 ]}
               >
