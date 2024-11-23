@@ -1,13 +1,15 @@
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
+import { PetService } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useCreatePetServices } from '@/hooks/na-hora/pet-services/use-create-pet-services'
 import { useDeletePetServices } from '@/hooks/na-hora/pet-services/use-delete-pet-services'
 import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
 import { useUpdatePetServices } from '@/hooks/na-hora/pet-services/use-update-pet-services'
+import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
 import {
   DeleteOutlined,
-  DollarCircleOutlined,
   EditOutlined,
   PlusCircleOutlined,
+  SettingOutlined,
 } from '@ant-design/icons'
 import {
   Button,
@@ -18,26 +20,32 @@ import {
   Modal,
   Popconfirm,
   Row,
+  Select,
   Typography,
 } from 'antd'
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
+import { ServiceConfigurationModal } from '../../modals/service-configuration-modal'
 
 export const ServicesTab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [currentPetService, setCurrentPetService] = useState<{
-    id: number
-    name: string
-  } | null>(null)
+  const [isServiceConfigurationModalOpen, setIsServiceConfigurationModalOpen] =
+    useState(false)
+  const [currentPetService, setCurrentPetService] = useState<PetService | null>(
+    null,
+  )
   const { triggerAlert } = useGlobalAlertContext()
   const companyCookie = parseCookies()['inf@na-hora']
   const { id: companyId } = JSON.parse(companyCookie)
 
   const [form] = Form.useForm()
 
-  const { data: petServices, isLoading: petServicesLoading } =
-    useLoadPetServices(companyId)
+  const {
+    data: petServices,
+    isLoading: petServicesLoading,
+    isRefetching: petServicesRefetching,
+  } = useLoadPetServices(companyId)
 
   const {
     mutate: createPetServiceMutation,
@@ -58,6 +66,8 @@ export const ServicesTab = () => {
     isError: deleteError,
   } = useDeletePetServices()
 
+  const { data: petTypes } = useLoadPetTypes(companyId)
+
   const deletePetService = (petServiceId: number) => {
     deletePetServiceMutation({
       dynamicRoute: petServiceId.toString(),
@@ -70,46 +80,32 @@ export const ServicesTab = () => {
         body: {
           name: values.name,
           paralellism: Number(values.paralellism),
-          // TODO: setar valores dinamicamente
-          configurations: [
-            {
-              companyPetHairID: 1,
-              companyPetSizeID: 1,
-              executionTime: 10,
-              price: 10,
-            },
-          ],
+          petTypes: values.petTypes,
         },
       })
     })
   }
 
   const updatePetService = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then((values: PetService) => {
       updatePetServiceMutation({
         body: {
           name: values.name,
           paralellism: Number(values.paralellism),
-          configurations: [
-            {
-              companyPetHairID: 1,
-              companyPetSizeID: 1,
-              executionTime: 10,
-              price: 10,
-            },
-          ],
+          petTypes: values.petTypes,
         },
         dynamicRoute: currentPetService?.id.toString(),
       })
     })
   }
 
-  const handleEdit = (petService: { id: number; name: string }) => {
+  const handleEdit = (petService: PetService) => {
     setCurrentPetService(petService)
     setIsEditMode(true)
     form.setFieldsValue({
       name: petService.name,
-      paralellism: 9999,
+      paralellism: petService.paralellism,
+      petTypes: petService.petTypes.map((petType) => petType.id),
     })
     setIsModalOpen(true)
   }
@@ -154,6 +150,11 @@ export const ServicesTab = () => {
     form.resetFields()
   }
 
+  const openConfigurationsModal = (petService: PetService) => {
+    setCurrentPetService(petService)
+    setIsServiceConfigurationModalOpen(true)
+  }
+
   return (
     <Col span={24}>
       <Row justify='center'>
@@ -168,30 +169,31 @@ export const ServicesTab = () => {
                 Cadastrar novo serviço <PlusCircleOutlined />
               </Button>
             </Row>
+
             <List
               locale={{ emptyText: 'Nenhum serviço cadastrado' }}
               dataSource={petServices}
-              loading={petServicesLoading}
-              renderItem={(animal) => (
+              loading={petServicesLoading || petServicesRefetching}
+              renderItem={(petService) => (
                 <List.Item
                   actions={[
                     <Button
                       type='link'
-                      onClick={() => {}}
-                      icon={<DollarCircleOutlined />}
+                      onClick={() => openConfigurationsModal(petService)}
+                      icon={<SettingOutlined />}
                     >
-                      Definir valores
+                      Configurações
                     </Button>,
                     <Button
                       type='link'
-                      onClick={() => handleEdit(animal)}
+                      onClick={() => handleEdit(petService)}
                       icon={<EditOutlined />}
                     >
                       Editar
                     </Button>,
                     <Popconfirm
                       title='Tem certeza que deseja excluir esse serviço?'
-                      onConfirm={() => deletePetService(animal.id)}
+                      onConfirm={() => deletePetService(petService.id)}
                     >
                       <Button type='link' danger icon={<DeleteOutlined />}>
                         Excluir
@@ -199,7 +201,7 @@ export const ServicesTab = () => {
                     </Popconfirm>,
                   ]}
                 >
-                  {animal.name}
+                  {petService.name}
                 </List.Item>
               )}
             />
@@ -223,8 +225,16 @@ export const ServicesTab = () => {
               </Button>,
             ]}
           >
-            <Form form={form} layout='vertical'>
-              <Form.Item label='Nome' required name='name'>
+            <Form
+              form={form}
+              layout='vertical'
+              onKeyUp={(e) => e.key === 'Enter' && handleOk()}
+            >
+              <Form.Item
+                label='Nome'
+                rules={[{ required: true, message: 'Nome obrigatório' }]}
+                name='name'
+              >
                 <Input
                   name='name'
                   type='text'
@@ -233,7 +243,12 @@ export const ServicesTab = () => {
               </Form.Item>
               <Form.Item
                 label='Atendimentos simultâneos'
-                required
+                rules={[
+                  {
+                    required: true,
+                    message: 'Atendimentos simultâneos obrigatórios',
+                  },
+                ]}
                 name='paralellism'
               >
                 <Input
@@ -242,8 +257,40 @@ export const ServicesTab = () => {
                   placeholder='Digite a quantidade de atendimentos possíveis simultaneamente.'
                 />
               </Form.Item>
+              <Form.Item
+                name='petTypes'
+                label='Pets por atendimento'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Pets por atendimento obrigatórios',
+                  },
+                ]}
+              >
+                <Select
+                  mode='multiple'
+                  style={{ width: '100%' }}
+                  placeholder='Selecione os tipos de pets'
+                >
+                  {petTypes?.map((petType) => (
+                    <Select.Option key={petType.id} value={petType.id}>
+                      {petType.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </Form>
           </Modal>
+
+          {isServiceConfigurationModalOpen && (
+            <ServiceConfigurationModal
+              petService={currentPetService}
+              isServiceConfigurationModalOpen={isServiceConfigurationModalOpen}
+              setIsServiceConfigurationModalOpen={
+                setIsServiceConfigurationModalOpen
+              }
+            />
+          )}
         </Col>
       </Row>
     </Col>
