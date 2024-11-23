@@ -1,19 +1,18 @@
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { PetService } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useRelatePetServiceConfiguration } from '@/hooks/na-hora/pet-services/use-relate-pet-service-configuration'
+import { LoadPetTypeCombinationsResponse } from '@/hooks/na-hora/pet-type-combinations/types/load.type'
 import { useLoadPetTypeCombinations } from '@/hooks/na-hora/pet-type-combinations/use-load-pet-type-combinations'
-import { QuestionCircleOutlined } from '@ant-design/icons'
+import { colors } from '@/utils/colors'
 import {
   Col,
   Divider,
   Form,
   Input,
   Modal,
-  Radio,
-  RadioChangeEvent,
   Row,
   Select,
-  Tooltip,
+  Spin,
   Typography,
 } from 'antd'
 import { useEffect, useState } from 'react'
@@ -32,15 +31,30 @@ export const ServiceConfigurationModal = ({
   const [selectedPetTypeId, setSelectedPetTypeId] = useState<string | null>(
     null,
   )
-  const [configurationRadio, setConfigurationRadio] = useState(0)
+  const [sizeColorMap, setSizeColorMap] = useState<Record<string, string>>()
 
   const [form] = Form.useForm()
   const { triggerAlert } = useGlobalAlertContext()
 
-  const { data: petTypeCombinations } = useLoadPetTypeCombinations(
-    selectedPetTypeId,
-    petService?.id,
-  )
+  const { data: petTypeCombinations, isFetching: isFetchingCombinations } =
+    useLoadPetTypeCombinations(selectedPetTypeId, petService?.id)
+
+  const generateSizeColorMap = (data: LoadPetTypeCombinationsResponse) => {
+    const uniqueSizes = Array.from(new Set(data.map((item) => item.size.name)))
+
+    const sizeColorMap: Record<string, string> = {}
+    uniqueSizes.forEach((size, index) => {
+      sizeColorMap[size] = colors[index % colors.length]
+    })
+
+    return sizeColorMap
+  }
+
+  useEffect(() => {
+    if (!petTypeCombinations) return
+
+    setSizeColorMap(generateSizeColorMap(petTypeCombinations))
+  }, [petTypeCombinations])
 
   const {
     mutate: relatePetServiceConfiguration,
@@ -48,13 +62,6 @@ export const ServiceConfigurationModal = ({
     isSuccess,
     isError,
   } = useRelatePetServiceConfiguration(petService?.id)
-
-  const onChangeConfigurationRadio = (e: RadioChangeEvent) => {
-    setConfigurationRadio(e.target.value)
-  }
-
-  const uniqueConfigurationForAllServices = configurationRadio === 0
-  const detailedConfigurationForAllServices = configurationRadio === 1
 
   const formatDetailedConfigurations = (serviceDetails: any) => {
     const treatedData: any[] = []
@@ -140,7 +147,7 @@ export const ServiceConfigurationModal = ({
       cancelText='Cancelar'
       okText='Salvar'
       confirmLoading={isPending}
-      width={700}
+      width={800}
       onOk={createServiceConfiguration}
     >
       <Form form={form} layout='vertical'>
@@ -163,158 +170,97 @@ export const ServiceConfigurationModal = ({
           name='configurationType'
           label={
             <Typography.Text strong>
-              Selecione o tipo de configuração
+              Defina os preços e a duração de cada serviço
             </Typography.Text>
           }
           style={{
             textAlign: 'left',
           }}
         >
-          <Radio.Group
-            onChange={onChangeConfigurationRadio}
-            value={configurationRadio}
-            defaultValue={0}
-          >
-            <Radio
-              value={0}
-              style={{ marginBottom: '16px' }}
-              disabled={!selectedPetTypeId}
-            >
-              Configuração única para todos os atendimentos
-            </Radio>
+          {isFetchingCombinations && (
+            <Row justify='center'>
+              <Spin />
+            </Row>
+          )}
 
-            <Radio
-              value={1}
-              style={{ margin: '16px 0' }}
-              disabled={!selectedPetTypeId}
-            >
-              Configuração detalhada por combinação
-            </Radio>
-
-            {uniqueConfigurationForAllServices && selectedPetTypeId && (
-              <Row gutter={[16, 16]}>
-                <Col xs={24} sm={12} md={6}>
-                  <Form.Item
-                    label={
-                      <div
+          {!isFetchingCombinations && petTypeCombinations?.length === 0 ? (
+            <Row justify='center'>
+              <Typography.Text type='secondary'>
+                Nenhuma configuração encontrada. Cadastre os portes e preços do
+                pet.
+              </Typography.Text>
+            </Row>
+          ) : (
+            !isFetchingCombinations &&
+            petTypeCombinations?.map(
+              ({ size, hair, price, executionTime }, index) => (
+                <Row gutter={[16, 16]} key={`${size.name}-${hair.name}`}>
+                  <Col xs={24} sm={12} md={6}>
+                    <Form.Item
+                      label={index === 0 && 'Tamanho'}
+                      name={`${size.id}-${hair.id}-size`}
+                      initialValue={size.id}
+                      rules={[
+                        { required: true, message: 'Tamanho obrigatório.' },
+                      ]}
+                    >
+                      <Select
+                        options={[{ value: size.id, label: size.name }]}
+                        value={size.id}
+                        disabled
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
+                          border: `1px solid ${sizeColorMap?.[size.name]}`,
+                          borderRadius: 6,
                         }}
-                      >
-                        Duração
-                        <Tooltip title='Duração em minutos em média do atendimento.'>
-                          <QuestionCircleOutlined />
-                        </Tooltip>
-                      </div>
-                    }
-                    name='executionTime'
-                    rules={[
-                      { required: true, message: 'Duração obrigatória.' },
-                    ]}
-                  >
-                    <Input
-                      placeholder='Duração'
-                      disabled={!selectedPetTypeId}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label={
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                        }}
-                      >
-                        Preço
-                        <Tooltip title='Preço em reais em média do atendimento.'>
-                          <QuestionCircleOutlined />
-                        </Tooltip>
-                      </div>
-                    }
-                    name='price'
-                    rules={[{ required: true, message: 'Preço obrigatório.' }]}
-                  >
-                    <Input
-                      placeholder='Preço'
-                      disabled={!selectedPetTypeId}
-                      style={{ width: '50%' }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            )}
+                      />
+                    </Form.Item>
+                  </Col>
 
-            {detailedConfigurationForAllServices &&
-              petTypeCombinations?.map(
-                ({ size, hair, price, executionTime }, index) => (
-                  <Row gutter={[16, 16]} key={`${size.name}-${hair.name}`}>
-                    <Col xs={24} sm={12} md={6}>
-                      <Form.Item
-                        label={index === 0 && 'Tamanho'}
-                        name={`${size.id}-${hair.id}-size`}
-                        initialValue={size.id}
-                        rules={[
-                          { required: true, message: 'Tamanho obrigatório.' },
-                        ]}
-                      >
-                        <Select
-                          options={[{ value: size.id, label: size.name }]}
-                          value={size.id}
-                          disabled
-                        />
-                      </Form.Item>
-                    </Col>
+                  <Col xs={24} sm={12} md={6}>
+                    <Form.Item
+                      label={index === 0 && 'Pelagem'}
+                      name={`${size.id}-${hair.id}-hair`}
+                      initialValue={hair.id}
+                      rules={[
+                        { required: true, message: 'Pelagem obrigatória.' },
+                      ]}
+                    >
+                      <Select
+                        options={[{ value: hair.id, label: hair.name }]}
+                        value={hair.id}
+                        disabled
+                      />
+                    </Form.Item>
+                  </Col>
 
-                    <Col xs={24} sm={12} md={6}>
-                      <Form.Item
-                        label={index === 0 && 'Pelagem'}
-                        name={`${size.id}-${hair.id}-hair`}
-                        initialValue={hair.id}
-                        rules={[
-                          { required: true, message: 'Pelagem obrigatória.' },
-                        ]}
-                      >
-                        <Select
-                          options={[{ value: hair.id, label: hair.name }]}
-                          value={hair.id}
-                          disabled
-                        />
-                      </Form.Item>
-                    </Col>
-
-                    <Col xs={24} sm={12} md={6}>
-                      <Form.Item
-                        label={index === 0 && 'Duração'}
-                        name={`${size.id}-${hair.id}-executionTime`}
-                        rules={[
-                          { required: true, message: 'Duração obrigatória.' },
-                        ]}
-                        initialValue={executionTime}
-                      >
-                        <Input placeholder='Duração' />
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={6}>
-                      <Form.Item
-                        label={index === 0 && 'Preço'}
-                        name={`${size.id}-${hair.id}-price`}
-                        rules={[
-                          { required: true, message: 'Preço obrigatório.' },
-                        ]}
-                        initialValue={price}
-                      >
-                        <Input placeholder='Preço' />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                ),
-              )}
-          </Radio.Group>
+                  <Col xs={24} sm={12} md={6}>
+                    <Form.Item
+                      label={index === 0 && 'Duração (em minutos)'}
+                      name={`${size.id}-${hair.id}-executionTime`}
+                      rules={[
+                        { required: true, message: 'Duração obrigatória.' },
+                      ]}
+                      initialValue={executionTime}
+                    >
+                      <Input placeholder='Ex: 60' />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={12} md={6}>
+                    <Form.Item
+                      label={index === 0 && 'Preço (em Reais)'}
+                      name={`${size.id}-${hair.id}-price`}
+                      rules={[
+                        { required: true, message: 'Preço obrigatório.' },
+                      ]}
+                      initialValue={price}
+                    >
+                      <Input placeholder='R$' />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              ),
+            )
+          )}
         </Form.Item>
       </Form>
     </Modal>
