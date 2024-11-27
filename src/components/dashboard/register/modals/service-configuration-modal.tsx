@@ -1,9 +1,7 @@
 import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { PetService } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useRelatePetServiceConfiguration } from '@/hooks/na-hora/pet-services/use-relate-pet-service-configuration'
-import { LoadPetTypeCombinationsResponse } from '@/hooks/na-hora/pet-type-combinations/types/load.type'
 import { useLoadPetTypeCombinations } from '@/hooks/na-hora/pet-type-combinations/use-load-pet-type-combinations'
-import { colors } from '@/utils/colors'
 import {
   Col,
   Divider,
@@ -31,30 +29,11 @@ export const ServiceConfigurationModal = ({
   const [selectedPetTypeId, setSelectedPetTypeId] = useState<string | null>(
     null,
   )
-  const [sizeColorMap, setSizeColorMap] = useState<Record<string, string>>()
-
-  const [form] = Form.useForm()
   const { triggerAlert } = useGlobalAlertContext()
+  const [form] = Form.useForm()
 
   const { data: petTypeCombinations, isFetching: isFetchingCombinations } =
     useLoadPetTypeCombinations(selectedPetTypeId, petService?.id)
-
-  const generateSizeColorMap = (data: LoadPetTypeCombinationsResponse) => {
-    const uniqueSizes = Array.from(new Set(data.map((item) => item.size.name)))
-
-    const sizeColorMap: Record<string, string> = {}
-    uniqueSizes.forEach((size, index) => {
-      sizeColorMap[size] = colors[index % colors.length]
-    })
-
-    return sizeColorMap
-  }
-
-  useEffect(() => {
-    if (!petTypeCombinations) return
-
-    setSizeColorMap(generateSizeColorMap(petTypeCombinations))
-  }, [petTypeCombinations])
 
   const {
     mutate: relatePetServiceConfiguration,
@@ -90,8 +69,7 @@ export const ServiceConfigurationModal = ({
       if (
         currentObjectTreated['companyPetHairID'] !== 0 &&
         currentObjectTreated['companyPetSizeID'] !== 0 &&
-        currentObjectTreated['executionTime'] !== 0 &&
-        currentObjectTreated['price'] !== 0
+        currentObjectTreated['executionTime'] !== 0
       ) {
         treatedData.push({ ...currentObjectTreated })
         currentObjectTreated['companyPetHairID'] = 0
@@ -106,8 +84,23 @@ export const ServiceConfigurationModal = ({
     }
   }
 
+  const removeMaskFromInput = (values: any) =>
+    Object.entries(values).reduce((acc, [key, value]: any) => {
+      console.log({ key, value })
+      if (key.includes('price')) {
+        // Converte o valor formatado para número decimal
+        const numericValue =
+          Number(value.toString().replace(/[^0-9]/g, '')) / 100
+        acc[key] = numericValue
+      } else {
+        acc[key] = value
+      }
+      return acc
+    }, {} as Record<string, any>)
+
   const createServiceConfiguration = () => {
     form.validateFields().then((values) => {
+      values = removeMaskFromInput(values)
       const { configurations } = formatDetailedConfigurations(values)
 
       relatePetServiceConfiguration({
@@ -134,6 +127,38 @@ export const ServiceConfigurationModal = ({
     }
   }, [isError])
 
+  const maskPrice = (value: string | number): string => {
+    if (value === null) {
+      return 'R$ 0,00'
+    }
+
+    console.log('value: ', value)
+    const numericValue = Number(value.toString().replace(/[^0-9]/g, '')) / 100
+    return numericValue.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    })
+  }
+
+  useEffect(() => {
+    if (petTypeCombinations && petTypeCombinations.length > 0) {
+      const normalizedValues = petTypeCombinations.reduce((acc, item) => {
+        const { size, hair, price, executionTime } = item
+
+        acc[`${size.id}-${hair.id}-size`] = size.id
+        acc[`${size.id}-${hair.id}-hair`] = hair.id
+        acc[`${size.id}-${hair.id}-executionTime`] = executionTime
+        acc[`${size.id}-${hair.id}-price`] = maskPrice(
+          price ? price?.toFixed(2) : 0,
+        )
+
+        return acc
+      }, {} as Record<string, any>)
+
+      form.setFieldsValue(normalizedValues)
+    }
+  }, [petTypeCombinations, form])
+
   return (
     <Modal
       title={
@@ -153,9 +178,10 @@ export const ServiceConfigurationModal = ({
       <Form form={form} layout='vertical'>
         <Form.Item
           label={<Typography.Text strong>Selecione o pet</Typography.Text>}
+          style={{ width: '30%' }}
         >
           <Select
-            placeholder='Selecione o pet que deseja configurar'
+            placeholder='Clique para selecionar'
             onSelect={(_, value) => setSelectedPetTypeId(value.key)}
           >
             {petService?.petTypes.map((petType) => (
@@ -169,9 +195,15 @@ export const ServiceConfigurationModal = ({
         <Form.Item
           name='configurationType'
           label={
-            <Typography.Text strong>
-              Defina os preços e a duração de cada serviço
-            </Typography.Text>
+            <Col>
+              <Typography.Text strong>
+                Defina os preços e a duração de cada serviço <br />
+              </Typography.Text>
+
+              <Typography.Text type='secondary' style={{ fontSize: '12px' }}>
+                Se o preço for 0, o cliente verá a frase "Sob consulta".
+              </Typography.Text>
+            </Col>
           }
           style={{
             textAlign: 'left',
@@ -186,8 +218,8 @@ export const ServiceConfigurationModal = ({
           {!isFetchingCombinations && petTypeCombinations?.length === 0 ? (
             <Row justify='center'>
               <Typography.Text type='secondary'>
-                Nenhuma configuração encontrada. Cadastre os portes e preços do
-                pet.
+                Nenhuma configuração encontrada. Cadastre os portes e pelagens
+                do pet.
               </Typography.Text>
             </Row>
           ) : (
@@ -208,10 +240,6 @@ export const ServiceConfigurationModal = ({
                         options={[{ value: size.id, label: size.name }]}
                         value={size.id}
                         disabled
-                        style={{
-                          border: `1px solid ${sizeColorMap?.[size.name]}`,
-                          borderRadius: 6,
-                        }}
                       />
                     </Form.Item>
                   </Col>
@@ -237,24 +265,40 @@ export const ServiceConfigurationModal = ({
                     <Form.Item
                       label={index === 0 && 'Duração (em minutos)'}
                       name={`${size.id}-${hair.id}-executionTime`}
-                      rules={[
-                        { required: true, message: 'Duração obrigatória.' },
-                      ]}
                       initialValue={executionTime}
+                      rules={[
+                        {
+                          validator: (_, value) =>
+                            value > 0
+                              ? Promise.resolve()
+                              : Promise.reject('Duração deve ser maior que 0.'),
+                        },
+                        { required: true },
+                      ]}
                     >
-                      <Input placeholder='Ex: 60' />
+                      <Input type='number' min={1} placeholder='Ex: 60' />
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={12} md={6}>
                     <Form.Item
-                      label={index === 0 && 'Preço (em Reais)'}
+                      label={index === 0 && 'Preço'}
                       name={`${size.id}-${hair.id}-price`}
                       rules={[
                         { required: true, message: 'Preço obrigatório.' },
                       ]}
                       initialValue={price}
                     >
-                      <Input placeholder='R$' />
+                      <Input
+                        placeholder='R$ 0,00'
+                        defaultValue={maskPrice(price)}
+                        onChange={(e) => {
+                          const maskedValue = maskPrice(e.target.value)
+                          form.setFieldValue(
+                            `${size.id}-${hair.id}-price`,
+                            maskedValue,
+                          )
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
