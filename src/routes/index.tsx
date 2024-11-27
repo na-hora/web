@@ -6,6 +6,7 @@ import { RegisterCompany } from '@/pages/company/register'
 import { SuccessCompanyPage } from '@/pages/company/register-success'
 import { Dashboard } from '@/pages/dashboard'
 import { DashboardAppointments } from '@/pages/dashboard/appointments'
+import { DashboardHours } from '@/pages/dashboard/hours'
 import { DashboardRegisters } from '@/pages/dashboard/registers'
 import { NotFoundPage } from '@/pages/errors/not-found'
 import { Home } from '@/pages/home'
@@ -66,7 +67,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/admin/dashboard/hours',
-        element: <div>Cadastro de horários da empresa</div>,
+        element: <DashboardHours />,
       },
       {
         path: '/admin/dashboard/profile',
