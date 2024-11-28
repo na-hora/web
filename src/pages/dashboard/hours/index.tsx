@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Col, Form, Row, TimePicker } from 'antd'
+import { Button, Col, Form, Row, TimePicker, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 
@@ -77,7 +77,7 @@ export const DashboardHours = () => {
       // style={{ padding: '24px', background: '#f9f9f9', borderRadius: '8px' }}
     >
       {daysOfWeek.map((day) => (
-        <div
+        <Col
           key={day.value}
           style={{
             marginBottom: 24,
@@ -87,7 +87,7 @@ export const DashboardHours = () => {
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           }}
         >
-          <h3 style={{ fontWeight: 600 }}>{day.label}</h3>
+          <Typography.Title level={5}>{day.label}</Typography.Title>
           {schedules[day.value].map((schedule, index) => (
             <Row gutter={[16, 16]} key={index} align='middle'>
               <Col xs={24} sm={10}>
@@ -105,7 +105,7 @@ export const DashboardHours = () => {
                         value!,
                       )
                     }
-                    style={{ width: '100%' }}
+                    style={{ width: '20%' }}
                   />
                 </Form.Item>
               </Col>
@@ -119,7 +119,7 @@ export const DashboardHours = () => {
                     onChange={(value) =>
                       handleScheduleChange(day.value, index, 'endHour', value!)
                     }
-                    style={{ width: '100%' }}
+                    style={{ width: '20%' }}
                   />
                 </Form.Item>
               </Col>
@@ -140,12 +140,12 @@ export const DashboardHours = () => {
           <Button
             type='dashed'
             onClick={() => addSubline(day.value)}
-            style={{ marginTop: 16, width: '100%' }}
+            style={{ marginTop: 16, width: '20%' }}
             icon={<PlusOutlined />}
           >
             Adicionar horário
           </Button>
-        </div>
+        </Col>
       ))}
       <Button
         type='primary'
