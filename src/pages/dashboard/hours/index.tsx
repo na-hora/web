@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Col, Form, Row, TimePicker, Typography } from 'antd'
+import { Button, Col, Divider, Form, Row, Switch, TimePicker } from 'antd'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 
@@ -25,26 +25,28 @@ export const DashboardHours = () => {
       daysOfWeek.reduce(
         (acc, day) => ({
           ...acc,
-          [day.value]: [],
+          [day.value]: [
+            { weekDay: day.value, startMinute: 480, endMinute: 720 },
+          ],
+        }),
+        {},
+      ),
+  )
+  const [disabledDays, setDisabledDays] = useState<{ [key: number]: boolean }>(
+    () =>
+      daysOfWeek.reduce(
+        (acc, day) => ({
+          ...acc,
+          [day.value]: false,
         }),
         {},
       ),
   )
 
-  const addSubline = (weekDay: number) => {
-    setSchedules((prev) => ({
+  const toggleDayAvailability = (weekDay: number) => {
+    setDisabledDays((prev) => ({
       ...prev,
-      [weekDay]: [
-        ...prev[weekDay],
-        { weekDay, startMinute: 480, endMinute: 720 }, // Default 08:00 to 12:00
-      ],
-    }))
-  }
-
-  const removeSchedule = (weekDay: number, index: number) => {
-    setSchedules((prev) => ({
-      ...prev,
-      [weekDay]: prev[weekDay].filter((_, i) => i !== index),
+      [weekDay]: !prev[weekDay],
     }))
   }
 
@@ -65,112 +67,155 @@ export const DashboardHours = () => {
 
   const handleSave = () => {
     const payload = Object.values(schedules).flat()
-    console.log(payload) // Replace with your API call
+    const availableSchedules = payload.filter(
+      (schedule) => !disabledDays[schedule.weekDay],
+    )
+
+    console.log(availableSchedules)
   }
 
   return (
-    <>
-      <h1 style={{ marginBottom: '4px' }}>Horários</h1>
-      <span>
-        Defina aqui os horários que ficarão disponíveis para seus clientes
-        agendarem atendimentos
-      </span>
-      <Row justify='center'>
-        <Col span={10}>
+    <Col>
+      <Row style={{ marginBottom: '20px' }}>
+        <Col>
+          <h1 style={{ marginBottom: '4px' }}>Horários</h1>
+          <span>
+            Defina aqui os horários que ficarão disponíveis para seus clientes
+            agendarem atendimentos
+          </span>
+        </Col>
+      </Row>
+      <Row justify='center' gutter={[0, 24]}>
+        <Col span={24}>
           <Form layout='vertical'>
             {daysOfWeek.map((day) => (
-              <div
+              <Col
                 key={day.value}
                 style={{
-                  marginBottom: 24,
-                  padding: '4px 16px',
-                  background: '#fff',
-                  borderRadius: 8,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  textAlign: 'center',
-                  alignItems: 'center',
-                  width: '500px',
+                  marginBottom: '24px',
+                  background: '#fafafa',
+                  borderRadius: '8px',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  padding: '0 16px 16px',
                 }}
               >
-                <Typography.Title level={5} style={{ marginBottom: 16 }}>
-                  {day.label}
-                </Typography.Title>
-                {schedules[day.value].map((schedule, index) => (
-                  <Col
-                    key={index}
+                <Col
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <h2>{day.label}</h2>
+                  <Switch
+                    checked={disabledDays[day.value]}
+                    onChange={() => toggleDayAvailability(day.value)}
                     style={{
-                      display: 'flex',
-                      gap: 16,
-                      alignItems: 'center',
-                      marginBottom: 16,
-                      justifyContent: 'center',
+                      backgroundColor: disabledDays[day.value]
+                        ? '#ff4d4f'
+                        : '#52c41a',
+                    }}
+                    checkedChildren='Indisponível'
+                    unCheckedChildren='Disponível'
+                  />
+                </Col>
+                {schedules[day.value].map((schedule, index) => (
+                  <Row
+                    key={index}
+                    gutter={16}
+                    style={{
+                      marginBottom: '16px',
+                      alignItems: index === 0 ? 'flex-end' : 'center',
                     }}
                   >
-                    <Form.Item
-                      label={index === 0 ? 'Hora inicial' : ''}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <TimePicker
-                        format='HH:mm'
-                        value={dayjs()
-                          .hour(Math.floor(schedule.startMinute / 60))
-                          .minute(schedule.startMinute % 60)}
-                        onChange={(value) =>
-                          handleScheduleChange(
-                            day.value,
-                            index,
-                            'startMinute',
-                            value,
-                          )
+                    <Col>
+                      <Form.Item
+                        label={index === 0 ? 'Hora inicial' : ''}
+                        style={{ marginBottom: 0 }}
+                      >
+                        <TimePicker
+                          format='HH:mm'
+                          value={dayjs()
+                            .hour(Math.floor(schedule.startMinute / 60))
+                            .minute(schedule.startMinute % 60)}
+                          onChange={(value) =>
+                            handleScheduleChange(
+                              day.value,
+                              index,
+                              'startMinute',
+                              value,
+                            )
+                          }
+                          disabled={disabledDays[day.value]}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item
+                        label={index === 0 ? 'Hora final' : ''}
+                        style={{ marginBottom: 0 }}
+                      >
+                        <TimePicker
+                          format='HH:mm'
+                          value={dayjs()
+                            .hour(Math.floor(schedule.endMinute / 60))
+                            .minute(schedule.endMinute % 60)}
+                          onChange={(value) =>
+                            handleScheduleChange(
+                              day.value,
+                              index,
+                              'endMinute',
+                              value,
+                            )
+                          }
+                          disabled={disabledDays[day.value]}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Button
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() =>
+                          setSchedules((prev) => ({
+                            ...prev,
+                            [day.value]: prev[day.value].filter(
+                              (_, i) => i !== index,
+                            ),
+                          }))
                         }
+                        disabled={disabledDays[day.value]}
                       />
-                    </Form.Item>
-                    <Form.Item
-                      label={index === 0 ? 'Hora final' : ''}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <TimePicker
-                        format='HH:mm'
-                        value={dayjs()
-                          .hour(Math.floor(schedule.endMinute / 60))
-                          .minute(schedule.endMinute % 60)}
-                        onChange={(value) =>
-                          handleScheduleChange(
-                            day.value,
-                            index,
-                            'endMinute',
-                            value,
-                          )
-                        }
-                      />
-                    </Form.Item>
-                    <Button
-                      danger
-                      icon={<DeleteOutlined />}
-                      onClick={() => removeSchedule(day.value, index)}
-                      style={{
-                        height: 'fit-content',
-                        alignSelf: 'flex-end',
-                      }}
-                    >
-                      Remover
-                    </Button>
-                  </Col>
+                    </Col>
+                  </Row>
                 ))}
                 <Button
                   type='dashed'
-                  onClick={() => addSubline(day.value)}
+                  onClick={() =>
+                    setSchedules((prev) => ({
+                      ...prev,
+                      [day.value]: [
+                        ...prev[day.value],
+                        {
+                          weekDay: day.value,
+                          startMinute: 480,
+                          endMinute: 720,
+                        },
+                      ],
+                    }))
+                  }
                   icon={<PlusOutlined />}
                   style={{
                     marginTop: 8,
-                    textAlign: 'center',
                     width: '100%',
                   }}
+                  disabled={disabledDays[day.value]}
                 >
                   Adicionar horário
                 </Button>
-              </div>
+              </Col>
             ))}
+            <Divider />
             <Button
               type='primary'
               onClick={handleSave}
@@ -182,6 +227,6 @@ export const DashboardHours = () => {
           </Form>
         </Col>
       </Row>
-    </>
+    </Col>
   )
 }
