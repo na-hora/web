@@ -17,23 +17,31 @@ export const DashboardRegisters = () => {
         </Col>
       </Row>
 
-      <Tabs defaultActiveKey='1'>
-        <Tabs.TabPane tab='Pets' key='1'>
-          <AnimalsTab />
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab='Portes' key='2'>
-          <SizesTab />
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab='Pelagens' key='3'>
-          <HairsTab />
-        </Tabs.TabPane>
-
-        <Tabs.TabPane tab='Serviços' key='4'>
-          <ServicesTab />
-        </Tabs.TabPane>
-      </Tabs>
+      <Tabs
+        defaultActiveKey='1'
+        items={[
+          {
+            key: '1',
+            label: 'Pets',
+            children: <AnimalsTab />,
+          },
+          {
+            key: '2',
+            label: 'Portes',
+            children: <SizesTab />,
+          },
+          {
+            key: '3',
+            label: 'Pelagens',
+            children: <HairsTab />,
+          },
+          {
+            key: '4',
+            label: 'Serviços',
+            children: <ServicesTab />,
+          },
+        ]}
+      />
     </>
   )
 }

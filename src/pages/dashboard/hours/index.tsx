@@ -1,7 +1,9 @@
+import { CompanyHour } from '@/hooks/na-hora/company-hour/types/load.type'
+import { useLoadCompanyHours } from '@/hooks/na-hora/company-hour/use-load-company-hours'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Col, Divider, Form, Row, Switch, TimePicker } from 'antd'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const daysOfWeek = [
   { label: 'Domingo', value: 0 },
@@ -13,25 +15,45 @@ const daysOfWeek = [
   { label: 'Sábado', value: 6 },
 ]
 
-interface Schedule {
-  weekDay: number
-  startMinute: number
-  endMinute: number
-}
-
 export const DashboardHours = () => {
-  const [schedules, setSchedules] = useState<{ [key: number]: Schedule[] }>(
-    () =>
-      daysOfWeek.reduce(
+  const {
+    data: companyHours,
+    isLoading: companyHoursLoading,
+    isRefetching: companyHoursRefetching,
+  } = useLoadCompanyHours()
+
+  const [schedules, setSchedules] = useState<{ [key: number]: CompanyHour[] }>({
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+    6: [],
+  })
+
+  useEffect(() => {
+    setSchedules(() => {
+      const updatedSchedules = daysOfWeek.reduce(
         (acc, day) => ({
           ...acc,
-          [day.value]: [
-            { weekDay: day.value, startMinute: 480, endMinute: 720 },
-          ],
+          [day.value]: companyHours?.filter((h) => h.weekday === day.value),
         }),
         {},
-      ),
-  )
+      )
+      return updatedSchedules
+    })
+  }, [companyHours])
+
+  useEffect(() => {
+    for (const day in schedules) {
+      setDisabledDays((prev) => ({
+        ...prev,
+        [day]: schedules[day]?.length == 0 ? true : false,
+      }))
+    }
+  }, [schedules])
+
   const [disabledDays, setDisabledDays] = useState<{ [key: number]: boolean }>(
     () =>
       daysOfWeek.reduce(
@@ -43,32 +65,32 @@ export const DashboardHours = () => {
       ),
   )
 
-  const toggleDayAvailability = (weekDay: number) => {
+  const toggleDayAvailability = (weekday: number) => {
     setDisabledDays((prev) => ({
       ...prev,
-      [weekDay]: !prev[weekDay],
+      [weekday]: !prev[weekday],
     }))
   }
 
   const handleScheduleChange = (
-    weekDay: number,
+    weekday: number,
     index: number,
-    field: keyof Schedule,
+    field: keyof CompanyHour,
     value: dayjs.Dayjs | null,
   ) => {
     if (!value) return
     const totalMinutes = value.hour() * 60 + value.minute()
     setSchedules((prev) => {
-      const updatedSchedules = [...prev[weekDay]]
+      const updatedSchedules = [...prev[weekday]]
       updatedSchedules[index][field] = totalMinutes
-      return { ...prev, [weekDay]: updatedSchedules }
+      return { ...prev, [weekday]: updatedSchedules }
     })
   }
 
   const handleSave = () => {
     const payload = Object.values(schedules).flat()
     const availableSchedules = payload.filter(
-      (schedule) => !disabledDays[schedule.weekDay],
+      (schedule) => !disabledDays[schedule.weekday],
     )
 
     console.log(availableSchedules)
@@ -117,9 +139,10 @@ export const DashboardHours = () => {
                     }}
                     checkedChildren='Indisponível'
                     unCheckedChildren='Disponível'
+                    disabled={companyHoursRefetching || companyHoursLoading}
                   />
                 </Col>
-                {schedules[day.value].map((schedule, index) => (
+                {schedules[day.value]?.map((schedule, index) => (
                   <Row
                     key={index}
                     gutter={16}
@@ -146,7 +169,11 @@ export const DashboardHours = () => {
                               value,
                             )
                           }
-                          disabled={disabledDays[day.value]}
+                          disabled={
+                            disabledDays[day.value] ||
+                            companyHoursLoading ||
+                            companyHoursRefetching
+                          }
                         />
                       </Form.Item>
                     </Col>
@@ -168,7 +195,11 @@ export const DashboardHours = () => {
                               value,
                             )
                           }
-                          disabled={disabledDays[day.value]}
+                          disabled={
+                            disabledDays[day.value] ||
+                            companyHoursLoading ||
+                            companyHoursRefetching
+                          }
                         />
                       </Form.Item>
                     </Col>
@@ -184,7 +215,11 @@ export const DashboardHours = () => {
                             ),
                           }))
                         }
-                        disabled={disabledDays[day.value]}
+                        disabled={
+                          disabledDays[day.value] ||
+                          companyHoursLoading ||
+                          companyHoursRefetching
+                        }
                       />
                     </Col>
                   </Row>
@@ -197,7 +232,8 @@ export const DashboardHours = () => {
                       [day.value]: [
                         ...prev[day.value],
                         {
-                          weekDay: day.value,
+                          id: 0,
+                          weekday: day.value,
                           startMinute: 480,
                           endMinute: 720,
                         },
@@ -209,7 +245,11 @@ export const DashboardHours = () => {
                     marginTop: 8,
                     width: '100%',
                   }}
-                  disabled={disabledDays[day.value]}
+                  disabled={
+                    disabledDays[day.value] ||
+                    companyHoursLoading ||
+                    companyHoursRefetching
+                  }
                 >
                   Adicionar horário
                 </Button>
@@ -221,6 +261,7 @@ export const DashboardHours = () => {
               onClick={handleSave}
               block
               style={{ marginTop: 24 }}
+              disabled={companyHoursLoading || companyHoursRefetching}
             >
               Salvar Horários
             </Button>
