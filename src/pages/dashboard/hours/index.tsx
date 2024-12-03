@@ -60,7 +60,7 @@ export const DashboardHours = () => {
     for (const day in schedules) {
       setDisabledDays((prev) => ({
         ...prev,
-        [day]: schedules[day]?.length == 0 ? true : false,
+        [day]: !schedules[day] || schedules[day]?.length == 0 ? true : false,
       }))
     }
   }, [schedules])
@@ -261,7 +261,7 @@ export const DashboardHours = () => {
                             onClick={() =>
                               setSchedules((prev) => ({
                                 ...prev,
-                                [day.value]: prev[day.value].filter(
+                                [day.value]: prev[day.value]?.filter(
                                   (_, i) => i !== index,
                                 ),
                               }))
@@ -283,7 +283,7 @@ export const DashboardHours = () => {
                       setSchedules((prev) => ({
                         ...prev,
                         [day.value]: [
-                          ...prev[day.value],
+                          ...(prev[day.value] || []),
                           {
                             id: 0,
                             weekday: day.value,
