@@ -8,13 +8,13 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 const daysOfWeek = [
-  { label: 'Domingo', value: 0 },
-  { label: 'Segunda-feira', value: 1 },
-  { label: 'Terça-feira', value: 2 },
-  { label: 'Quarta-feira', value: 3 },
-  { label: 'Quinta-feira', value: 4 },
-  { label: 'Sexta-feira', value: 5 },
+  { label: 'Segunda', value: 1 },
+  { label: 'Terça', value: 2 },
+  { label: 'Quarta', value: 3 },
+  { label: 'Quinta', value: 4 },
+  { label: 'Sexta', value: 5 },
   { label: 'Sábado', value: 6 },
+  { label: 'Domingo', value: 0 },
 ]
 
 export const DashboardHours = () => {
@@ -132,7 +132,7 @@ export const DashboardHours = () => {
   }
 
   return (
-    <Col>
+    <Col span={24}>
       <Row style={{ marginBottom: '20px' }}>
         <Col>
           <h1 style={{ marginBottom: '4px' }}>Horários</h1>
@@ -142,162 +142,174 @@ export const DashboardHours = () => {
           </span>
         </Col>
       </Row>
-      <Row justify='center' gutter={[0, 24]}>
+      <Row justify='center' gutter={[16, 24]}>
         <Col span={24}>
           <Form layout='vertical' form={form}>
-            {daysOfWeek.map((day) => (
-              <Col
-                key={day.value}
-                style={{
-                  marginBottom: '24px',
-                  background: '#fafafa',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  padding: '0 16px 16px',
-                }}
-              >
+            <Row gutter={[16, 24]} align='stretch'>
+              {daysOfWeek.map((day) => (
                 <Col
+                  key={day.value}
+                  xs={24}
+                  sm={12}
+                  md={8}
+                  lg={6}
+                  xl={6}
                   style={{
+                    marginBottom: '24px',
+                    background: '#fafafa',
+                    borderRadius: '8px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                    padding: '0 16px 16px',
                     display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
                   }}
                 >
-                  <h2>{day.label}</h2>
-                  <Switch
-                    checked={disabledDays[day.value]}
-                    onChange={() => toggleDayAvailability(day.value)}
-                    style={{
-                      backgroundColor: disabledDays[day.value]
-                        ? '#ff4d4f'
-                        : '#52c41a',
-                    }}
-                    checkedChildren='Indisponível'
-                    unCheckedChildren='Disponível'
-                    disabled={
-                      companyHoursRefetching ||
-                      companyHoursLoading ||
-                      relatePending
-                    }
-                  />
-                </Col>
-                {schedules[day.value]?.map((schedule, index) => (
-                  <Row
-                    key={index}
-                    gutter={16}
-                    style={{
-                      marginBottom: '16px',
-                      alignItems: index === 0 ? 'flex-end' : 'center',
-                    }}
-                  >
-                    <Col>
-                      <Form.Item
-                        label={index === 0 ? 'Hora inicial' : ''}
-                        style={{ marginBottom: 0 }}
-                      >
-                        <TimePicker
-                          format='HH:mm'
-                          value={dayjs()
-                            .hour(Math.floor(schedule.startMinute / 60))
-                            .minute(schedule.startMinute % 60)}
-                          onChange={(value) =>
-                            handleScheduleChange(
-                              day.value,
-                              index,
-                              'startMinute',
-                              value,
-                            )
-                          }
-                          disabled={
-                            disabledDays[day.value] ||
-                            companyHoursLoading ||
-                            companyHoursRefetching ||
-                            relatePending
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        label={index === 0 ? 'Hora final' : ''}
-                        style={{ marginBottom: 0 }}
-                      >
-                        <TimePicker
-                          format='HH:mm'
-                          value={dayjs()
-                            .hour(Math.floor(schedule.endMinute / 60))
-                            .minute(schedule.endMinute % 60)}
-                          onChange={(value) =>
-                            handleScheduleChange(
-                              day.value,
-                              index,
-                              'endMinute',
-                              value,
-                            )
-                          }
-                          disabled={
-                            disabledDays[day.value] ||
-                            companyHoursLoading ||
-                            companyHoursRefetching ||
-                            relatePending
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Button
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() =>
-                          setSchedules((prev) => ({
-                            ...prev,
-                            [day.value]: prev[day.value].filter(
-                              (_, i) => i !== index,
-                            ),
-                          }))
-                        }
+                  <Col>
+                    <Col
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <h2>{day.label}</h2>
+                      <Switch
+                        checked={disabledDays[day.value]}
+                        onChange={() => toggleDayAvailability(day.value)}
+                        style={{
+                          backgroundColor: disabledDays[day.value]
+                            ? '#ff4d4f'
+                            : '#52c41a',
+                        }}
+                        checkedChildren='Indisponível'
+                        unCheckedChildren='Disponível'
                         disabled={
-                          disabledDays[day.value] ||
-                          companyHoursLoading ||
                           companyHoursRefetching ||
+                          companyHoursLoading ||
                           relatePending
                         }
                       />
                     </Col>
-                  </Row>
-                ))}
-                <Button
-                  type='dashed'
-                  onClick={() =>
-                    setSchedules((prev) => ({
-                      ...prev,
-                      [day.value]: [
-                        ...prev[day.value],
-                        {
-                          id: 0,
-                          weekday: day.value,
-                          startMinute: 480,
-                          endMinute: 720,
-                        },
-                      ],
-                    }))
-                  }
-                  icon={<PlusOutlined />}
-                  style={{
-                    marginTop: 8,
-                    width: '100%',
-                  }}
-                  disabled={
-                    disabledDays[day.value] ||
-                    companyHoursLoading ||
-                    companyHoursRefetching ||
-                    relatePending
-                  }
-                >
-                  Adicionar horário
-                </Button>
-              </Col>
-            ))}
+                    {schedules[day.value]?.map((schedule, index) => (
+                      <Row
+                        key={index}
+                        gutter={16}
+                        style={{
+                          marginBottom: '16px',
+                          alignItems: index === 0 ? 'flex-end' : 'center',
+                        }}
+                      >
+                        <Col span={9}>
+                          <Form.Item
+                            label={index === 0 ? 'Hora inicial' : ''}
+                            style={{ marginBottom: 0 }}
+                          >
+                            <TimePicker
+                              format='HH:mm'
+                              value={dayjs()
+                                .hour(Math.floor(schedule.startMinute / 60))
+                                .minute(schedule.startMinute % 60)}
+                              onChange={(value) =>
+                                handleScheduleChange(
+                                  day.value,
+                                  index,
+                                  'startMinute',
+                                  value,
+                                )
+                              }
+                              disabled={
+                                disabledDays[day.value] ||
+                                companyHoursLoading ||
+                                companyHoursRefetching ||
+                                relatePending
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={9}>
+                          <Form.Item
+                            label={index === 0 ? 'Hora final' : ''}
+                            style={{ marginBottom: 0 }}
+                          >
+                            <TimePicker
+                              format='HH:mm'
+                              value={dayjs()
+                                .hour(Math.floor(schedule.endMinute / 60))
+                                .minute(schedule.endMinute % 60)}
+                              onChange={(value) =>
+                                handleScheduleChange(
+                                  day.value,
+                                  index,
+                                  'endMinute',
+                                  value,
+                                )
+                              }
+                              disabled={
+                                disabledDays[day.value] ||
+                                companyHoursLoading ||
+                                companyHoursRefetching ||
+                                relatePending
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col>
+                          <Button
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() =>
+                              setSchedules((prev) => ({
+                                ...prev,
+                                [day.value]: prev[day.value].filter(
+                                  (_, i) => i !== index,
+                                ),
+                              }))
+                            }
+                            disabled={
+                              disabledDays[day.value] ||
+                              companyHoursLoading ||
+                              companyHoursRefetching ||
+                              relatePending
+                            }
+                          />
+                        </Col>
+                      </Row>
+                    ))}
+                  </Col>
+                  <Button
+                    type='dashed'
+                    onClick={() =>
+                      setSchedules((prev) => ({
+                        ...prev,
+                        [day.value]: [
+                          ...prev[day.value],
+                          {
+                            id: 0,
+                            weekday: day.value,
+                            startMinute: 480,
+                            endMinute: 720,
+                          },
+                        ],
+                      }))
+                    }
+                    icon={<PlusOutlined />}
+                    style={{
+                      marginTop: 8,
+                      width: '100%',
+                    }}
+                    disabled={
+                      disabledDays[day.value] ||
+                      companyHoursLoading ||
+                      companyHoursRefetching ||
+                      relatePending
+                    }
+                  >
+                    Adicionar horário
+                  </Button>
+                </Col>
+              ))}
+            </Row>
             <Divider />
             <Button
               type='primary'
