@@ -117,10 +117,20 @@ export const DashboardHours = () => {
   }
 
   const handleSave = () => {
-    const payload = Object.values(schedules).flat()
-    const availableSchedules = payload.filter(
-      (schedule) => !disabledDays[schedule.weekday],
-    )
+    const availableSchedules: CompanyHour[] = []
+    if (schedules) {
+      const payload = Object.values(schedules).flat()
+      for (const schedule of payload) {
+        if (schedule) {
+          availableSchedules.push({
+            weekday: schedule.weekday,
+            startMinute: schedule.startMinute,
+            endMinute: schedule.endMinute,
+            id: schedule.id,
+          })
+        }
+      }
+    }
 
     form.validateFields().then(() => {
       relateCompanyHoursMutation({
