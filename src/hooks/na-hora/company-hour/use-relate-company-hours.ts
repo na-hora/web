@@ -1,8 +1,8 @@
 import { useHooks } from '@/hooks'
 import { TPostDataParams } from '@/hooks/types'
-import { RelateCompanyHoursBody } from './types/create.type'
+import { RelateCompanyHoursBody } from './types/relate.type'
 
-export const UseRelateCompanyHours = () => {
+export const useRelateCompanyHours = () => {
   const { usePostData } = useHooks()
 
   return usePostData<TPostDataParams<RelateCompanyHoursBody>, string>({

@@ -1,5 +1,7 @@
+import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { CompanyHour } from '@/hooks/na-hora/company-hour/types/load.type'
 import { useLoadCompanyHours } from '@/hooks/na-hora/company-hour/use-load-company-hours'
+import { useRelateCompanyHours } from '@/hooks/na-hora/company-hour/use-relate-company-hours'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Col, Divider, Form, Row, Switch, TimePicker } from 'antd'
 import dayjs from 'dayjs'
@@ -16,11 +18,20 @@ const daysOfWeek = [
 ]
 
 export const DashboardHours = () => {
+  const [form] = Form.useForm()
+  const { triggerAlert } = useGlobalAlertContext()
   const {
     data: companyHours,
     isLoading: companyHoursLoading,
     isRefetching: companyHoursRefetching,
   } = useLoadCompanyHours()
+
+  const {
+    mutate: relateCompanyHoursMutation,
+    isPending: relatePending,
+    isSuccess: relateSuccess,
+    isError: relateError,
+  } = useRelateCompanyHours()
 
   const [schedules, setSchedules] = useState<{ [key: number]: CompanyHour[] }>({
     0: [],
@@ -53,6 +64,24 @@ export const DashboardHours = () => {
       }))
     }
   }, [schedules])
+
+  useEffect(() => {
+    if (relateSuccess) {
+      triggerAlert({
+        message: 'Operação realizada com sucesso',
+        type: 'success',
+      })
+    }
+  }, [relateSuccess])
+
+  useEffect(() => {
+    if (relateError) {
+      triggerAlert({
+        message: 'Ocorreu um erro inesperado na operação',
+        type: 'error',
+      })
+    }
+  }, [relateError])
 
   const [disabledDays, setDisabledDays] = useState<{ [key: number]: boolean }>(
     () =>
@@ -93,7 +122,13 @@ export const DashboardHours = () => {
       (schedule) => !disabledDays[schedule.weekday],
     )
 
-    console.log(availableSchedules)
+    form.validateFields().then(() => {
+      relateCompanyHoursMutation({
+        body: {
+          registers: availableSchedules,
+        },
+      })
+    })
   }
 
   return (
@@ -109,7 +144,7 @@ export const DashboardHours = () => {
       </Row>
       <Row justify='center' gutter={[0, 24]}>
         <Col span={24}>
-          <Form layout='vertical'>
+          <Form layout='vertical' form={form}>
             {daysOfWeek.map((day) => (
               <Col
                 key={day.value}
@@ -139,7 +174,11 @@ export const DashboardHours = () => {
                     }}
                     checkedChildren='Indisponível'
                     unCheckedChildren='Disponível'
-                    disabled={companyHoursRefetching || companyHoursLoading}
+                    disabled={
+                      companyHoursRefetching ||
+                      companyHoursLoading ||
+                      relatePending
+                    }
                   />
                 </Col>
                 {schedules[day.value]?.map((schedule, index) => (
@@ -172,7 +211,8 @@ export const DashboardHours = () => {
                           disabled={
                             disabledDays[day.value] ||
                             companyHoursLoading ||
-                            companyHoursRefetching
+                            companyHoursRefetching ||
+                            relatePending
                           }
                         />
                       </Form.Item>
@@ -198,7 +238,8 @@ export const DashboardHours = () => {
                           disabled={
                             disabledDays[day.value] ||
                             companyHoursLoading ||
-                            companyHoursRefetching
+                            companyHoursRefetching ||
+                            relatePending
                           }
                         />
                       </Form.Item>
@@ -218,7 +259,8 @@ export const DashboardHours = () => {
                         disabled={
                           disabledDays[day.value] ||
                           companyHoursLoading ||
-                          companyHoursRefetching
+                          companyHoursRefetching ||
+                          relatePending
                         }
                       />
                     </Col>
@@ -248,7 +290,8 @@ export const DashboardHours = () => {
                   disabled={
                     disabledDays[day.value] ||
                     companyHoursLoading ||
-                    companyHoursRefetching
+                    companyHoursRefetching ||
+                    relatePending
                   }
                 >
                   Adicionar horário
@@ -261,7 +304,9 @@ export const DashboardHours = () => {
               onClick={handleSave}
               block
               style={{ marginTop: 24 }}
-              disabled={companyHoursLoading || companyHoursRefetching}
+              disabled={
+                companyHoursLoading || companyHoursRefetching || relatePending
+              }
             >
               Salvar Horários
             </Button>
