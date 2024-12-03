@@ -120,8 +120,9 @@ export const DashboardHours = () => {
     const availableSchedules: CompanyHour[] = []
     if (schedules) {
       const payload = Object.values(schedules).flat()
+      // console.log({ schedules })
       for (const schedule of payload) {
-        if (schedule) {
+        if (schedule && !disabledDays[schedule.weekday]) {
           availableSchedules.push({
             weekday: schedule.weekday,
             startMinute: schedule.startMinute,
@@ -130,6 +131,9 @@ export const DashboardHours = () => {
           })
         }
       }
+      // availableSchedules = payload.filter(
+      //   (schedule) => !disabledDays[schedule.weekday],
+      // )
     }
 
     form.validateFields().then(() => {
