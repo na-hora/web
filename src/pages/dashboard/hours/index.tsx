@@ -3,7 +3,7 @@ import { CompanyHour } from '@/hooks/na-hora/company-hour/types/load.type'
 import { useLoadCompanyHours } from '@/hooks/na-hora/company-hour/use-load-company-hours'
 import { useRelateCompanyHours } from '@/hooks/na-hora/company-hour/use-relate-company-hours'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Col, Divider, Form, Row, Switch, TimePicker } from 'antd'
+import { Button, Col, Form, Row, Switch, TimePicker } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
@@ -143,13 +143,31 @@ export const DashboardHours = () => {
 
   return (
     <Col span={24}>
-      <Row style={{ marginBottom: '20px' }}>
+      <Row
+        style={{ marginBottom: '20px' }}
+        justify='space-between'
+        align='bottom'
+      >
         <Col>
           <h1 style={{ marginBottom: '4px' }}>Horários</h1>
           <span>
             Defina aqui os horários que ficarão disponíveis para seus clientes
             agendarem atendimentos
           </span>
+        </Col>
+
+        <Col>
+          <Button
+            type='primary'
+            onClick={handleSave}
+            block
+            style={{ marginTop: 24 }}
+            disabled={
+              companyHoursLoading || companyHoursRefetching || relatePending
+            }
+          >
+            Salvar Horários
+          </Button>
         </Col>
       </Row>
       <Row justify='center' gutter={[16, 24]}>
@@ -166,10 +184,7 @@ export const DashboardHours = () => {
                   xl={6}
                   style={{
                     marginBottom: '24px',
-                    background: '#fafafa',
-                    borderRadius: '8px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                    padding: '0 16px 16px',
+                    padding: '0 8px 16px',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -205,12 +220,13 @@ export const DashboardHours = () => {
                       <Row
                         key={index}
                         gutter={16}
+                        justify={index === 0 ? 'end' : 'space-between'}
                         style={{
                           marginBottom: '16px',
                           alignItems: index === 0 ? 'flex-end' : 'center',
                         }}
                       >
-                        <Col span={9}>
+                        <Col span={10}>
                           <Form.Item
                             label={index === 0 ? 'Hora inicial' : ''}
                             style={{ marginBottom: 0 }}
@@ -237,7 +253,7 @@ export const DashboardHours = () => {
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={9}>
+                        <Col span={10}>
                           <Form.Item
                             label={index === 0 ? 'Hora final' : ''}
                             style={{ marginBottom: 0 }}
@@ -320,18 +336,6 @@ export const DashboardHours = () => {
                 </Col>
               ))}
             </Row>
-            <Divider />
-            <Button
-              type='primary'
-              onClick={handleSave}
-              block
-              style={{ marginTop: 24 }}
-              disabled={
-                companyHoursLoading || companyHoursRefetching || relatePending
-              }
-            >
-              Salvar Horários
-            </Button>
           </Form>
         </Col>
       </Row>
