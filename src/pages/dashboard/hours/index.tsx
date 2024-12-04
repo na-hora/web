@@ -190,7 +190,7 @@ export const DashboardHours = () => {
                     justifyContent: 'space-between',
                   }}
                 >
-                  <Col>
+                  <Col style={{ padding: 0 }}>
                     <Col
                       style={{
                         display: 'flex',
@@ -220,15 +220,14 @@ export const DashboardHours = () => {
                       <Row
                         key={index}
                         gutter={16}
-                        justify={index === 0 ? 'end' : 'space-between'}
                         style={{
                           marginBottom: '16px',
                           alignItems: index === 0 ? 'flex-end' : 'center',
                         }}
                       >
-                        <Col span={10}>
+                        <Col span={9}>
                           <Form.Item
-                            label={index === 0 ? 'Hora inicial' : ''}
+                            label={index === 0 ? 'Início' : ''}
                             style={{ marginBottom: 0 }}
                           >
                             <TimePicker
@@ -253,9 +252,9 @@ export const DashboardHours = () => {
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={10}>
+                        <Col span={9}>
                           <Form.Item
-                            label={index === 0 ? 'Hora final' : ''}
+                            label={index === 0 ? 'Fim' : ''}
                             style={{ marginBottom: 0 }}
                           >
                             <TimePicker
