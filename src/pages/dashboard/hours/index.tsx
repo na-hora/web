@@ -31,6 +31,7 @@ export const DashboardHours = () => {
     isPending: relatePending,
     isSuccess: relateSuccess,
     isError: relateError,
+    error: relateErrorData,
   } = useRelateCompanyHours()
 
   const [schedules, setSchedules] = useState<{ [key: number]: CompanyHour[] }>({
@@ -77,7 +78,9 @@ export const DashboardHours = () => {
   useEffect(() => {
     if (relateError) {
       triggerAlert({
-        message: 'Ocorreu um erro inesperado na operação',
+        message: (relateErrorData as any).response?.data?.includes('final')
+          ? (relateErrorData as any).response?.data
+          : 'Ocorreu um erro inesperado na operação',
         type: 'error',
       })
     }
@@ -249,6 +252,7 @@ export const DashboardHours = () => {
                                 companyHoursRefetching ||
                                 relatePending
                               }
+                              showNow={false}
                             />
                           </Form.Item>
                         </Col>
@@ -276,6 +280,7 @@ export const DashboardHours = () => {
                                 companyHoursRefetching ||
                                 relatePending
                               }
+                              showNow={false}
                             />
                           </Form.Item>
                         </Col>
