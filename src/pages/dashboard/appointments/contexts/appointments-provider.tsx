@@ -11,6 +11,8 @@ export type Params = {
   setSelectedDateFromCalendar: React.Dispatch<React.SetStateAction<TZDate>>
   isCreateAppointmentModalOpen: boolean
   setIsCreateAppointmentModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  isBlockCompanyHourModalOpen: boolean
+  setIsBlockCompanyHourModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   calendarRef: React.RefObject<typeof Calendar>
   petServiceIdFilter: string
   setPetServiceIdFilter: React.Dispatch<React.SetStateAction<string>>
@@ -29,6 +31,8 @@ export const AppointmentsProvider: React.FC<{
     useState<TZDate>(null)
   const [isCreateAppointmentModalOpen, setIsCreateAppointmentModalOpen] =
     useState(false)
+  const [isBlockCompanyHourModalOpen, setIsBlockCompanyHourModalOpen] =
+    useState(false)
   const [petServiceIdFilter, setPetServiceIdFilter] = useState('')
 
   const calendarRef = useRef<typeof Calendar>(null)
@@ -45,6 +49,8 @@ export const AppointmentsProvider: React.FC<{
           setSelectedDateFromCalendar,
           isCreateAppointmentModalOpen,
           setIsCreateAppointmentModalOpen,
+          isBlockCompanyHourModalOpen,
+          setIsBlockCompanyHourModalOpen,
           calendarRef,
           petServiceIdFilter,
           setPetServiceIdFilter,

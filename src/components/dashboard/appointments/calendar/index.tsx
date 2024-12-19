@@ -28,7 +28,8 @@ export const AppointmentCalendar = ({ services }: Props) => {
   const {
     selectedView,
     setSelectedDateFromCalendar,
-    setIsCreateAppointmentModalOpen,
+    // setIsCreateAppointmentModalOpen,
+    setIsBlockCompanyHourModalOpen,
     calendarRef,
     petServiceIdFilter,
   } = useAppointmentsContext()
@@ -95,7 +96,8 @@ export const AppointmentCalendar = ({ services }: Props) => {
     end,
   }: EventObject) => {
     setSelectedDateFromCalendar({ start, end })
-    setIsCreateAppointmentModalOpen(true)
+    // setIsCreateAppointmentModalOpen(true)
+    setIsBlockCompanyHourModalOpen(true)
   }
 
   const filterAppointments = () => {

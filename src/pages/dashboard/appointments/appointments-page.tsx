@@ -1,6 +1,6 @@
 import { AppointmentCalendar } from '@/components/dashboard/appointments/calendar'
 import { CalendarHeader } from '@/components/dashboard/appointments/calendar-header'
-import { CreateAppointmentModal } from '@/components/dashboard/appointments/create-appointment-modal'
+import { HourModal } from '@/components/dashboard/appointments/hour-modal'
 import { LoadPetServicesResponse } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
 import { colors } from '@/utils/colors'
@@ -18,7 +18,8 @@ type FormattedServices = {
 }[]
 
 export const Appointments = () => {
-  const { isCreateAppointmentModalOpen } = useAppointmentsContext()
+  // const { isCreateAppointmentModalOpen } = useAppointmentsContext()
+  const { isBlockCompanyHourModalOpen } = useAppointmentsContext()
   const [formattedServices, setFormattedServices] = useState<FormattedServices>(
     [],
   )
@@ -52,7 +53,8 @@ export const Appointments = () => {
 
       <CalendarHeader services={formattedServices} />
       <AppointmentCalendar services={formattedServices} />
-      {isCreateAppointmentModalOpen && <CreateAppointmentModal />}
+      {/* {isCreateAppointmentModalOpen && <CreateAppointmentModal />} */}
+      {isBlockCompanyHourModalOpen && <HourModal />}
     </>
   )
 }
