@@ -1,10 +1,7 @@
 // import { RegisterCompanyFormData } from './types'
 
-import { RegisterCompanyFormData } from '@/components/register-company/form-wrapper/types'
-import { useCreateCompanyAndAddress } from '@/hooks/na-hora/company/use-create-company'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { Button, Form } from 'antd'
-import { useEffect } from 'react'
 import { AnimalInfoForm } from '../animal-info-form'
 import { Confirmation } from '../confirmation'
 import { Schedule } from '../schedule'
@@ -18,26 +15,16 @@ enum STEPS {
 }
 
 export const CreateAppointmentForm = () => {
-  const {
-    form,
-    currentStep,
-    registerCompanyFormData,
-    setRegisterCompanyFormData,
-    setCurrentStep,
-    validator,
-    setIsRegisteringCompany,
-  } = useAppointmentContext()
+  const { form, currentStep, setRegisterCompanyFormData, setCurrentStep } =
+    useAppointmentContext()
 
-  const { mutate: createCompanyAndAddressMutation, isPending } =
-    useCreateCompanyAndAddress()
+  // useEffect(() => {
+  //   setIsRegisteringCompany(false)
 
-  useEffect(() => {
-    setIsRegisteringCompany(false)
-
-    if (isPending) {
-      setIsRegisteringCompany(true)
-    }
-  }, [isPending, setIsRegisteringCompany])
+  //   if (isPending) {
+  //     setIsRegisteringCompany(true)
+  //   }
+  // }, [isPending, setIsRegisteringCompany])
 
   const nextStep = () => {
     const isLastStep = currentStep === STEPS.CONFIRMATION
@@ -66,43 +53,21 @@ export const CreateAppointmentForm = () => {
     setCurrentStep(currentStep - 1)
   }
 
-  const formatFormValuesToSubmit = (): RegisterCompanyFormData => {
-    const lastStepFields = form.getFieldsValue()
-    return {
-      name: registerCompanyFormData.name,
-      fantasyName: registerCompanyFormData.fantasyName,
-      cnpj: registerCompanyFormData.cnpj?.replace(/[^\d]+/g, ''),
-      email: lastStepFields.email,
-      phone: registerCompanyFormData.phone?.replace(/[^\d]+/g, ''),
-      password: lastStepFields.password,
-      address: {
-        cityIbge: registerCompanyFormData.cityIbge,
-        zipCode: registerCompanyFormData.zipCode?.replace(/[^\d]+/g, ''),
-        neighborhood: registerCompanyFormData.neighborhood,
-        street: registerCompanyFormData.street,
-        number: registerCompanyFormData.number,
-        complement: registerCompanyFormData.complement,
-      },
-      validator: validator as string,
-    }
-  }
-
-  const createCompany = () => {
-    const formattedFormValues = formatFormValuesToSubmit()
-
-    createCompanyAndAddressMutation(
-      { body: formattedFormValues },
-      {
-        onSuccess: () => {
-          window.location.href = '/company/register/success'
-        },
-      },
-    )
-  }
+  // const createCompany = () => {
+  //   createCompanyAndAddressMutation(
+  //     { body: formattedFormValues },
+  //     {
+  //       onSuccess: () => {
+  //         window.location.href = '/company/register/success'
+  //       },
+  //     },
+  //   )
+  // }
 
   const nextPageOrSubmit = () => {
     if (currentStep === STEPS.CONFIRMATION) {
-      createCompany()
+      // createCompany()
+      return
     } else {
       nextStep()
     }
