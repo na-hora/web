@@ -1,9 +1,9 @@
-import { useRegisterCompanyContext } from '@/pages/company/contexts/register-company-provider'
+import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { Steps } from 'antd'
 import styles from './styles.module.css'
 
 export const AppointmentSteps = () => {
-  const { currentStep, setCurrentStep } = useRegisterCompanyContext()
+  const { currentStep, setCurrentStep } = useAppointmentContext()
 
   return (
     <div className={styles.steps}>
@@ -11,7 +11,7 @@ export const AppointmentSteps = () => {
         current={currentStep}
         items={[
           {
-            title: 'Informações',
+            title: 'Serviço',
             disabled: true,
             style: { cursor: 'default' },
           },
