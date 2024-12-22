@@ -1,0 +1,26 @@
+.main {
+  height: 100%;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-color: #f5f5f5;
+}
+
+.section {
+  max-width: 500px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 20px;
+  gap: 20px;
+}

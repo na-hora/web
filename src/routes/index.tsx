@@ -2,6 +2,7 @@ import { AdminForgotPasswordPage } from '@/components/admin/forgot-password'
 import { AdminLoginPage } from '@/components/admin/login'
 import { AdminResetPasswordPage } from '@/components/admin/reset-password'
 import { Admin } from '@/pages/admin'
+import { Appointment } from '@/pages/appointment'
 import { RegisterCompany } from '@/pages/company/register'
 import { SuccessCompanyPage } from '@/pages/company/register-success'
 import { Dashboard } from '@/pages/dashboard'
@@ -21,7 +22,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/appointment',
-    element: <div>Appointment</div>,
+    element: <Appointment />,
   },
   {
     path: '/company/register',
