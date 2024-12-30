@@ -1,3 +1,4 @@
+import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { locale } from '@/utils/calendar'
 import { Button, Calendar, Card, Col, Row, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -14,8 +15,8 @@ interface TimeSlot {
 }
 
 export const Schedule = () => {
-  const [selectedDate, setSelectedDate] = useState(undefined)
-  const [selectedTime, setSelectedTime] = useState<string | null>(null)
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } =
+    useAppointmentContext()
   const [availableDates, setAvailableDates] = useState<TimeSlot[]>([])
   const [timeSlots, setTimeSlots] = useState<{
     morning: string[]
@@ -30,16 +31,16 @@ export const Schedule = () => {
       datetime: '2024-12-20T10:00:00',
     },
     {
-      datetime: '2024-12-23T08:00:00',
+      datetime: '2024-12-27T08:00:00',
     },
     {
-      datetime: '2024-12-23T09:00:00',
+      datetime: '2024-12-27T09:00:00',
     },
     {
-      datetime: '2024-12-23T14:00:00',
+      datetime: '2024-12-27T14:00:00',
     },
     {
-      datetime: '2024-12-24T10:00:00',
+      datetime: '2024-12-27T10:00:00',
     },
   ]
 

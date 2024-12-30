@@ -1,4 +1,5 @@
 import { Form, FormInstance } from 'antd'
+import dayjs from 'dayjs'
 import { createContext, useContext, useState } from 'react'
 
 export type Params = {
@@ -11,6 +12,12 @@ export type Params = {
   form: FormInstance
   currentStep: number
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
+  formData: any
+  setFormData: React.Dispatch<React.SetStateAction<any>>
+  selectedDate: dayjs.Dayjs | undefined
+  setSelectedDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs | undefined>>
+  selectedTime: string | null
+  setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export const AppointmentContext = createContext<Params>({} as Params)
@@ -22,8 +29,13 @@ export const AppointmentProvider: React.FC<{
   const [currentStep, setCurrentStep] = useState(0)
   const [petType, setPetType] = useState<number | undefined>(undefined)
   const [serviceValue, setServiceValue] = useState<number>(0)
-
   const [form] = Form.useForm()
+  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | undefined>(
+    undefined,
+  )
+  const [selectedTime, setSelectedTime] = useState<string | null>(null)
+  const [formData, setFormData] = useState({})
+
   return (
     <AppointmentContext.Provider
       value={{
@@ -36,6 +48,12 @@ export const AppointmentProvider: React.FC<{
         form,
         currentStep,
         setCurrentStep,
+        formData,
+        setFormData,
+        selectedDate,
+        setSelectedDate,
+        selectedTime,
+        setSelectedTime,
       }}
     >
       {children}
