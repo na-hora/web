@@ -26,7 +26,7 @@ export const NavbarDashboard = () => {
       >
         <img src='/logo.svg' alt='' style={{ width: '50px' }} />
       </div>
-      <h2 style={{ color: '#ffffff98' }}>{companyName}</h2>
+      <h2 style={{ color: '#fff' }}>{companyName}</h2>
       <Popconfirm
         title='Tem certeza que deseja sair?'
         okText='Sim'
