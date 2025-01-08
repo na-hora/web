@@ -104,7 +104,6 @@ export const AnimalInfoForm = () => {
               color: '#0C4A6E',
               fontWeight: 'bold',
               boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-              fontFamily: 'Chewy',
             }}
           >
             {option?.icon && (

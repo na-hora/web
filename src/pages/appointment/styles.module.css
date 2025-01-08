@@ -1,7 +1,7 @@
 .main {
   height: 100%;
   min-height: 100vh;
-  font-family: 'Chewy';
+  font-family: 'Inter', sans-serif;
 }
 
 .section {
@@ -13,5 +13,5 @@
   align-items: center;
   text-align: center;
   padding: 20px;
-  background-image: url('/public/PAW.svg');
+  background-image: url('/public/imgs/appointment/bg-01-mb.png');
 }
