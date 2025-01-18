@@ -1,15 +1,15 @@
 import { useLoadPetTypes } from '@/hooks/na-hora/pet-type/use-load-pet-types'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { Button } from 'antd'
+import styles from './styles.module.css'
 
 export const AnimalType = () => {
-  // const companyCookie = parseCookies()['inf@na-hora']
-  // const { id: companyId } = JSON.parse(companyCookie)
-  const { appointmentData, setAppointmentData } = useAppointmentContext()
+  const { appointmentData, setAppointmentData, companyId } =
+    useAppointmentContext()
   console.log('appointmentData: ', appointmentData)
 
-  const { data: petTypes, isLoading } = useLoadPetTypes(
-    '5478b7e4-2469-40b5-ad26-2c4b9490c178',
+  const { data: petTypes } = useLoadPetTypes(
+    companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
   )
 
   const savePetTypeId = (petTypeId: number) => {
@@ -44,19 +44,13 @@ export const AnimalType = () => {
         <Button
           key={petType.id}
           onClick={() => savePetTypeId(petType.id)}
+          className={styles.button}
           style={{
-            borderRadius: '20px',
-            boxShadow: '0 0 2px 2px rgba(0, 0, 0, 0.05)',
-            margin: '20px',
-            width: '100%',
-            height: '100px',
             border: `${
               petType.id === appointmentData.petTypeId
                 ? '2px solid #3196b5'
                 : 'none'
             }`,
-            display: 'flex',
-            justifyContent: 'flex-start',
           }}
         >
           <img src={petImageUrl(petType.name)} height={100} />

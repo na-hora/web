@@ -1,6 +1,7 @@
 import { Form, FormInstance } from 'antd'
 import dayjs from 'dayjs'
 import { createContext, useContext, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 type Appointment = {
   petTypeId: number | undefined
@@ -28,6 +29,7 @@ export type Params = {
   setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>
   appointmentData: Appointment
   setAppointmentData: React.Dispatch<React.SetStateAction<Appointment>>
+  companyId: string | undefined
 }
 
 export const AppointmentContext = createContext<Params>({} as Params)
@@ -52,6 +54,7 @@ export const AppointmentProvider: React.FC<{
     petServiceId: undefined,
     appointmentDate: undefined,
   })
+  const { companyId } = useParams()
 
   return (
     <AppointmentContext.Provider
@@ -73,6 +76,7 @@ export const AppointmentProvider: React.FC<{
         setSelectedTime,
         appointmentData,
         setAppointmentData,
+        companyId,
       }}
     >
       {children}

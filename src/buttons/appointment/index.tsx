@@ -17,7 +17,7 @@ export const AppointmentButton = ({ children, style, ...props }: Props) => {
       style={{
         background: '#3196b5',
         padding: '20px 32px',
-        width: '80%',
+        width: '50%',
         borderRadius: '24px',
         ...style,
       }}
