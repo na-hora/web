@@ -1,6 +1,7 @@
 import { AppointmentButton } from '@/buttons/appointment'
 import { AnimalInfoForm } from '@/components/appointment/animal-info-form'
 import { Confirmation } from '@/components/appointment/confirmation'
+import { AnimalHair } from '@/components/appointment/hair-step'
 import { InitialStep } from '@/components/appointment/initial-step'
 import { Schedule } from '@/components/appointment/schedule'
 import { AnimalSize } from '@/components/appointment/size-step'
@@ -78,7 +79,7 @@ export const AppointmentPage = () => {
       case STEPS.PET_HAIR:
         return <AnimalSize />
       case STEPS.PET_SIZE:
-        return <AnimalInfoForm />
+        return <AnimalHair />
       case STEPS.PET_SERVICE:
         return <AnimalInfoForm />
       case STEPS.SCHEDULE:
