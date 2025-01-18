@@ -15,8 +15,7 @@ interface TimeSlot {
 }
 
 export const Schedule = () => {
-  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } =
-    useAppointmentContext()
+  const { appointmentData, setAppointmentData } = useAppointmentContext()
   const [availableDates, setAvailableDates] = useState<TimeSlot[]>([])
   const [timeSlots, setTimeSlots] = useState<{
     morning: string[]
@@ -28,19 +27,19 @@ export const Schedule = () => {
 
   const mockApiData = [
     {
-      datetime: '2024-12-20T10:00:00',
+      datetime: '2025-01-20T10:00:00',
     },
     {
-      datetime: '2024-12-27T08:00:00',
+      datetime: '2025-01-27T08:00:00',
     },
     {
-      datetime: '2024-12-27T09:00:00',
+      datetime: '2025-01-27T09:00:00',
     },
     {
-      datetime: '2024-12-27T14:00:00',
+      datetime: '2025-01-27T14:00:00',
     },
     {
-      datetime: '2024-12-27T10:00:00',
+      datetime: '2025-01-27T10:00:00',
     },
   ]
 
@@ -83,8 +82,11 @@ export const Schedule = () => {
   }, [])
 
   const handleDateSelect = (date: any) => {
-    setSelectedDate(date)
-    setSelectedTime(null)
+    setAppointmentData((prev) => ({
+      ...prev,
+      appointmentTime: undefined,
+      appointmentDate: date,
+    }))
 
     const selectedDateStr = date.format('YYYY-MM-DD')
     const availableSlot = availableDates.find(
@@ -99,7 +101,10 @@ export const Schedule = () => {
   }
 
   const handleTimeSelect = (time: string) => {
-    setSelectedTime(time)
+    setAppointmentData((prev) => ({
+      ...prev,
+      appointmentTime: time,
+    }))
   }
 
   const disabledDate = (current: dayjs.Dayjs) => {
@@ -113,27 +118,27 @@ export const Schedule = () => {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
+    <div style={{ margin: '0 auto', padding: '24px' }}>
       <Title level={2} style={{ marginBottom: '24px' }}>
         Escolha seu Horário
       </Title>
 
-      <Row gutter={24}>
-        <Col xs={24} md={12}>
+      <Row gutter={24} style={{ gap: '24px' }} justify='center'>
+        <Col xs={24} md={11}>
           <Card title='Selecione uma Data'>
             <Calendar
               fullscreen={false}
               onSelect={handleDateSelect}
-              value={selectedDate}
+              value={appointmentData.appointmentDate}
               disabledDate={disabledDate}
               locale={locale}
             />
           </Card>
         </Col>
 
-        <Col xs={24} md={12}>
-          <Card title='Horários Disponíveis' style={{ height: '425px' }}>
-            {selectedDate ? (
+        <Col xs={24} md={11}>
+          <Card title='Horários Disponíveis' style={{ minHeight: '425px' }}>
+            {appointmentData.appointmentDate ? (
               <Col>
                 {timeSlots.morning.length > 0 && (
                   <>
@@ -143,7 +148,11 @@ export const Schedule = () => {
                         <Col span={12} key={time}>
                           <Button
                             style={{ width: '100%' }}
-                            type={selectedTime === time ? 'primary' : 'default'}
+                            type={
+                              appointmentData.appointmentTime === time
+                                ? 'primary'
+                                : 'default'
+                            }
                             onClick={() => handleTimeSelect(time)}
                           >
                             {time}
@@ -162,7 +171,11 @@ export const Schedule = () => {
                         <Col span={12} key={time}>
                           <Button
                             style={{ width: '100%' }}
-                            type={selectedTime === time ? 'primary' : 'default'}
+                            type={
+                              appointmentData.appointmentTime === time
+                                ? 'primary'
+                                : 'default'
+                            }
                             onClick={() => handleTimeSelect(time)}
                           >
                             {time}

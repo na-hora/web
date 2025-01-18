@@ -1,9 +1,9 @@
 import { AppointmentButton } from '@/buttons/appointment'
-import { AnimalInfoForm } from '@/components/appointment/animal-info-form'
 import { Confirmation } from '@/components/appointment/confirmation'
 import { AnimalHair } from '@/components/appointment/hair-step'
 import { InitialStep } from '@/components/appointment/initial-step'
 import { Schedule } from '@/components/appointment/schedule'
+import { AnimalServices } from '@/components/appointment/services-step'
 import { AnimalSize } from '@/components/appointment/size-step'
 import { AnimalType } from '@/components/appointment/type-step'
 import { UserInfoForm } from '@/components/appointment/user-info-form'
@@ -24,28 +24,22 @@ enum STEPS {
 }
 
 export const AppointmentPage = () => {
-  const {
-    form,
-    currentStep,
-    setCurrentStep,
-    selectedDate,
-    selectedTime,
-    setFormData,
-  } = useAppointmentContext()
+  const { form, currentStep, setCurrentStep, setAppointmentData } =
+    useAppointmentContext()
 
   const nextStep = () => {
     const isLastStep = currentStep === STEPS.CONFIRMATION
     if (isLastStep) return
 
     form.validateFields().then(() => {
-      setFormData((prev: any) => ({
+      setAppointmentData((prev: any) => ({
         ...prev,
-        ...form.getFieldsValue(),
+        user: form.getFieldsValue(),
       }))
 
-      if (currentStep === STEPS.SCHEDULE && (!selectedDate || !selectedTime)) {
-        return
-      }
+      // if (currentStep === STEPS.SCHEDULE && (!selectedDate || !selectedTime)) {
+      //   return
+      // }
 
       setCurrentStep(currentStep + 1)
     })
@@ -53,11 +47,6 @@ export const AppointmentPage = () => {
 
   const prevStep = () => {
     if (currentStep === 0) return
-
-    setFormData((prev: any) => ({
-      ...prev,
-      ...form.getFieldsValue(),
-    }))
 
     setCurrentStep(currentStep - 1)
   }
@@ -81,7 +70,7 @@ export const AppointmentPage = () => {
       case STEPS.PET_SIZE:
         return <AnimalHair />
       case STEPS.PET_SERVICE:
-        return <AnimalInfoForm />
+        return <AnimalServices />
       case STEPS.SCHEDULE:
         return <Schedule />
       case STEPS.USER_INFO:
@@ -99,7 +88,10 @@ export const AppointmentPage = () => {
         <img src='/public/imgs/appointment/beagle-sitting.png' />
       </section>
 
-      <section className={styles.textsection}>
+      <section
+        className={styles.textsection}
+        style={{ maxWidth: currentStep === STEPS.SCHEDULE ? '800px' : '350px' }}
+      >
         {renderCurrentStep()}
 
         <Col
@@ -120,9 +112,9 @@ export const AppointmentPage = () => {
 
           <AppointmentButton
             onClick={handleSubmit}
-            disabled={
-              currentStep === STEPS.SCHEDULE && (!selectedDate || !selectedTime)
-            }
+            // disabled={
+            //   currentStep === STEPS.SCHEDULE && (!selectedDate || !selectedTime)
+            // }
           >
             {currentStep === STEPS.INITIAL
               ? 'Vamos lá'
