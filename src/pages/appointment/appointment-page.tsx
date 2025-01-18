@@ -15,8 +15,8 @@ import styles from './styles.module.css'
 enum STEPS {
   INITIAL = 0,
   PET_TYPE = 1,
-  PET_HAIR = 2,
-  PET_SIZE = 3,
+  PET_SIZE = 2,
+  PET_HAIR = 3,
   PET_SERVICE = 4,
   SCHEDULE = 5,
   USER_INFO = 6,
@@ -65,10 +65,10 @@ export const AppointmentPage = () => {
         return <InitialStep />
       case STEPS.PET_TYPE:
         return <AnimalType />
-      case STEPS.PET_HAIR:
-        return <AnimalHair />
       case STEPS.PET_SIZE:
         return <AnimalSize />
+      case STEPS.PET_HAIR:
+        return <AnimalHair />
       case STEPS.PET_SERVICE:
         return <AnimalServices />
       case STEPS.SCHEDULE:

@@ -1,6 +1,7 @@
 import { useLoadSpecificsPetServices } from '@/hooks/na-hora/pet-services/use-load-specifics-pet-services'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
-import { Button, Col, Row } from 'antd'
+import { Button, Row } from 'antd'
+import styles from './styles.module.css'
 
 export const AnimalServices = () => {
   const { companyId, appointmentData, setAppointmentData } =
@@ -15,7 +16,7 @@ export const AnimalServices = () => {
 
   const { data: petServices } = useLoadSpecificsPetServices(params)
 
-  const setpetServiceId = (petServiceId: number) => {
+  const savePetServiceId = (petServiceId: number) => {
     setAppointmentData({
       ...appointmentData,
       petServiceId: petServiceId,
@@ -31,32 +32,21 @@ export const AnimalServices = () => {
 
       <Row justify='space-evenly'>
         {petServices?.services.map((petService) => (
-          <Col>
-            <Button
-              onClick={() => setpetServiceId(petService.id)}
-              style={{
-                border: '1px solid #3196b5',
-                padding: '8px',
-                borderRadius: '20px',
-                width: '150px',
-                backgroundColor:
-                  petService.id === appointmentData?.petServiceId
-                    ? '#3196b5'
-                    : '',
-              }}
-            >
-              <h3
-                style={{
-                  color:
-                    petService.id === appointmentData?.petServiceId
-                      ? '#fff'
-                      : '#3196b5',
-                }}
-              >
-                {petService.name}
-              </h3>
-            </Button>
-          </Col>
+          <Button
+            key={petService.id}
+            onClick={() => savePetServiceId(petService.id)}
+            className={styles.button}
+            style={{
+              border: `${
+                petService.id === appointmentData.petServiceId
+                  ? '2px solid #3196b5'
+                  : 'none'
+              }`,
+            }}
+          >
+            {/* <img src={petImageUrl(petService.name)} height={100} /> */}
+            <h3>{petService.name}</h3>
+          </Button>
         ))}
       </Row>
     </>
