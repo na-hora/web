@@ -66,9 +66,9 @@ export const AppointmentPage = () => {
       case STEPS.PET_TYPE:
         return <AnimalType />
       case STEPS.PET_HAIR:
-        return <AnimalSize />
-      case STEPS.PET_SIZE:
         return <AnimalHair />
+      case STEPS.PET_SIZE:
+        return <AnimalSize />
       case STEPS.PET_SERVICE:
         return <AnimalServices />
       case STEPS.SCHEDULE:

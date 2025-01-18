@@ -1,4 +1,4 @@
-import { useLoadPetServices } from '@/hooks/na-hora/pet-services/use-load-pet-services'
+import { useLoadSpecificsPetServices } from '@/hooks/na-hora/pet-services/use-load-specifics-pet-services'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { Button, Col, Row } from 'antd'
 
@@ -6,9 +6,14 @@ export const AnimalServices = () => {
   const { companyId, appointmentData, setAppointmentData } =
     useAppointmentContext()
 
-  const { data: petServices } = useLoadPetServices(
-    companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
-  )
+  const params = {
+    companyId: companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
+    petHairId: appointmentData.petHairId,
+    petSizeId: appointmentData.petSizeId,
+    petTypeId: appointmentData.petTypeId,
+  }
+
+  const { data: petServices } = useLoadSpecificsPetServices(params)
 
   const setpetServiceId = (petServiceId: number) => {
     setAppointmentData({
@@ -25,7 +30,7 @@ export const AnimalServices = () => {
       </p>
 
       <Row justify='space-evenly'>
-        {petServices?.map((petService) => (
+        {petServices?.services.map((petService) => (
           <Col>
             <Button
               onClick={() => setpetServiceId(petService.id)}
