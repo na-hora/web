@@ -1,20 +1,23 @@
 // import { RegisterCompanyFormData } from './types'
 
+import { AppointmentButton } from '@/buttons/appointment'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { Button, Col, Form } from 'antd'
 import { AnimalInfoForm } from '../animal-info-form'
 import { Confirmation } from '../confirmation'
+import { InitialStep } from '../initial'
 import { Schedule } from '../schedule'
 import { UserInfoForm } from '../user-info-form'
 
 enum STEPS {
-  PET_TYPE = 0,
-  PET_HAIR = 1,
-  PET_SIZE = 2,
-  PET_SERVICE = 3,
-  SCHEDULE = 4,
-  USER_INFO = 5,
-  CONFIRMATION = 6,
+  INITIAL = 0,
+  PET_TYPE = 1,
+  PET_HAIR = 2,
+  PET_SIZE = 3,
+  PET_SERVICE = 4,
+  SCHEDULE = 5,
+  USER_INFO = 6,
+  CONFIRMATION = 7,
 }
 
 export const CreateAppointmentForm = () => {
@@ -67,6 +70,8 @@ export const CreateAppointmentForm = () => {
 
   const renderCurrentStep = () => {
     switch (currentStep) {
+      case STEPS.INITIAL:
+        return <InitialStep />
       case STEPS.PET_TYPE:
         return <AnimalInfoForm />
       case STEPS.PET_HAIR:
@@ -88,17 +93,7 @@ export const CreateAppointmentForm = () => {
 
   return (
     <Col xxl={24} xl={24} style={{ padding: '20px' }}>
-      <Form
-        layout='vertical'
-        form={form}
-        initialValues={formData}
-        style={{
-          width: '100%',
-          maxWidth: '800px',
-          margin: '20px auto',
-          padding: '0 15px',
-        }}
-      >
+      <Form layout='vertical' form={form} initialValues={formData}>
         {renderCurrentStep()}
 
         <div
@@ -106,27 +101,30 @@ export const CreateAppointmentForm = () => {
             width: '100%',
             display: 'flex',
             flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
-            justifyContent: window.innerWidth <= 480 ? 'stretch' : 'flex-end',
+            justifyContent:
+              window.innerWidth <= 480
+                ? 'stretch'
+                : currentStep > 0
+                ? 'flex-end'
+                : 'center',
             gap: '10px',
             marginTop: '24px',
           }}
         >
           {currentStep > 0 && <Button onClick={prevStep}>Voltar</Button>}
 
-          {currentStep > 3 && (
-            <Button
-              type='primary'
-              onClick={handleSubmit}
-              disabled={
-                currentStep === STEPS.SCHEDULE &&
-                (!selectedDate || !selectedTime)
-              }
-            >
-              {currentStep === STEPS.USER_INFO
-                ? 'Marcar meu horário'
-                : 'Próximo'}
-            </Button>
-          )}
+          <AppointmentButton
+            onClick={handleSubmit}
+            disabled={
+              currentStep === STEPS.SCHEDULE && (!selectedDate || !selectedTime)
+            }
+          >
+            {currentStep === STEPS.INITIAL
+              ? 'Vamos lá'
+              : currentStep === STEPS.CONFIRMATION
+              ? 'Finalizar'
+              : 'Próximo'}
+          </AppointmentButton>
         </div>
       </Form>
     </Col>

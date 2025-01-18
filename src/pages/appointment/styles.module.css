@@ -21,7 +21,7 @@
   background-size: cover;
 
   img {
-    height: 90%;
+    height: 50%;
     position: relative;
     left: 30px;
     top: 50px;
@@ -40,12 +40,33 @@
 }
 
 .textsection {
-  max-width: 500px;
-  margin: 50px auto 0 auto;
+  max-width: 350px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 20px;
+  animation: fadeInUp 0.4s ease forwards;
+
+  h3 {
+    margin: 0;
+  }
+
+  @media screen and (min-width: 535px) {
+    border-radius: 20px;
+    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

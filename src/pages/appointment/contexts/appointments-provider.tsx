@@ -2,6 +2,14 @@ import { Form, FormInstance } from 'antd'
 import dayjs from 'dayjs'
 import { createContext, useContext, useState } from 'react'
 
+type Appointment = {
+  petTypeId: number | undefined
+  petHairId: number | undefined
+  petSizeId: number | undefined
+  petServiceId: number | undefined
+  appointmentDate: dayjs.Dayjs | undefined
+}
+
 export type Params = {
   petType: number | undefined
   setPetType: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -18,6 +26,8 @@ export type Params = {
   setSelectedDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs | undefined>>
   selectedTime: string | null
   setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>
+  appointmentData: Appointment
+  setAppointmentData: React.Dispatch<React.SetStateAction<Appointment>>
 }
 
 export const AppointmentContext = createContext<Params>({} as Params)
@@ -35,6 +45,13 @@ export const AppointmentProvider: React.FC<{
   )
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [formData, setFormData] = useState({})
+  const [appointmentData, setAppointmentData] = useState<Appointment>({
+    petTypeId: undefined,
+    petHairId: undefined,
+    petSizeId: undefined,
+    petServiceId: undefined,
+    appointmentDate: undefined,
+  })
 
   return (
     <AppointmentContext.Provider
@@ -54,6 +71,8 @@ export const AppointmentProvider: React.FC<{
         setSelectedDate,
         selectedTime,
         setSelectedTime,
+        appointmentData,
+        setAppointmentData,
       }}
     >
       {children}

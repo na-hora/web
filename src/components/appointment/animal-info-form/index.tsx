@@ -45,25 +45,25 @@ export const AnimalInfoForm = () => {
 
   const steps = [
     {
-      id: 0,
+      id: 1,
       title: 'Qual é o tipo do seu pet?',
       field: 'pet_type',
       options: PET_OPTIONS.types,
     },
     {
-      id: 1,
+      id: 2,
       title: 'Como é a pelagem dele?',
       field: 'pet_hair',
       options: PET_OPTIONS.hair,
     },
     {
-      id: 2,
+      id: 3,
       title: 'Qual o tamanho do seu pet?',
       field: 'pet_size',
       options: PET_OPTIONS.sizes,
     },
     {
-      id: 3,
+      id: 4,
       title: 'Qual serviço você deseja?',
       field: 'pet_service',
       options: PET_OPTIONS.services,
@@ -71,12 +71,12 @@ export const AnimalInfoForm = () => {
   ]
 
   const handleSelection = (field: string, value: number) => {
-    form.setFieldValue(field, value)
-    setRegisterCompanyFormData((prev: any) => ({
-      ...prev,
-      [field]: value,
-    }))
-    setCurrentStep(currentStep + 1)
+    // form.setFieldValue(field, value)
+    // setRegisterCompanyFormData((prev: any) => ({
+    //   ...prev,
+    //   [field]: value,
+    // }))
+    setCurrentStep((prevStep) => prevStep + 1)
   }
 
   return (
