@@ -1,3 +1,4 @@
+import { useLoadAvailableDays } from '@/hooks/na-hora/appointments/use-load-available-days'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { locale } from '@/utils/calendar'
 import { Button, Calendar, Card, Col, Row, Typography } from 'antd'
@@ -25,33 +26,19 @@ export const Schedule = () => {
     afternoon: [],
   })
 
-  const mockApiData = [
-    {
-      datetime: '2025-01-20T10:00:00',
-    },
-    {
-      datetime: '2025-01-27T08:00:00',
-    },
-    {
-      datetime: '2025-01-27T09:00:00',
-    },
-    {
-      datetime: '2025-01-27T14:00:00',
-    },
-    {
-      datetime: '2025-01-27T10:00:00',
-    },
-  ]
+  const { data: availableDays } = useLoadAvailableDays()
 
   useEffect(() => {
-    const processApiData = (data: any[]) => {
+    const processApiData = (data: string[] | undefined) => {
+      if (!data) return
+
       const dateMap = new Map<
         string,
         { morning: string[]; afternoon: string[] }
       >()
 
       data.forEach((slot) => {
-        const dateTime = dayjs(slot.datetime)
+        const dateTime = dayjs(slot)
         const date = dateTime.format('YYYY-MM-DD')
         const time = dateTime.format('HH:mm')
         const hour = dateTime.hour()
@@ -78,7 +65,7 @@ export const Schedule = () => {
       setAvailableDates(processed)
     }
 
-    processApiData(mockApiData)
+    processApiData(availableDays)
   }, [])
 
   const handleDateSelect = (date: any) => {

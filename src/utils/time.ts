@@ -48,3 +48,28 @@ export function fullMonthAndYearDate<T>(month: T, year: T): string {
   const monthName = date.toLocaleString('pt-BR', { month: 'long' })
   return `${monthName} de ${year}`
 }
+
+export function getFirstAndLastDayOfMonth() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth()
+
+  // Primeiro dia do mês
+  const firstDay = new Date(year, month, 1)
+
+  // Último dia do mês
+  const lastDay = new Date(year, month + 1, 0)
+
+  // Formatando para ISO string com timezone -03:00
+  const firstDayFormatted = new Date(firstDay.setHours(0, 0, 0, 0))
+    .toISOString()
+    .replace('Z', '-03:00')
+  const lastDayFormatted = new Date(lastDay.setHours(0, 0, 0, 0))
+    .toISOString()
+    .replace('Z', '-03:00')
+
+  return {
+    firstDay: firstDayFormatted,
+    lastDay: lastDayFormatted,
+  }
+}

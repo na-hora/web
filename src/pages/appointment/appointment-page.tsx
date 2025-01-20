@@ -11,6 +11,7 @@ import { AnimalType } from '@/components/appointment/type-step'
 import { UserInfoForm } from '@/components/appointment/user-info-form'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button, Col } from 'antd'
+import { useEffect } from 'react'
 import { useAppointmentContext } from './contexts/appointments-provider'
 import styles from './styles.module.css'
 
@@ -29,6 +30,13 @@ enum STEPS {
 export const AppointmentPage = () => {
   const { form, currentStep, setCurrentStep, setAppointmentData } =
     useAppointmentContext()
+
+  useEffect(() => {
+    setAppointmentData((prev: any) => ({
+      ...prev,
+      companyId: '5478b7e4-2469-40b5-ad26-2c4b9490c178', //TODO
+    }))
+  }, [])
 
   const nextStep = () => {
     const isLastStep = currentStep === STEPS.CONFIRMATION
