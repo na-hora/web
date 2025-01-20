@@ -11,9 +11,9 @@ export const AppointmentProgressBar = () => {
 
   return (
     <Progress
-      percent={currentStep * 17}
+      percent={currentStep * 13}
       strokeColor={twoColors}
-      showInfo={currentStep === 6}
+      showInfo={currentStep === 8}
     />
   )
 }

@@ -1,4 +1,6 @@
+import { PhoneInput } from '@/components/inputs/phone'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
+import { phoneMask } from '@/utils/masks'
 import { Form, Input } from 'antd'
 
 export const UserInfoForm = () => {
@@ -21,13 +23,26 @@ export const UserInfoForm = () => {
         rules={[{ required: true, message: 'Telefone obrigatório' }]}
         required
       >
-        <Input />
+        <PhoneInput
+          onChange={(e) =>
+            form.setFieldValue('phone', phoneMask(e.target.value))
+          }
+        />
       </Form.Item>
 
       <Form.Item
         label='E-mail'
         name='email'
-        rules={[{ required: true, message: 'E-mail obrigatório' }]}
+        rules={[
+          {
+            type: 'email',
+            message: 'Esse não é um e-mail válido',
+          },
+          {
+            required: true,
+            message: 'E-mail obrigatório',
+          },
+        ]}
         required
       >
         <Input type='email' />

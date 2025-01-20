@@ -2,6 +2,8 @@ import { AppointmentButton } from '@/buttons/appointment'
 import { Confirmation } from '@/components/appointment/confirmation'
 import { AnimalHair } from '@/components/appointment/hair-step'
 import { InitialStep } from '@/components/appointment/initial-step'
+import { AppointmentProgressBar } from '@/components/appointment/progress-bar'
+import { ReviewStep } from '@/components/appointment/review-step'
 import { Schedule } from '@/components/appointment/schedule'
 import { AnimalServices } from '@/components/appointment/services-step'
 import { AnimalSize } from '@/components/appointment/size-step'
@@ -20,7 +22,8 @@ enum STEPS {
   PET_SERVICE = 4,
   SCHEDULE = 5,
   USER_INFO = 6,
-  CONFIRMATION = 7,
+  REVIEW = 7,
+  CONFIRMATION = 8,
 }
 
 export const AppointmentPage = () => {
@@ -52,10 +55,9 @@ export const AppointmentPage = () => {
   }
 
   const handleSubmit = () => {
-    if (currentStep === STEPS.CONFIRMATION) {
-      // Submit logic here
-      return
-    }
+    // if (currentStep === STEPS.REVIEW) {
+    //   return
+    // }
     nextStep()
   }
 
@@ -75,6 +77,8 @@ export const AppointmentPage = () => {
         return <Schedule />
       case STEPS.USER_INFO:
         return <UserInfoForm />
+      case STEPS.REVIEW:
+        return <ReviewStep />
       case STEPS.CONFIRMATION:
         return <Confirmation />
       default:
@@ -92,6 +96,8 @@ export const AppointmentPage = () => {
         className={styles.textsection}
         style={{ maxWidth: currentStep === STEPS.SCHEDULE ? '800px' : '350px' }}
       >
+        {currentStep !== STEPS.INITIAL && <AppointmentProgressBar />}
+
         {renderCurrentStep()}
 
         <Col
@@ -99,6 +105,7 @@ export const AppointmentPage = () => {
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
+            alignItems: 'center',
             gap: '10px',
             marginTop: '24px',
           }}
@@ -118,8 +125,8 @@ export const AppointmentPage = () => {
           >
             {currentStep === STEPS.INITIAL
               ? 'Vamos lá'
-              : currentStep === STEPS.CONFIRMATION
-              ? 'Finalizar'
+              : currentStep === STEPS.REVIEW
+              ? 'Confirmar agendamento'
               : 'Próximo'}
           </AppointmentButton>
         </Col>
