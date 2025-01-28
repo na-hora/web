@@ -49,27 +49,22 @@ export function fullMonthAndYearDate<T>(month: T, year: T): string {
   return `${monthName} de ${year}`
 }
 
-export function getFirstAndLastDayOfMonth() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = now.getMonth()
+export function convertDateTOISO8601WithTimezone(
+  date: string,
+  time: string,
+): string {
+  const currentDate = new Date(`${date}T${time}`)
+  const offset = currentDate.getTimezoneOffset()
 
-  // Primeiro dia do mês
-  const firstDay = new Date(year, month, 1)
+  // Converte o offset para o formato +HH:mm ou -HH:mm
+  const offsetHours = Math.abs(Math.floor(offset / 60))
+    .toString()
+    .padStart(2, '0')
+  const offsetMinutes = Math.abs(offset % 60)
+    .toString()
+    .padStart(2, '0')
+  const offsetSign = offset > 0 ? '-' : '+'
+  const timezoneOffset = `${offsetSign}${offsetHours}:${offsetMinutes}`
 
-  // Último dia do mês
-  const lastDay = new Date(year, month + 1, 0)
-
-  // Formatando para ISO string com timezone -03:00
-  const firstDayFormatted = new Date(firstDay.setHours(0, 0, 0, 0))
-    .toISOString()
-    .replace('Z', '-03:00')
-  const lastDayFormatted = new Date(lastDay.setHours(0, 0, 0, 0))
-    .toISOString()
-    .replace('Z', '-03:00')
-
-  return {
-    firstDay: firstDayFormatted,
-    lastDay: lastDayFormatted,
-  }
+  return `${date}T${time}:00${timezoneOffset}`
 }

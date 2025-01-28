@@ -9,6 +9,10 @@ import { AnimalServices } from '@/components/appointment/services-step'
 import { AnimalSize } from '@/components/appointment/size-step'
 import { AnimalType } from '@/components/appointment/type-step'
 import { UserInfoForm } from '@/components/appointment/user-info-form'
+import { useGlobalAlertContext } from '@/contexts/global-alert-context'
+import { useCreateAppointment } from '@/hooks/na-hora/appointments/use-create-appointment'
+import { removePhoneMask } from '@/utils/masks'
+import { convertDateTOISO8601WithTimezone } from '@/utils/time'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button, Col } from 'antd'
 import { useEffect } from 'react'
@@ -28,8 +32,16 @@ enum STEPS {
 }
 
 export const AppointmentPage = () => {
-  const { form, currentStep, setCurrentStep, setAppointmentData } =
-    useAppointmentContext()
+  const {
+    form,
+    currentStep,
+    setCurrentStep,
+    appointmentData,
+    setAppointmentData,
+  } = useAppointmentContext()
+  const { mutate: createAppointment, error: createAppointmentError } =
+    useCreateAppointment()
+  const { triggerAlert } = useGlobalAlertContext()
 
   useEffect(() => {
     setAppointmentData((prev: any) => ({
@@ -37,6 +49,15 @@ export const AppointmentPage = () => {
       companyId: '5478b7e4-2469-40b5-ad26-2c4b9490c178', //TODO
     }))
   }, [])
+
+  useEffect(() => {
+    if (createAppointmentError) {
+      triggerAlert({
+        type: 'error',
+        message: 'Erro ao criar agendamento',
+      })
+    }
+  }, [createAppointmentError, triggerAlert])
 
   const nextStep = () => {
     const isLastStep = currentStep === STEPS.CONFIRMATION
@@ -62,10 +83,36 @@ export const AppointmentPage = () => {
     setCurrentStep(currentStep - 1)
   }
 
+  const formatDataToCreateAppointment = () => {
+    return {
+      companyId: appointmentData.companyId,
+      companyPetSizeId: appointmentData.petSizeId,
+      companyPetHairId: appointmentData.petHairId,
+      companyPetServiceId: appointmentData.petServiceId,
+      startTime: convertDateTOISO8601WithTimezone(
+        appointmentData.appointmentDateString as string,
+        appointmentData.appointmentTime as string,
+      ),
+      client: {
+        name: appointmentData.user.name,
+        email: appointmentData.user.email,
+        phone: `55${removePhoneMask(appointmentData.user.phone)}`,
+      },
+    }
+  }
+
   const handleSubmit = () => {
-    // if (currentStep === STEPS.REVIEW) {
-    //   return
-    // }
+    if (currentStep === STEPS.REVIEW) {
+      const payload = formatDataToCreateAppointment()
+
+      if (!Object.values(payload).some((value) => !value)) {
+        triggerAlert({
+          type: 'error',
+          message: 'Preencha todos os campos obrigatórios',
+        })
+      }
+      createAppointment(payload as any)
+    }
     nextStep()
   }
 

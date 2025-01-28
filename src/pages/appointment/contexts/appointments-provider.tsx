@@ -1,17 +1,22 @@
-import { getFirstAndLastDayOfMonth } from '@/utils/time'
 import { Form, FormInstance } from 'antd'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { createContext, useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 type Appointment = {
-  companyId: string | undefined
-  petTypeId: number | undefined
-  petHairId: number | undefined
-  petSizeId: number | undefined
-  petServiceId: number | undefined
-  appointmentDate: dayjs.Dayjs | undefined
-  appointmentTime: string | undefined
+  companyId: string | null
+  petTypeId: number | null
+  petHairId: number | null
+  petSizeId: number | null
+  petServiceId: number | null
+  appointmentDate: dayjs.Dayjs | null
+  appointmentDateString: string | null
+  appointmentTime: string | null
   executionTime: number
   calendarDates: {
     firstDayOfMonth: string
@@ -41,17 +46,20 @@ export const AppointmentProvider: React.FC<{
   const [currentStep, setCurrentStep] = useState(0)
   const [form] = Form.useForm()
   const [appointmentData, setAppointmentData] = useState<Appointment>({
-    companyId: undefined,
-    petTypeId: undefined,
-    petHairId: undefined,
-    petSizeId: undefined,
-    petServiceId: undefined,
+    companyId: null,
+    petTypeId: null,
+    petHairId: null,
+    petSizeId: null,
+    petServiceId: null,
     executionTime: 0,
-    appointmentDate: undefined,
-    appointmentTime: undefined,
+    appointmentDate: null,
+    appointmentDateString: null,
+    appointmentTime: null,
     calendarDates: {
-      firstDayOfMonth: getFirstAndLastDayOfMonth().firstDay,
-      lastDayOfMonth: getFirstAndLastDayOfMonth().lastDay,
+      firstDayOfMonth: dayjs()
+        .startOf('month')
+        .format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      lastDayOfMonth: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     },
     user: {
       name: '',

@@ -1,9 +1,16 @@
 import { useLoadAvailableDays } from '@/hooks/na-hora/appointments/use-load-available-days'
+import { useLoadCompleteDaySchedule } from '@/hooks/na-hora/appointments/use-load-complete-day-schedule'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { locale } from '@/utils/calendar'
 import { Button, Calendar, Card, Col, Row, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
+
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const { Title, Text } = Typography
 
@@ -17,6 +24,7 @@ interface TimeSlot {
 
 export const Schedule = () => {
   const { appointmentData, setAppointmentData } = useAppointmentContext()
+  console.log('appointmentData: ', appointmentData)
   const [availableDates, setAvailableDates] = useState<TimeSlot[]>([])
   const [timeSlots, setTimeSlots] = useState<{
     morning: string[]
@@ -27,6 +35,8 @@ export const Schedule = () => {
   })
 
   const { data: availableDays } = useLoadAvailableDays()
+  const { data: completeDaySchedule, refetch: fetchDaySchedule } =
+    useLoadCompleteDaySchedule()
 
   useEffect(() => {
     const processApiData = (data: string[] | undefined) => {
@@ -66,13 +76,14 @@ export const Schedule = () => {
     }
 
     processApiData(availableDays)
-  }, [])
+  }, [availableDays])
 
-  const handleDateSelect = (date: any) => {
+  const handleDateSelect = async (date: dayjs.Dayjs) => {
     setAppointmentData((prev) => ({
       ...prev,
       appointmentTime: undefined,
       appointmentDate: date,
+      appointmentDateString: date.format('YYYY-MM-DD'),
     }))
 
     const selectedDateStr = date.format('YYYY-MM-DD')
@@ -80,8 +91,29 @@ export const Schedule = () => {
       (slot) => slot.date === selectedDateStr,
     )
 
-    if (availableSlot) {
-      setTimeSlots(availableSlot.times)
+    if (availableSlot && appointmentData.appointmentDateString) {
+      try {
+        await fetchDaySchedule()
+
+        if (completeDaySchedule) {
+          const morning: string[] = []
+          const afternoon: string[] = []
+
+          completeDaySchedule.forEach((time: string) => {
+            const hour = dayjs(time).hour()
+            if (hour < 12) {
+              morning.push(dayjs(time).format('HH:mm'))
+            } else {
+              afternoon.push(dayjs(time).format('HH:mm'))
+            }
+          })
+
+          setTimeSlots({ morning, afternoon })
+        }
+      } catch (error) {
+        console.error('Erro ao carregar horários:', error)
+        setTimeSlots({ morning: [], afternoon: [] })
+      }
     } else {
       setTimeSlots({ morning: [], afternoon: [] })
     }
