@@ -1,6 +1,6 @@
 import { useLoadSpecificsPetServices } from '@/hooks/na-hora/pet-services/use-load-specifics-pet-services'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
-import { Button, Row } from 'antd'
+import { Button, Flex, Row, Skeleton, Space } from 'antd'
 import styles from './styles.module.css'
 
 export const AnimalServices = () => {
@@ -14,13 +14,40 @@ export const AnimalServices = () => {
     petTypeId: appointmentData.petTypeId,
   }
 
-  const { data: petServices } = useLoadSpecificsPetServices(params)
+  const { data: petServices, isFetching } = useLoadSpecificsPetServices(params)
 
   const savePetServiceId = (petServiceId: number) => {
     setAppointmentData({
       ...appointmentData,
       petServiceId: petServiceId,
     })
+  }
+
+  if (isFetching) {
+    return (
+      <Flex gap='middle' vertical>
+        <p>
+          Nos informe o{' '}
+          <b style={{ color: '#3196b5' }}>
+            serviço que você deseja para seu pet
+          </b>
+        </p>
+        <Space className={styles.skeleton}>
+          <Skeleton.Image
+            active={true}
+            style={{ height: '60px', width: '60px' }}
+          />
+          <Skeleton.Input active={true} size='small' />
+        </Space>
+        <Space className={styles.skeleton}>
+          <Skeleton.Image
+            active={true}
+            style={{ height: '60px', width: '60px' }}
+          />
+          <Skeleton.Input active={true} size='small' />
+        </Space>
+      </Flex>
+    )
   }
 
   return (

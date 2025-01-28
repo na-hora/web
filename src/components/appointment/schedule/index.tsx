@@ -2,7 +2,7 @@ import { useLoadAvailableDays } from '@/hooks/na-hora/appointments/use-load-avai
 import { useLoadCompleteDaySchedule } from '@/hooks/na-hora/appointments/use-load-complete-day-schedule'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { locale } from '@/utils/calendar'
-import { Button, Calendar, Card, Col, Row, Typography } from 'antd'
+import { Button, Calendar, Card, Col, Row, Skeleton, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
@@ -24,7 +24,6 @@ interface TimeSlot {
 
 export const Schedule = () => {
   const { appointmentData, setAppointmentData } = useAppointmentContext()
-  console.log('appointmentData: ', appointmentData)
   const [availableDates, setAvailableDates] = useState<TimeSlot[]>([])
   const [timeSlots, setTimeSlots] = useState<{
     morning: string[]
@@ -34,8 +33,10 @@ export const Schedule = () => {
     afternoon: [],
   })
 
-  const { data: availableDays } = useLoadAvailableDays()
-  const { data: completeDaySchedule, refetch: fetchDaySchedule } =
+  const { data: availableDays, isFetching: isFetchingAvailableDays } =
+    useLoadAvailableDays()
+
+  const { data: completeDaySchedule, isFetching: isFetchingDaySchedule } =
     useLoadCompleteDaySchedule()
 
   useEffect(() => {
@@ -93,8 +94,6 @@ export const Schedule = () => {
 
     if (availableSlot && appointmentData.appointmentDateString) {
       try {
-        await fetchDaySchedule()
-
         if (completeDaySchedule) {
           const morning: string[] = []
           const afternoon: string[] = []
@@ -145,19 +144,36 @@ export const Schedule = () => {
       <Row gutter={24} style={{ gap: '24px' }} justify='center'>
         <Col xs={24} md={11}>
           <Card title='Selecione uma Data'>
-            <Calendar
-              fullscreen={false}
-              onSelect={handleDateSelect}
-              value={appointmentData.appointmentDate}
-              disabledDate={disabledDate}
-              locale={locale}
-            />
+            {isFetchingAvailableDays ? (
+              <Skeleton active />
+            ) : (
+              <Calendar
+                fullscreen={false}
+                onSelect={handleDateSelect}
+                value={appointmentData.appointmentDate as dayjs.Dayjs}
+                disabledDate={disabledDate}
+                locale={locale}
+              />
+            )}
           </Card>
         </Col>
 
         <Col xs={24} md={11}>
           <Card title='Horários Disponíveis' style={{ minHeight: '425px' }}>
-            {appointmentData.appointmentDate ? (
+            {!appointmentData.appointmentDate ? (
+              <Col>
+                <Text type='secondary'>
+                  Selecione uma data para ver os horários disponíveis
+                </Text>
+              </Col>
+            ) : isFetchingDaySchedule ? (
+              <Skeleton active />
+            ) : timeSlots.morning.length === 0 &&
+              timeSlots.afternoon.length === 0 ? (
+              <Text type='secondary'>
+                Não há horários disponíveis para esta data
+              </Text>
+            ) : (
               <Col>
                 {timeSlots.morning.length > 0 && (
                   <>
@@ -204,19 +220,6 @@ export const Schedule = () => {
                     </Row>
                   </>
                 )}
-
-                {timeSlots.morning.length === 0 &&
-                  timeSlots.afternoon.length === 0 && (
-                    <Text type='secondary'>
-                      Não há horários disponíveis para esta data
-                    </Text>
-                  )}
-              </Col>
-            ) : (
-              <Col>
-                <Text type='secondary'>
-                  Selecione uma data para ver os horários disponíveis
-                </Text>
               </Col>
             )}
           </Card>

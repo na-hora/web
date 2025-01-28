@@ -1,12 +1,12 @@
 import { useLoadPetSizes } from '@/hooks/na-hora/pet-size/use-load-pet-sizes'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
-import { Button, Col, Row } from 'antd'
+import { Button, Col, Row, Skeleton } from 'antd'
 
 export const AnimalSize = () => {
   const { companyId, appointmentData, setAppointmentData } =
     useAppointmentContext()
 
-  const { data: petSizes } = useLoadPetSizes(
+  const { data: petSizes, isFetching } = useLoadPetSizes(
     companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
   )
 
@@ -15,6 +15,31 @@ export const AnimalSize = () => {
       ...appointmentData,
       petSizeId: petSizeId,
     })
+  }
+
+  if (isFetching) {
+    return (
+      <>
+        <p>
+          Nos informe o <b style={{ color: '#3196b5' }}>porte do seu pet</b>
+        </p>
+
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+        </Row>
+      </>
+    )
   }
 
   return (

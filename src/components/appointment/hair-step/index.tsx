@@ -1,12 +1,12 @@
 import { useLoadPetHairs } from '@/hooks/na-hora/pet-hair/use-load-pet-hairs'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
-import { Button, Col, Row } from 'antd'
+import { Button, Col, Row, Skeleton } from 'antd'
 
 export const AnimalHair = () => {
   const { companyId, appointmentData, setAppointmentData } =
     useAppointmentContext()
 
-  const { data: petHairs } = useLoadPetHairs(
+  const { data: petHairs, isFetching } = useLoadPetHairs(
     companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
   )
 
@@ -15,6 +15,31 @@ export const AnimalHair = () => {
       ...appointmentData,
       petHairId: petHairId,
     })
+  }
+
+  if (isFetching) {
+    return (
+      <>
+        <p>
+          Nos informe a <b style={{ color: '#3196b5' }}>pelagem do seu pet</b>
+        </p>
+
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+          <Col span={12}>
+            <Skeleton.Button active shape='round' block />
+          </Col>
+        </Row>
+      </>
+    )
   }
 
   return (
