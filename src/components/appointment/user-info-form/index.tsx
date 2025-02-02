@@ -4,7 +4,16 @@ import { phoneMask } from '@/utils/masks'
 import { Form, Input } from 'antd'
 
 export const UserInfoForm = () => {
-  const { form } = useAppointmentContext()
+  const { form, setAppointmentData } = useAppointmentContext()
+
+  const handleOnChange = (inputName: string, value: string) => {
+    form.setFieldValue(inputName, value)
+
+    setAppointmentData((prev: any) => ({
+      ...prev,
+      client: form.getFieldsValue(),
+    }))
+  }
 
   return (
     <Form form={form} layout='vertical' style={{ width: '100%' }}>
@@ -14,7 +23,7 @@ export const UserInfoForm = () => {
         rules={[{ required: true, message: 'Nome completo obrigatório' }]}
         required
       >
-        <Input />
+        <Input onChange={(e) => handleOnChange('name', e.target.value)} />
       </Form.Item>
 
       <Form.Item
@@ -24,9 +33,10 @@ export const UserInfoForm = () => {
         required
       >
         <PhoneInput
-          onChange={(e) =>
+          onChange={(e) => {
             form.setFieldValue('phone', phoneMask(e.target.value))
-          }
+            handleOnChange('phone', phoneMask(e.target.value))
+          }}
         />
       </Form.Item>
 
@@ -45,7 +55,10 @@ export const UserInfoForm = () => {
         ]}
         required
       >
-        <Input type='email' />
+        <Input
+          type='email'
+          onChange={(e) => handleOnChange('email', e.target.value)}
+        />
       </Form.Item>
     </Form>
   )

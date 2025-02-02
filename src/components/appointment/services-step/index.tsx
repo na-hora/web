@@ -1,26 +1,40 @@
+import { SpecificPetService } from '@/hooks/na-hora/pet-services/types/load-specifics-services.type'
 import { useLoadSpecificsPetServices } from '@/hooks/na-hora/pet-services/use-load-specifics-pet-services'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { Button, Flex, Row, Skeleton, Space } from 'antd'
 import styles from './styles.module.css'
 
 export const AnimalServices = () => {
-  const { companyId, appointmentData, setAppointmentData } =
-    useAppointmentContext()
+  const { appointmentData, setAppointmentData } = useAppointmentContext()
 
   const params = {
-    companyId: companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
-    petHairId: appointmentData.petHairId,
-    petSizeId: appointmentData.petSizeId,
-    petTypeId: appointmentData.petTypeId,
+    companyId: appointmentData.companyId as string,
+    petHairId: appointmentData.petHairId as number,
+    petSizeId: appointmentData.petSizeId as number,
+    petTypeId: appointmentData.petTypeId as number,
   }
-
   const { data: petServices, isFetching } = useLoadSpecificsPetServices(params)
 
-  const savePetServiceId = (petServiceId: number) => {
+  const savePetService = (petService: SpecificPetService) => {
     setAppointmentData({
       ...appointmentData,
-      petServiceId: petServiceId,
+      petService,
     })
+  }
+
+  const serviceImage = (serviceName: string): string => {
+    const serviceNameLowerCase = serviceName.toLowerCase()
+
+    switch (serviceNameLowerCase) {
+      case 'banho':
+        return '/imgs/appointment/shower.png'
+      case 'tosa':
+        return '/imgs/appointment/scissor.png'
+      case 'banho e tosa':
+        return '/imgs/appointment/shower.png'
+      default:
+        return ''
+    }
   }
 
   if (isFetching) {
@@ -61,17 +75,17 @@ export const AnimalServices = () => {
         {petServices?.services.map((petService) => (
           <Button
             key={petService.id}
-            onClick={() => savePetServiceId(petService.id)}
+            onClick={() => savePetService(petService)}
             className={styles.button}
             style={{
               border: `${
-                petService.id === appointmentData.petServiceId
+                petService.id === appointmentData.petService?.id
                   ? '2px solid #3196b5'
                   : 'none'
               }`,
             }}
           >
-            {/* <img src={petImageUrl(petService.name)} height={100} /> */}
+            <img src={serviceImage(petService.name)} height={100} />
             <h3>{petService.name}</h3>
           </Button>
         ))}

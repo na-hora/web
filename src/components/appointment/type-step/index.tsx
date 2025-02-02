@@ -4,11 +4,10 @@ import { Button, Flex, Skeleton, Space } from 'antd'
 import styles from './styles.module.css'
 
 export const AnimalType = () => {
-  const { appointmentData, setAppointmentData, companyId } =
-    useAppointmentContext()
+  const { appointmentData, setAppointmentData } = useAppointmentContext()
 
   const { data: petTypes, isFetching } = useLoadPetTypes(
-    companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
+    appointmentData?.companyId as string,
   )
 
   const savePetTypeId = (petTypeId: number) => {

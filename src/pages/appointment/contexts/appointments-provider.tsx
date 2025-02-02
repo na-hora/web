@@ -1,9 +1,9 @@
+import { SpecificPetService } from '@/hooks/na-hora/pet-services/types/load-specifics-services.type'
 import { Form, FormInstance } from 'antd'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import { createContext, useContext, useState } from 'react'
-import { useParams } from 'react-router-dom'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -13,7 +13,7 @@ type Appointment = {
   petTypeId: number | null
   petHairId: number | null
   petSizeId: number | null
-  petServiceId: number | null
+  petService: SpecificPetService | null
   appointmentDate: dayjs.Dayjs | null
   appointmentDateString: string | null
   appointmentTime: string | null
@@ -22,7 +22,7 @@ type Appointment = {
     firstDayOfMonth: string
     lastDayOfMonth: string
   }
-  user: {
+  client: {
     name: string
     email: string
     phone: string
@@ -35,7 +35,8 @@ export type Params = {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
   appointmentData: Appointment
   setAppointmentData: React.Dispatch<React.SetStateAction<Appointment>>
-  companyId: string | undefined
+  nextStep: VoidFunction
+  prevStep: VoidFunction
 }
 
 export const AppointmentContext = createContext<Params>({} as Params)
@@ -50,7 +51,7 @@ export const AppointmentProvider: React.FC<{
     petTypeId: null,
     petHairId: null,
     petSizeId: null,
-    petServiceId: null,
+    petService: null,
     executionTime: 0,
     appointmentDate: null,
     appointmentDateString: null,
@@ -61,13 +62,32 @@ export const AppointmentProvider: React.FC<{
         .format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       lastDayOfMonth: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     },
-    user: {
+    client: {
       name: '',
       email: '',
       phone: '',
     },
   })
-  const { companyId } = useParams()
+
+  const nextStep = () => {
+    const isLastStep = currentStep === 8 // confirmation
+    if (isLastStep) return
+
+    form.validateFields().then(() => {
+      setAppointmentData((prev: any) => ({
+        ...prev,
+        client: form.getFieldsValue(),
+      }))
+
+      setCurrentStep(currentStep + 1)
+    })
+  }
+
+  const prevStep = () => {
+    if (currentStep === 0) return
+
+    setCurrentStep(currentStep - 1)
+  }
 
   return (
     <AppointmentContext.Provider
@@ -77,7 +97,8 @@ export const AppointmentProvider: React.FC<{
         setCurrentStep,
         appointmentData,
         setAppointmentData,
-        companyId,
+        nextStep,
+        prevStep,
       }}
     >
       {children}

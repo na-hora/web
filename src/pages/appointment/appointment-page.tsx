@@ -9,13 +9,13 @@ import { AnimalServices } from '@/components/appointment/services-step'
 import { AnimalSize } from '@/components/appointment/size-step'
 import { AnimalType } from '@/components/appointment/type-step'
 import { UserInfoForm } from '@/components/appointment/user-info-form'
-import { useGlobalAlertContext } from '@/contexts/global-alert-context'
 import { useCreateAppointment } from '@/hooks/na-hora/appointments/use-create-appointment'
 import { removePhoneMask } from '@/utils/masks'
 import { convertDateTOISO8601WithTimezone } from '@/utils/time'
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Button, Col } from 'antd'
-import { useEffect } from 'react'
+import { Button, Col, Tooltip } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useAppointmentContext } from './contexts/appointments-provider'
 import styles from './styles.module.css'
 
@@ -31,114 +31,120 @@ enum STEPS {
   CONFIRMATION = 8,
 }
 
+const STEP_COMPONENTS = {
+  [STEPS.INITIAL]: InitialStep,
+  [STEPS.PET_TYPE]: AnimalType,
+  [STEPS.PET_SIZE]: AnimalSize,
+  [STEPS.PET_HAIR]: AnimalHair,
+  [STEPS.PET_SERVICE]: AnimalServices,
+  [STEPS.SCHEDULE]: Schedule,
+  [STEPS.USER_INFO]: UserInfoForm,
+  [STEPS.REVIEW]: ReviewStep,
+  [STEPS.CONFIRMATION]: Confirmation,
+}
+
+const stepValidations: { [key: number]: (data: any) => any } = {
+  [STEPS.INITIAL]: (data: any) => ({
+    isValid: !!data.companyId,
+    message: 'Selecione uma empresa',
+  }),
+  [STEPS.PET_TYPE]: (data: any) => ({
+    isValid: !!data.petTypeId,
+    message: 'Selecione um tipo de animal',
+  }),
+  [STEPS.PET_SIZE]: (data: any) => ({
+    isValid: !!data.petSizeId,
+    message: 'Selecione um tamanho de animal',
+  }),
+  [STEPS.PET_HAIR]: (data: any) => ({
+    isValid: !!data.petHairId,
+    message: 'Selecione o tamanho da pelagem',
+  }),
+  [STEPS.PET_SERVICE]: (data: any) => ({
+    isValid: !!data.petService?.id,
+    message: 'Selecione um serviço',
+  }),
+  [STEPS.SCHEDULE]: (data: any) => ({
+    isValid: !!data.appointmentDate,
+    message: 'Selecione um horário',
+  }),
+  [STEPS.USER_INFO]: (data: any) => ({
+    isValid: !!(data.client.name && data.client.email && data.client.phone),
+    message: 'Preencha os dados do cliente',
+  }),
+}
+
 export const AppointmentPage = () => {
   const {
-    form,
     currentStep,
-    setCurrentStep,
     appointmentData,
     setAppointmentData,
+    nextStep,
+    prevStep,
   } = useAppointmentContext()
-  const { mutate: createAppointment, error: createAppointmentError } =
+  const { mutate: createAppointment, isPending: isCreating } =
     useCreateAppointment()
-  const { triggerAlert } = useGlobalAlertContext()
+  const [disabledMessage, setDisabledMessage] = useState('')
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    setAppointmentData((prev: any) => ({
-      ...prev,
-      companyId: '5478b7e4-2469-40b5-ad26-2c4b9490c178', //TODO
-    }))
-  }, [])
-
-  useEffect(() => {
-    if (createAppointmentError) {
-      triggerAlert({
-        type: 'error',
-        message: 'Erro ao criar agendamento',
-      })
+    const companyId = searchParams.get('q')
+    if (companyId) {
+      setAppointmentData((prev) => ({ ...prev, companyId }))
     }
-  }, [createAppointmentError, triggerAlert])
+  }, [searchParams, setAppointmentData])
 
-  const nextStep = () => {
-    const isLastStep = currentStep === STEPS.CONFIRMATION
-    if (isLastStep) return
-
-    form.validateFields().then(() => {
-      setAppointmentData((prev: any) => ({
-        ...prev,
-        user: form.getFieldsValue(),
-      }))
-
-      // if (currentStep === STEPS.SCHEDULE && (!selectedDate || !selectedTime)) {
-      //   return
-      // }
-
-      setCurrentStep(currentStep + 1)
-    })
-  }
-
-  const prevStep = () => {
-    if (currentStep === 0) return
-
-    setCurrentStep(currentStep - 1)
-  }
-
-  const formatDataToCreateAppointment = () => {
-    return {
-      companyId: appointmentData.companyId,
-      companyPetSizeId: appointmentData.petSizeId,
-      companyPetHairId: appointmentData.petHairId,
-      companyPetServiceId: appointmentData.petServiceId,
-      startTime: convertDateTOISO8601WithTimezone(
-        appointmentData.appointmentDateString as string,
-        appointmentData.appointmentTime as string,
-      ),
-      client: {
-        name: appointmentData.user.name,
-        email: appointmentData.user.email,
-        phone: `55${removePhoneMask(appointmentData.user.phone)}`,
-      },
-    }
-  }
+  const formatDataToCreateAppointment = () => ({
+    companyId: appointmentData.companyId as string,
+    companyPetSizeId: appointmentData.petSizeId as number,
+    companyPetHairId: appointmentData.petHairId as number,
+    companyPetServiceId: appointmentData.petService?.id as number,
+    startTime: convertDateTOISO8601WithTimezone(
+      appointmentData.appointmentDateString as string,
+      appointmentData.appointmentTime as string,
+    ),
+    client: {
+      name: appointmentData.client.name,
+      email: appointmentData.client.email,
+      phone: removePhoneMask(appointmentData.client.phone),
+    },
+  })
 
   const handleSubmit = () => {
     if (currentStep === STEPS.REVIEW) {
-      const payload = formatDataToCreateAppointment()
-
-      if (!Object.values(payload).some((value) => !value)) {
-        triggerAlert({
-          type: 'error',
-          message: 'Preencha todos os campos obrigatórios',
-        })
-      }
-      createAppointment(payload as any)
+      createAppointment({ body: formatDataToCreateAppointment() })
+      return
     }
+
     nextStep()
   }
 
-  const renderCurrentStep = () => {
-    switch (currentStep) {
-      case STEPS.INITIAL:
-        return <InitialStep />
-      case STEPS.PET_TYPE:
-        return <AnimalType />
-      case STEPS.PET_SIZE:
-        return <AnimalSize />
-      case STEPS.PET_HAIR:
-        return <AnimalHair />
-      case STEPS.PET_SERVICE:
-        return <AnimalServices />
-      case STEPS.SCHEDULE:
-        return <Schedule />
-      case STEPS.USER_INFO:
-        return <UserInfoForm />
-      case STEPS.REVIEW:
-        return <ReviewStep />
-      case STEPS.CONFIRMATION:
-        return <Confirmation />
-      default:
-        return null
+  const isButtonDisabled = () => {
+    const validation = stepValidations[currentStep as STEPS]?.(appointmentData)
+    if (validation) {
+      setDisabledMessage(validation.message)
+      return !validation.isValid
     }
+    return false
+  }
+
+  const isDisabled = useMemo(
+    () => isButtonDisabled(),
+    [
+      currentStep,
+      appointmentData.companyId,
+      appointmentData.petTypeId,
+      appointmentData.petSizeId,
+      appointmentData.petHairId,
+      appointmentData.petService?.id,
+      appointmentData.appointmentDate,
+      appointmentData.client,
+    ],
+  )
+
+  const renderCurrentStep = () => {
+    const StepComponent = STEP_COMPONENTS[currentStep as STEPS]
+    return StepComponent ? <StepComponent /> : null
   }
 
   return (
@@ -165,25 +171,28 @@ export const AppointmentPage = () => {
             marginTop: '24px',
           }}
         >
-          {currentStep > 0 && (
-            <Button onClick={prevStep} type='link' style={{ width: '50%' }}>
-              <ArrowLeftOutlined />
-              Voltar
-            </Button>
-          )}
+          {currentStep > STEPS.INITIAL &&
+            currentStep !== STEPS.CONFIRMATION && (
+              <Button onClick={prevStep} type='link' style={{ width: '50%' }}>
+                <ArrowLeftOutlined />
+                Voltar
+              </Button>
+            )}
 
-          <AppointmentButton
-            onClick={handleSubmit}
-            // disabled={
-            //   currentStep === STEPS.SCHEDULE && (!selectedDate || !selectedTime)
-            // }
-          >
-            {currentStep === STEPS.INITIAL
-              ? 'Vamos lá'
-              : currentStep === STEPS.REVIEW
-              ? 'Confirmar agendamento'
-              : 'Próximo'}
-          </AppointmentButton>
+          {currentStep !== STEPS.CONFIRMATION && (
+            <Tooltip title={isDisabled ? disabledMessage : ''}>
+              <AppointmentButton
+                onClick={handleSubmit}
+                disabled={isDisabled || isCreating}
+              >
+                {currentStep === STEPS.INITIAL
+                  ? 'Vamos lá'
+                  : currentStep === STEPS.REVIEW
+                  ? 'Confirmar agendamento'
+                  : 'Próximo'}
+              </AppointmentButton>
+            </Tooltip>
+          )}
         </Col>
       </section>
     </main>

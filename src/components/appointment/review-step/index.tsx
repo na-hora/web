@@ -10,16 +10,16 @@ export const ReviewStep = () => {
       <h3>Confirme os dados do seu atendimento</h3>
 
       <p>
-        <b>Nome:</b> {appointmentData.user.name}
+        <b>Nome:</b> {appointmentData.client.name}
       </p>
       <p>
-        <b>Telefone:</b> {appointmentData.user.phone}
+        <b>Telefone:</b> {appointmentData.client.phone}
       </p>
       <p>
-        <b>Email:</b> {appointmentData.user.email}
+        <b>Email:</b> {appointmentData.client.email}
       </p>
       <p>
-        <b>Serviço:</b> *TODO*
+        <b>Serviço:</b> {appointmentData.petService?.name}
       </p>
 
       <p>

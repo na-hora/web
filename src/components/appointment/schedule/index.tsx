@@ -79,10 +79,29 @@ export const Schedule = () => {
     processApiData(availableDays)
   }, [availableDays])
 
+  useEffect(() => {
+    if (completeDaySchedule) {
+      const morning: string[] = []
+      const afternoon: string[] = []
+
+      completeDaySchedule.forEach((time: string) => {
+        const hour = dayjs(time).hour()
+        if (hour < 12) {
+          morning.push(dayjs(time).format('HH:mm'))
+        } else {
+          afternoon.push(dayjs(time).format('HH:mm'))
+        }
+      })
+
+      setTimeSlots({ morning, afternoon })
+    }
+  }, [completeDaySchedule])
+
   const handleDateSelect = async (date: dayjs.Dayjs) => {
+    setTimeSlots({ morning: [], afternoon: [] })
+
     setAppointmentData((prev) => ({
       ...prev,
-      appointmentTime: undefined,
       appointmentDate: date,
       appointmentDateString: date.format('YYYY-MM-DD'),
     }))
@@ -92,28 +111,7 @@ export const Schedule = () => {
       (slot) => slot.date === selectedDateStr,
     )
 
-    if (availableSlot && appointmentData.appointmentDateString) {
-      try {
-        if (completeDaySchedule) {
-          const morning: string[] = []
-          const afternoon: string[] = []
-
-          completeDaySchedule.forEach((time: string) => {
-            const hour = dayjs(time).hour()
-            if (hour < 12) {
-              morning.push(dayjs(time).format('HH:mm'))
-            } else {
-              afternoon.push(dayjs(time).format('HH:mm'))
-            }
-          })
-
-          setTimeSlots({ morning, afternoon })
-        }
-      } catch (error) {
-        console.error('Erro ao carregar horários:', error)
-        setTimeSlots({ morning: [], afternoon: [] })
-      }
-    } else {
+    if (!availableSlot) {
       setTimeSlots({ morning: [], afternoon: [] })
     }
   }

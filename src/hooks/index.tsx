@@ -74,10 +74,14 @@ export const useHooks = () => {
     url,
     options,
     mutationKey,
+    onSuccess,
+    onError,
   }: {
     url: string
     options?: any
     mutationKey?: string
+    onSuccess?: VoidFunction
+    onError?: VoidFunction
   }): UseMutationResult<TResponse, unknown, TData, unknown> => {
     return useMutation<TResponse, unknown, TData>({
       mutationFn: async (data: TData) => {
@@ -107,6 +111,11 @@ export const useHooks = () => {
         queryClient.invalidateQueries([
           mutationKey || url,
         ] as InvalidateQueryFilters)
+
+        onSuccess && onSuccess()
+      },
+      onError: () => {
+        onError && onError()
       },
     })
   }
