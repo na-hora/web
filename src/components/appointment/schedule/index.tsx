@@ -24,96 +24,58 @@ interface TimeSlot {
 
 export const Schedule = () => {
   const { appointmentData, setAppointmentData } = useAppointmentContext()
-  const [availableDates, setAvailableDates] = useState<TimeSlot[]>([])
-  const [timeSlots, setTimeSlots] = useState<{
-    morning: string[]
-    afternoon: string[]
-  }>({
-    morning: [],
-    afternoon: [],
-  })
+  const [availableHoursByDay, setAvailableHoursByDay] =
+    useState<TimeSlot | null>(null)
 
   const { data: availableDays, isFetching: isFetchingAvailableDays } =
-    useLoadAvailableDays()
+    useLoadAvailableDays() // para mostrar os dias disponíveis no calendário - "2025-02-12"
 
   const { data: completeDaySchedule, isFetching: isFetchingDaySchedule } =
-    useLoadCompleteDaySchedule()
+    useLoadCompleteDaySchedule() // todos os horários disponíveis de um dia - "2025-02-12T10:40:00-03:00"
 
   useEffect(() => {
-    const processApiData = (data: string[] | undefined) => {
-      if (!data) return
+    setAppointmentData((prev) => ({
+      ...prev,
+      shouldFetchSchedule: false,
+    }))
 
-      const dateMap = new Map<
-        string,
-        { morning: string[]; afternoon: string[] }
-      >()
-
-      data.forEach((slot) => {
-        const dateTime = dayjs(slot)
-        const date = dateTime.format('YYYY-MM-DD')
-        const time = dateTime.format('HH:mm')
-        const hour = dateTime.hour()
-
-        if (!dateMap.has(date)) {
-          dateMap.set(date, { morning: [], afternoon: [] })
-        }
-
-        const slots = dateMap.get(date)!
-        if (hour < 12) {
-          slots.morning.push(time)
-        } else {
-          slots.afternoon.push(time)
-        }
-      })
-
-      const processed: TimeSlot[] = Array.from(dateMap.entries()).map(
-        ([date, times]) => ({
-          date,
-          times,
-        }),
-      )
-
-      setAvailableDates(processed)
-    }
-
-    processApiData(availableDays)
-  }, [availableDays])
-
-  useEffect(() => {
-    if (completeDaySchedule) {
-      const morning: string[] = []
-      const afternoon: string[] = []
-
-      completeDaySchedule.forEach((time: string) => {
-        const hour = dayjs(time).hour()
-        if (hour < 12) {
-          morning.push(dayjs(time).format('HH:mm'))
-        } else {
-          afternoon.push(dayjs(time).format('HH:mm'))
-        }
-      })
-
-      setTimeSlots({ morning, afternoon })
-    }
+    const processedTimes = processScheduleTimes(completeDaySchedule)
+    setAvailableHoursByDay(processedTimes)
   }, [completeDaySchedule])
 
+  const processScheduleTimes = (completeDaySchedule: string[] | undefined) => {
+    if (!completeDaySchedule?.length) return null
+
+    const morning: string[] = []
+    const afternoon: string[] = []
+
+    completeDaySchedule.forEach((time: string) => {
+      const hour = dayjs(time).hour()
+      if (hour < 12) {
+        morning.push(dayjs(time).format('HH:mm'))
+      } else {
+        afternoon.push(dayjs(time).format('HH:mm'))
+      }
+    })
+
+    return {
+      date: dayjs(completeDaySchedule[0]).format('YYYY-MM-DD'),
+      times: {
+        morning,
+        afternoon,
+      },
+    }
+  }
+
   const handleDateSelect = async (date: dayjs.Dayjs) => {
-    setTimeSlots({ morning: [], afternoon: [] })
+    const dateString = date.format('YYYY-MM-DD')
 
     setAppointmentData((prev) => ({
       ...prev,
       appointmentDate: date,
-      appointmentDateString: date.format('YYYY-MM-DD'),
+      appointmentDateString: dateString,
+      shouldFetchSchedule: true,
     }))
-
-    const selectedDateStr = date.format('YYYY-MM-DD')
-    const availableSlot = availableDates.find(
-      (slot) => slot.date === selectedDateStr,
-    )
-
-    if (!availableSlot) {
-      setTimeSlots({ morning: [], afternoon: [] })
-    }
   }
 
   const handleTimeSelect = (time: string) => {
@@ -126,8 +88,8 @@ export const Schedule = () => {
   const disabledDate = (current: dayjs.Dayjs) => {
     const currentDateStr = current.format('YYYY-MM-DD')
     const isBeforeToday = current < dayjs().startOf('day')
-    const isUnavailable = !availableDates.some(
-      (slot) => slot.date === currentDateStr,
+    const isUnavailable = !availableDays?.some(
+      (date) => date === currentDateStr,
     )
 
     return isBeforeToday || isUnavailable
@@ -148,7 +110,6 @@ export const Schedule = () => {
               <Calendar
                 fullscreen={false}
                 onSelect={handleDateSelect}
-                value={appointmentData.appointmentDate as dayjs.Dayjs}
                 disabledDate={disabledDate}
                 locale={locale}
               />
@@ -166,58 +127,60 @@ export const Schedule = () => {
               </Col>
             ) : isFetchingDaySchedule ? (
               <Skeleton active />
-            ) : timeSlots.morning.length === 0 &&
-              timeSlots.afternoon.length === 0 ? (
+            ) : availableHoursByDay?.times.morning.length === 0 &&
+              availableHoursByDay?.times.afternoon.length === 0 ? (
               <Text type='secondary'>
                 Não há horários disponíveis para esta data
               </Text>
             ) : (
               <Col>
-                {timeSlots.morning.length > 0 && (
-                  <>
-                    <Title level={4}>Manhã</Title>
-                    <Row gutter={[8, 8]}>
-                      {timeSlots.morning.map((time) => (
-                        <Col span={12} key={time}>
-                          <Button
-                            style={{ width: '100%' }}
-                            type={
-                              appointmentData.appointmentTime === time
-                                ? 'primary'
-                                : 'default'
-                            }
-                            onClick={() => handleTimeSelect(time)}
-                          >
-                            {time}
-                          </Button>
-                        </Col>
-                      ))}
-                    </Row>
-                  </>
-                )}
+                {availableHoursByDay &&
+                  availableHoursByDay?.times.morning.length > 0 && (
+                    <>
+                      <Title level={4}>Manhã</Title>
+                      <Row gutter={[8, 8]}>
+                        {availableHoursByDay?.times.morning.map((time) => (
+                          <Col span={12} key={time}>
+                            <Button
+                              style={{ width: '100%' }}
+                              type={
+                                appointmentData.appointmentTime === time
+                                  ? 'primary'
+                                  : 'default'
+                              }
+                              onClick={() => handleTimeSelect(time)}
+                            >
+                              {time}
+                            </Button>
+                          </Col>
+                        ))}
+                      </Row>
+                    </>
+                  )}
 
-                {timeSlots.afternoon.length > 0 && (
-                  <>
-                    <Title level={4}>Tarde</Title>
-                    <Row gutter={[8, 8]}>
-                      {timeSlots.afternoon.map((time) => (
-                        <Col span={12} key={time}>
-                          <Button
-                            style={{ width: '100%' }}
-                            type={
-                              appointmentData.appointmentTime === time
-                                ? 'primary'
-                                : 'default'
-                            }
-                            onClick={() => handleTimeSelect(time)}
-                          >
-                            {time}
-                          </Button>
-                        </Col>
-                      ))}
-                    </Row>
-                  </>
-                )}
+                {availableHoursByDay &&
+                  availableHoursByDay?.times.afternoon.length > 0 && (
+                    <>
+                      <Title level={4}>Tarde</Title>
+                      <Row gutter={[8, 8]}>
+                        {availableHoursByDay?.times.afternoon.map((time) => (
+                          <Col span={12} key={time}>
+                            <Button
+                              style={{ width: '100%' }}
+                              type={
+                                appointmentData.appointmentTime === time
+                                  ? 'primary'
+                                  : 'default'
+                              }
+                              onClick={() => handleTimeSelect(time)}
+                            >
+                              {time}
+                            </Button>
+                          </Col>
+                        ))}
+                      </Row>
+                    </>
+                  )}
               </Col>
             )}
           </Card>

@@ -205,7 +205,7 @@ export const AppointmentPage = () => {
                 {currentStep === STEPS.INITIAL
                   ? 'Vamos lá'
                   : currentStep === STEPS.REVIEW
-                  ? 'Confirmar agendamento'
+                  ? 'Reservar horário'
                   : 'Próximo'}
               </AppointmentButton>
             </Tooltip>

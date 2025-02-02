@@ -18,6 +18,7 @@ type Appointment = {
   appointmentDateString: string | null
   appointmentTime: string | null
   executionTime: number
+  shouldFetchSchedule: boolean
   calendarDates: {
     firstDayOfMonth: string
     lastDayOfMonth: string
@@ -56,6 +57,7 @@ export const AppointmentProvider: React.FC<{
     appointmentDate: null,
     appointmentDateString: null,
     appointmentTime: null,
+    shouldFetchSchedule: false,
     calendarDates: {
       firstDayOfMonth: dayjs()
         .startOf('month')
