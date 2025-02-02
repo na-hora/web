@@ -31,7 +31,7 @@
     background: url('/public/imgs/appointment/elipses-desktop.png') no-repeat
       center center;
     background-size: cover;
-    height: 50vh;
+    height: 30vh;
   }
 
   @media screen and (min-width: 1024px) {
