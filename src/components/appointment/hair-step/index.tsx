@@ -3,11 +3,10 @@ import { useAppointmentContext } from '@/pages/appointment/contexts/appointments
 import { Button, Col, Row, Skeleton } from 'antd'
 
 export const AnimalHair = () => {
-  const { companyId, appointmentData, setAppointmentData } =
-    useAppointmentContext()
+  const { appointmentData, setAppointmentData } = useAppointmentContext()
 
   const { data: petHairs, isFetching } = useLoadPetHairs(
-    companyId || '5478b7e4-2469-40b5-ad26-2c4b9490c178',
+    appointmentData?.companyId as string,
   )
 
   const setPetHairId = (petHairId: number) => {
