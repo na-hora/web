@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAppointmentContext } from './contexts/appointments-provider'
 import styles from './styles.module.css'
+import { CreateAppointmentModal } from '@/components/appointment/create-appointment-modal'
 
 enum STEPS {
   INITIAL = 0,
@@ -179,6 +180,7 @@ export const AppointmentPage = () => {
         {currentStep !== STEPS.INITIAL && <AppointmentProgressBar />}
 
         {renderCurrentStep()}
+        {isCreating && <CreateAppointmentModal isOpen={isCreating} />}
 
         <Col
           style={{
