@@ -135,14 +135,18 @@ export const Schedule = () => {
             {isFetchingAvailableDays ? (
               <Skeleton active />
             ) : (
-              <Calendar
-                fullscreen={false}
-                onSelect={handleDateSelect}
-                disabledDate={disabledDate}
-                locale={locale}
-              />
+                <Calendar
+                  fullscreen={false}
+                  onSelect={handleDateSelect}
+                  disabledDate={disabledDate}
+                  locale={locale}
+                />
+
             )}
           </Card>
+
+          {isFetchingAvailableDays && <Typography.Text type='danger'>Estamos carregando os horários, aguarde um momento</Typography.Text>}
+
         </Col>
 
         <Col xs={24} md={11}>
