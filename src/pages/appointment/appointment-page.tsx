@@ -125,6 +125,8 @@ export const AppointmentPage = () => {
       email: appointmentData.client.email,
       phone: removePhoneMask(appointmentData.client.phone),
     },
+    petName: appointmentData.petName,
+    note: appointmentData.note,
   })
 
   const handleSubmit = () => {

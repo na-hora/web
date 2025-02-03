@@ -11,7 +11,9 @@ export const UserInfoForm = () => {
 
     setAppointmentData((prev: any) => ({
       ...prev,
-      client: form.getFieldsValue(),
+      client: form.getFieldsValue(['name', 'phone', 'email']),
+      petName: form.getFieldValue('petName'),
+      note: form.getFieldValue('note'),
     }))
   }
 
@@ -59,6 +61,20 @@ export const UserInfoForm = () => {
           type='email'
           onChange={(e) => handleOnChange('email', e.target.value)}
         />
+      </Form.Item>
+
+      <Form.Item
+        label='Nome do seu pet'
+        name= 'petName'
+      >
+        <Input onChange={(e) => handleOnChange('petName', e.target.value)} />
+      </Form.Item>
+
+      <Form.Item
+        label='Alguma informação adicional?'
+        name= 'note'
+      >
+        <Input.TextArea  onChange={(e) => handleOnChange('note', e.target.value)} />
       </Form.Item>
     </Form>
   )

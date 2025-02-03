@@ -27,7 +27,9 @@ type Appointment = {
     name: string
     email: string
     phone: string
-  }
+  },
+  petName: string,
+  note: string
 }
 
 export type Params = {
@@ -69,6 +71,8 @@ export const AppointmentProvider: React.FC<{
       email: '',
       phone: '',
     },
+    petName: '',
+    note: '',
   })
 
   const nextStep = () => {
