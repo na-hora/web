@@ -1,6 +1,11 @@
-import { Button, Result } from 'antd'
+import { Result } from 'antd'
+import { useRouteError } from 'react-router-dom'
 
-export const NotFound = () => {
+export const GenericError = () => {
+    const error = useRouteError()
+
+  console.error(error)
+
   return (
     <div
       style={{
@@ -13,19 +18,15 @@ export const NotFound = () => {
     >
       <Result
         icon={<img src='/logo.svg' alt='' style={{ width: '150px' }} />}
-        title={<h3>Opss... Esta página não foi encontrada</h3>}
+        title={<h3>Ops...parece que algo deu errado &#129300;</h3>}
         style={{
           maxWidth: '500px',
         }}
         extra={
           <div>
             <p>
-              Você pode retornar para a tela inicial ou entrar em contato com o
-              nosso suporte.
+              Iremos verificar o que pode ter acontecido
             </p>
-            <Button type='primary' key='console' href='/'>
-              Início
-            </Button>
           </div>
         }
       />

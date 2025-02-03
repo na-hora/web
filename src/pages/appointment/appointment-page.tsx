@@ -77,17 +77,17 @@ const stepValidations: { [key: number]: (data: any) => any } = {
 const stepImage = (currentStep: number) => {
   switch (currentStep) {
     case STEPS.INITIAL:
-      return '/public/imgs/appointment/beagle-sitting.png'
+      return '/imgs/appointment/beagle-sitting.png'
     case STEPS.PET_TYPE:
-      return '/public/imgs/appointment/woman-with-dog.png'
+      return '/imgs/appointment/woman-with-dog.png'
     case STEPS.PET_SIZE:
-      return '/public/imgs/appointment/dog-size.png'
+      return '/imgs/appointment/dog-size.png'
     case STEPS.PET_HAIR:
-      return '/public/imgs/appointment/barbershop.png'
+      return '/imgs/appointment/barbershop.png'
     case STEPS.PET_SERVICE:
-      return '/public/imgs/appointment/service.png'
+      return '/imgs/appointment/service.png'
     default:
-      return '/public/imgs/appointment/beagle-sitting.png'
+      return '/imgs/appointment/beagle-sitting.png'
   }
 }
 

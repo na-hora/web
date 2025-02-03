@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { SelectInfo } from 'antd/es/calendar/generateCalendar'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -39,6 +40,8 @@ export const Schedule = () => {
       shouldFetchSchedule: false,
     }))
 
+
+
     const processedTimes = processScheduleTimes(completeDaySchedule)
     setAvailableHoursByDay(processedTimes)
   }, [completeDaySchedule])
@@ -67,7 +70,32 @@ export const Schedule = () => {
     }
   }
 
-  const handleDateSelect = async (date: dayjs.Dayjs) => {
+  const handleDateSelect = (date: dayjs.Dayjs, selectInfo: SelectInfo) => {
+    const changeHeaderDate = selectInfo.source !== 'date'
+    if (changeHeaderDate) {
+      // limpa a data para aparecer a mensagem correta nos slots
+      setAppointmentData(prev => ({
+        ...prev,
+        appointmentDate: null,
+        calendarDates: {
+          firstDayOfMonth: date
+            .startOf('month')
+            .format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+          lastDayOfMonth: date.endOf('month').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+        },
+      }))
+
+      // limpa os slots
+      setAvailableHoursByDay({
+        date: date.format('YYYY-MM-DD'),
+        times: {
+          morning: [],
+          afternoon: [],
+        },})
+
+      return
+    }
+
     const dateString = date.format('YYYY-MM-DD')
 
     setAppointmentData((prev) => ({

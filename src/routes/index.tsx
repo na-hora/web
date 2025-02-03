@@ -9,7 +9,7 @@ import { Dashboard } from '@/pages/dashboard'
 import { DashboardAppointments } from '@/pages/dashboard/appointments'
 import { DashboardHours } from '@/pages/dashboard/hours'
 import { DashboardRegisters } from '@/pages/dashboard/registers'
-import { NotFoundPage } from '@/pages/errors/not-found'
+import { GenericError } from '@/components/errors/generic'
 import { Home } from '@/pages/home'
 import { createBrowserRouter } from 'react-router-dom'
 import { AuthGuard } from './guards/auth-guard'
@@ -18,23 +18,27 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <Home />,
-    errorElement: <NotFoundPage />,
+    errorElement: <GenericError />,
   },
   {
     path: '/appointment',
     element: <Appointment />,
+    errorElement: <GenericError />
   },
   {
     path: '/company/register',
     element: <RegisterCompany />,
+    errorElement: <GenericError />
   },
   {
     path: '/company/register/success',
     element: <SuccessCompanyPage />,
+    errorElement: <GenericError />
   },
   {
     path: '/',
     element: <Admin />,
+    errorElement: <GenericError />,
     children: [
       {
         path: '/admin/login',
@@ -57,6 +61,7 @@ export const router = createBrowserRouter([
         <Dashboard />
       </AuthGuard>
     ),
+    errorElement: <GenericError />,
     children: [
       {
         path: '/admin/dashboard/appointments',
