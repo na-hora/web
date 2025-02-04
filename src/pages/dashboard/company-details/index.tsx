@@ -1,9 +1,9 @@
-import { useLoadCompanyDetails } from '@/hooks/na-hora/company/use-load-company-details'
+import { useLoadCompanyDetailsPrivate } from '@/hooks/na-hora/company/use-load-company-details-private.ts'
 import { Col, Flex, Skeleton, Typography } from 'antd'
 
 export const CompanyDetails = () => {
   const { data: companyDetails, isLoading: companyDetailsLoading } =
-    useLoadCompanyDetails()
+    useLoadCompanyDetailsPrivate()
 
   return (
     <Flex vertical>
