@@ -1,5 +1,6 @@
 import { useLoadCompanyDetailsPrivate } from '@/hooks/na-hora/company/use-load-company-details-private.ts'
 import { Col, Flex, Skeleton, Typography } from 'antd'
+import { phoneMask } from '@/utils/masks.ts'
 
 export const CompanyDetails = () => {
   const { data: companyDetails, isLoading: companyDetailsLoading } =
@@ -42,7 +43,7 @@ export const CompanyDetails = () => {
             >
               Telefone:
             </Typography.Text>
-            <Typography.Text>{companyDetails?.phone}</Typography.Text>
+            <Typography.Text>{phoneMask(companyDetails?.phone as string)}</Typography.Text>
           </div>
 
           <div
@@ -72,13 +73,82 @@ export const CompanyDetails = () => {
               strong
               style={{ marginRight: '8px', minWidth: '80px' }}
             >
-              Endereço:
+              Rua:
             </Typography.Text>
             <Typography.Text>
-              {companyDetails?.companyAddresses[0]?.street},{' '}
-              {companyDetails?.companyAddresses[0]?.number}, bairro{' '}
-              {companyDetails?.companyAddresses[0]?.neighborhood},{' '}
+              {companyDetails?.companyAddresses[0]?.street}
+            </Typography.Text>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '8px',
+            }}
+          >
+            <Typography.Text
+              strong
+              style={{ marginRight: '8px', minWidth: '80px' }}
+            >
+              Número:
+            </Typography.Text>
+            <Typography.Text>
+              {companyDetails?.companyAddresses[0]?.number}
+            </Typography.Text>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '8px',
+            }}
+          >
+            <Typography.Text
+              strong
+              style={{ marginRight: '8px', minWidth: '80px' }}
+            >
+              Bairro:
+            </Typography.Text>
+            <Typography.Text>
+              {companyDetails?.companyAddresses[0]?.neighborhood}
+            </Typography.Text>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '8px',
+            }}
+          >
+            <Typography.Text
+              strong
+              style={{ marginRight: '8px', minWidth: '80px' }}
+            >
+              Cidade:
+            </Typography.Text>
+            <Typography.Text>
               {companyDetails?.companyAddresses[0]?.city.name}
+            </Typography.Text>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '8px',
+            }}
+          >
+            <Typography.Text
+              strong
+              style={{ marginRight: '8px', minWidth: '80px' }}
+            >
+              Estado:
+            </Typography.Text>
+            <Typography.Text>
+              {companyDetails?.companyAddresses[0]?.city.state.name}
             </Typography.Text>
           </div>
         </Col>
