@@ -19,6 +19,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useAppointmentContext } from './contexts/appointments-provider'
 import styles from './styles.module.css'
 import { CreateAppointmentModal } from '@/components/appointment/create-appointment-modal'
+import { useLoadCompanyDetailsPublic } from '@/hooks/na-hora/company/use-load-company-details-public.ts'
 
 enum STEPS {
   INITIAL = 0,
@@ -99,18 +100,29 @@ export const AppointmentPage = () => {
     setAppointmentData,
     nextStep,
     prevStep,
+    setCompany
   } = useAppointmentContext()
   const { mutate: createAppointment, isPending: isCreating } =
     useCreateAppointment()
   const [disabledMessage, setDisabledMessage] = useState('')
   const [searchParams] = useSearchParams()
+  const companyId = searchParams.get('q')
+
+  const { data: companyDetails, isFetched } =
+    useLoadCompanyDetailsPublic(companyId)
 
   useEffect(() => {
-    const companyId = searchParams.get('q')
     if (companyId) {
       setAppointmentData((prev) => ({ ...prev, companyId }))
     }
   }, [searchParams, setAppointmentData])
+
+  useEffect(() => {
+    if (isFetched && companyDetails) {
+      setCompany(companyDetails)
+
+    }
+  }, [isFetched, companyDetails, setCompany])
 
   const formatDataToCreateAppointment = () => ({
     companyId: appointmentData.companyId as string,

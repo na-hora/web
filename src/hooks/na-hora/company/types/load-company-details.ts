@@ -88,3 +88,17 @@ export interface State {
   ddd: string
   createdAt: string
 }
+
+export type CompanyResponsePublic = {
+  fantasyName: string
+  phone: string
+  avatarUrl: string
+  address: {
+    street: string
+    neighborhood: string
+    number: string
+    city: string
+    state: string
+    zipCode: string
+  }
+}

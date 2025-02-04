@@ -8,6 +8,20 @@ import { createContext, useContext, useState } from 'react'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+type Company = {
+  fantasyName: string
+  phone: string
+  avatarUrl: string
+  address: {
+    street: string
+    neighborhood: string
+    number: string
+    city: string
+    state: string
+    zipCode: string
+  }
+}
+
 type Appointment = {
   companyId: string | null
   petTypeId: number | null
@@ -40,6 +54,8 @@ export type Params = {
   setAppointmentData: React.Dispatch<React.SetStateAction<Appointment>>
   nextStep: VoidFunction
   prevStep: VoidFunction
+  company: Company
+  setCompany: React.Dispatch<React.SetStateAction<Company>>
 }
 
 export const AppointmentContext = createContext<Params>({} as Params)
@@ -74,6 +90,19 @@ export const AppointmentProvider: React.FC<{
     petName: '',
     note: '',
   })
+  const [company, setCompany] = useState({
+    fantasyName: '',
+    phone: '',
+    avatarUrl: '',
+    address: {
+      street: '',
+      neighborhood: '',
+      number: '',
+      city: '',
+      state: '',
+      zipCode: '',
+  }
+  })
 
   const nextStep = () => {
     const isLastStep = currentStep === 8 // confirmation
@@ -105,6 +134,8 @@ export const AppointmentProvider: React.FC<{
         setAppointmentData,
         nextStep,
         prevStep,
+        company,
+        setCompany
       }}
     >
       {children}
