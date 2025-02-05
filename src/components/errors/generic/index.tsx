@@ -1,8 +1,8 @@
-import { Result } from 'antd'
+import { Button, Result } from 'antd'
 import { useRouteError } from 'react-router-dom'
 
 export const GenericError = () => {
-    const error = useRouteError()
+  const error = useRouteError()
 
   console.error(error)
 
@@ -25,8 +25,12 @@ export const GenericError = () => {
         extra={
           <div>
             <p>
-              Iremos verificar o que pode ter acontecido
+              Verificaremos o que houve e resolvemos o problema assim que
+              possível!
             </p>
+            <Button type='primary' key='console' href='/admin/login'>
+              Voltar ao painel
+            </Button>
           </div>
         }
       />

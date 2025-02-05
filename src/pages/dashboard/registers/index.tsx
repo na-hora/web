@@ -1,5 +1,6 @@
 import { AnimalsTab } from '@/components/dashboard/register/register-tabs/animals'
 import { HairsTab } from '@/components/dashboard/register/register-tabs/hairs'
+import { OperatorsTab } from '@/components/dashboard/register/register-tabs/operators'
 import { ServicesTab } from '@/components/dashboard/register/register-tabs/services'
 import { SizesTab } from '@/components/dashboard/register/register-tabs/sizes'
 import { Col, Row, Tabs } from 'antd'
@@ -39,6 +40,11 @@ export const DashboardRegisters = () => {
             key: '4',
             label: 'Serviços',
             children: <ServicesTab />,
+          },
+          {
+            key: '5',
+            label: 'Operadores',
+            children: <OperatorsTab />,
           },
         ]}
       />
