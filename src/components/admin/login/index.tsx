@@ -49,7 +49,6 @@ export const AdminLoginPage: React.FC = () => {
     <>
       <div style={{ textAlign: 'center' }}>
         <img src='/logo.svg' alt='na hora' style={{ width: '150px' }} />
-        <h1>Na Hora</h1>
         <p>Faça aqui seu login no painel de controle.</p>
       </div>
 
