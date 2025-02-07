@@ -6,6 +6,7 @@ import { Admin } from '@/pages/admin'
 import { Appointment } from '@/pages/appointment'
 import { RegisterCompany } from '@/pages/company/register'
 import { SuccessCompanyPage } from '@/pages/company/register-success'
+import { AppointmentConfirmation } from '@/pages/confirmation'
 import { Dashboard } from '@/pages/dashboard'
 import { DashboardAppointments } from '@/pages/dashboard/appointments'
 import { CompanyDetails } from '@/pages/dashboard/company-details'
@@ -24,6 +25,11 @@ export const router = createBrowserRouter([
   {
     path: '/appointment',
     element: <Appointment />,
+    errorElement: <GenericError />,
+  },
+  {
+    path: '/appointment/confirmation',
+    element: <AppointmentConfirmation />,
     errorElement: <GenericError />,
   },
   {
