@@ -40,11 +40,10 @@ export const Schedule = () => {
       shouldFetchSchedule: false,
     }))
 
-
-
     const processedTimes = processScheduleTimes(completeDaySchedule)
     setAvailableHoursByDay(processedTimes)
   }, [completeDaySchedule])
+
 
   const processScheduleTimes = (completeDaySchedule: string[] | undefined) => {
     if (!completeDaySchedule?.length) return null
@@ -71,9 +70,10 @@ export const Schedule = () => {
   }
 
   const handleDateSelect = (date: dayjs.Dayjs, selectInfo: SelectInfo) => {
-    const changeHeaderDate = selectInfo.source !== 'date'
-    if (changeHeaderDate) {
-      // limpa a data para aparecer a mensagem correta nos slots
+    const isChangingMonth = selectInfo.source !== 'date'
+
+
+    if (isChangingMonth) {
       setAppointmentData(prev => ({
         ...prev,
         appointmentDate: null,
@@ -81,29 +81,31 @@ export const Schedule = () => {
           firstDayOfMonth: date
             .startOf('month')
             .format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-          lastDayOfMonth: date.endOf('month').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+          lastDayOfMonth: date
+            .endOf('month')
+            .format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
         },
       }))
 
-      // limpa os slots
+      // Limpa os slots do dia
       setAvailableHoursByDay({
         date: date.format('YYYY-MM-DD'),
         times: {
           morning: [],
           afternoon: [],
-        },})
-
-      return
+        },
+      })
     }
 
-    const dateString = date.format('YYYY-MM-DD')
-
-    setAppointmentData((prev) => ({
-      ...prev,
-      appointmentDate: date,
-      appointmentDateString: dateString,
-      shouldFetchSchedule: true,
-    }))
+    // Atualiza a data selecionada apenas quando clica em um dia específico
+    if (!isChangingMonth) {
+      const dateString = date.format('YYYY-MM-DD')
+      setAppointmentData((prev) => ({
+        ...prev,
+        appointmentDate: date,
+        appointmentDateString: dateString,
+      }))
+    }
   }
 
   const handleTimeSelect = (time: string) => {
@@ -120,7 +122,7 @@ export const Schedule = () => {
       (date) => date === currentDateStr,
     )
 
-    return isBeforeToday || isUnavailable
+    return isUnavailable || isBeforeToday
   }
 
   return (
@@ -132,17 +134,13 @@ export const Schedule = () => {
       <Row gutter={24} style={{ gap: '24px' }} justify='center'>
         <Col xs={24} md={11}>
           <Card title='Selecione uma Data'>
-            {isFetchingAvailableDays ? (
-              <Skeleton active />
-            ) : (
-                <Calendar
-                  fullscreen={false}
-                  onSelect={handleDateSelect}
-                  disabledDate={disabledDate}
-                  locale={locale}
-                />
-
-            )}
+            <Calendar
+              key='appointment-calendar'
+              fullscreen={false}
+              onSelect={handleDateSelect}
+              disabledDate={disabledDate}
+              locale={locale}
+            />
           </Card>
 
           {isFetchingAvailableDays && <Typography.Text type='danger'>Estamos carregando os horários, aguarde um momento</Typography.Text>}

@@ -14,7 +14,6 @@ export const useLoadCompleteDaySchedule = (): UseQueryResult<string[]> => {
     }&day=${appointmentData.appointmentDateString}`,
     enabled:
       !!appointmentData?.companyId &&
-      !!appointmentData?.appointmentDateString &&
-      appointmentData.shouldFetchSchedule,
+      !!appointmentData?.appointmentDateString
   })
 }
