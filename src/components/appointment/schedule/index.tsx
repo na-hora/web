@@ -72,7 +72,6 @@ export const Schedule = () => {
   const handleDateSelect = (date: dayjs.Dayjs, selectInfo: SelectInfo) => {
     const isChangingMonth = selectInfo.source !== 'date'
 
-
     if (isChangingMonth) {
       setAppointmentData(prev => ({
         ...prev,
@@ -137,7 +136,7 @@ export const Schedule = () => {
         <Col xs={24} md={11}>
           <Card title='Selecione uma Data'>
             <Calendar
-              key='appointment-calendar'
+              defaultValue={appointmentData?.appointmentDate || dayjs()}
               fullscreen={false}
               onSelect={handleDateSelect}
               disabledDate={disabledDate}
