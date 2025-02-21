@@ -20,6 +20,7 @@ import { useAppointmentContext } from './contexts/appointments-provider'
 import styles from './styles.module.css'
 import { CreateAppointmentModal } from '@/components/appointment/create-appointment-modal'
 import { useLoadCompanyDetailsPublic } from '@/hooks/na-hora/company/use-load-company-details-public.ts'
+import { Appointment } from '@/pages/appointment/contexts/appointments-provider.tsx'
 
 enum STEPS {
   INITIAL = 0,
@@ -46,31 +47,31 @@ const STEP_COMPONENTS = {
 }
 
 const stepValidations: { [key: number]: (data: any) => any } = {
-  [STEPS.INITIAL]: (data: any) => ({
+  [STEPS.INITIAL]: (data: Appointment) => ({
     isValid: !!data.companyId,
     message: 'Selecione uma empresa',
   }),
-  [STEPS.PET_TYPE]: (data: any) => ({
+  [STEPS.PET_TYPE]: (data: Appointment) => ({
     isValid: !!data.petTypeId,
     message: 'Selecione um tipo de animal',
   }),
-  [STEPS.PET_SIZE]: (data: any) => ({
+  [STEPS.PET_SIZE]: (data: Appointment) => ({
     isValid: !!data.petSizeId,
     message: 'Selecione um tamanho de animal',
   }),
-  [STEPS.PET_HAIR]: (data: any) => ({
+  [STEPS.PET_HAIR]: (data: Appointment) => ({
     isValid: !!data.petHairId,
     message: 'Selecione o tamanho da pelagem',
   }),
-  [STEPS.PET_SERVICE]: (data: any) => ({
+  [STEPS.PET_SERVICE]: (data: Appointment) => ({
     isValid: !!data.petService?.id,
     message: 'Selecione um serviço',
   }),
-  [STEPS.SCHEDULE]: (data: any) => ({
-    isValid: !!data.appointmentDate,
+  [STEPS.SCHEDULE]: (data: Appointment) => ({
+    isValid: (!!data.appointmentDate && !!data.appointmentTime),
     message: 'Selecione um horário',
   }),
-  [STEPS.USER_INFO]: (data: any) => ({
+  [STEPS.USER_INFO]: (data: Appointment) => ({
     isValid: !!(data.client.name && data.client.email && data.client.phone),
     message: 'Preencha os dados do cliente',
   }),
@@ -170,6 +171,7 @@ export const AppointmentPage = () => {
       appointmentData.petHairId,
       appointmentData.petService?.id,
       appointmentData.appointmentDate,
+      appointmentData.appointmentTime,
       appointmentData.client,
     ],
   )

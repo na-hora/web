@@ -22,7 +22,7 @@ type Company = {
   }
 }
 
-type Appointment = {
+export type Appointment = {
   companyId: string | null
   petTypeId: number | null
   petHairId: number | null

@@ -77,6 +77,7 @@ export const Schedule = () => {
       setAppointmentData(prev => ({
         ...prev,
         appointmentDate: null,
+        appointmentTime: null,
         calendarDates: {
           firstDayOfMonth: date
             .startOf('month')
@@ -102,6 +103,7 @@ export const Schedule = () => {
       const dateString = date.format('YYYY-MM-DD')
       setAppointmentData((prev) => ({
         ...prev,
+        appointmentTime: null,
         appointmentDate: date,
         appointmentDateString: dateString,
       }))
