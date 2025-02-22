@@ -8,6 +8,7 @@ import '@toast-ui/calendar/dist/toastui-calendar.min.css'
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 import { useAppointmentsContext } from './contexts/appointments-provider'
+import { AppointmentManagerModal } from '@/components/dashboard/appointments/appointment-manager-modal'
 
 type FormattedServices = {
   id: string
@@ -19,7 +20,7 @@ type FormattedServices = {
 
 export const Appointments = () => {
   // const { isCreateAppointmentModalOpen } = useAppointmentsContext()
-  const { isBlockCompanyHourModalOpen } = useAppointmentsContext()
+  const { isBlockCompanyHourModalOpen, isAppointmentManagerModalOpen } = useAppointmentsContext()
   const [formattedServices, setFormattedServices] = useState<FormattedServices>(
     [],
   )
@@ -54,6 +55,7 @@ export const Appointments = () => {
       <CalendarHeader services={formattedServices} />
       <AppointmentCalendar services={formattedServices} />
       {/* {isCreateAppointmentModalOpen && <CreateAppointmentModal />} */}
+      {isAppointmentManagerModalOpen && <AppointmentManagerModal />}
       {isBlockCompanyHourModalOpen && <HourModal />}
     </>
   )

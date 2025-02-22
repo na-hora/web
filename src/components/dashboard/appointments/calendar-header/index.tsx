@@ -21,7 +21,7 @@ const viewModeOptions = [
   },
 ]
 
-type FormattedServices = {
+export type FormattedServices = {
   id: string
   name: string
   backgroundColor: string

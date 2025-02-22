@@ -32,11 +32,14 @@ export const AppointmentCalendar = ({ services }: Props) => {
     setIsBlockCompanyHourModalOpen,
     calendarRef,
     petServiceIdFilter,
+    setIsAppointmentManagerModalOpen,
+    setSelectedAppointment
   } = useAppointmentsContext()
   const { data: initialAppointments } = useLoadAppointments()
 
   const formatAppointment = (appointment: Appointment) => {
     return {
+      ...appointment,
       id: appointment.id,
       calendarId: `${appointment.serviceName === 'banho' ? 1 : 2}`, // TODO
       title: appointment.serviceName,
@@ -100,6 +103,15 @@ export const AppointmentCalendar = ({ services }: Props) => {
     setIsBlockCompanyHourModalOpen(true)
   }
 
+  const handleClickEvent: ExternalEventTypes['clickEvent'] = ({ event }) => {
+    const selectedAppointment = appointments.find(
+      (appointment) => appointment.id === event.id,
+    )
+
+    setSelectedAppointment(selectedAppointment)
+    setIsAppointmentManagerModalOpen(true)
+  }
+
   const filterAppointments = () => {
     if (petServiceIdFilter === '') return appointments
 
@@ -124,7 +136,7 @@ export const AppointmentCalendar = ({ services }: Props) => {
           },
         }}
         theme={theme}
-        useDetailPopup={true}
+        useDetailPopup={false}
         useFormPopup={false}
         useCreationPopup={true}
         view={selectedView}
@@ -140,6 +152,7 @@ export const AppointmentCalendar = ({ services }: Props) => {
           timeStep: [0, 10, 20, 30, 40, 50],
         }}
         onSelectDateTime={openCreateEventModal}
+        onClickEvent={handleClickEvent}
       />
     </>
   )
