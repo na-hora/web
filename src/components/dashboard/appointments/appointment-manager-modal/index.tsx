@@ -33,7 +33,7 @@ export const AppointmentManagerModal = () => {
         >
           <Button key='submit' type='primary' danger>
             Excluir agendamento
-          </Button>,
+          </Button>
         </Popconfirm>,
       ]}
     >
