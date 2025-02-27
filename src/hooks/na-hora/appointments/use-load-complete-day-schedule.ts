@@ -11,9 +11,12 @@ export const useLoadCompleteDaySchedule = (): UseQueryResult<string[]> => {
       import.meta.env.VITE_API_URL
     }/appointments/complete-day-schedule?companyId=${
       appointmentData.companyId
-    }&day=${appointmentData.appointmentDateString}`,
+    }&day=${appointmentData.appointmentDateString}&companyPetServiceValueId=${
+      appointmentData.petService?.serviceValueId
+    }`,
     enabled:
       !!appointmentData?.companyId &&
-      !!appointmentData?.appointmentDateString
+      !!appointmentData?.appointmentDateString &&
+      !!appointmentData?.petService?.serviceValueId,
   })
 }

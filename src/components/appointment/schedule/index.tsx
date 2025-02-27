@@ -6,9 +6,9 @@ import { Button, Calendar, Card, Col, Row, Skeleton, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
+import { SelectInfo } from 'antd/es/calendar/generateCalendar'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { SelectInfo } from 'antd/es/calendar/generateCalendar'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -44,7 +44,6 @@ export const Schedule = () => {
     setAvailableHoursByDay(processedTimes)
   }, [completeDaySchedule])
 
-
   const processScheduleTimes = (completeDaySchedule: string[] | undefined) => {
     if (!completeDaySchedule?.length) return null
 
@@ -73,7 +72,7 @@ export const Schedule = () => {
     const isChangingMonth = selectInfo.source !== 'date'
 
     if (isChangingMonth) {
-      setAppointmentData(prev => ({
+      setAppointmentData((prev) => ({
         ...prev,
         appointmentDate: null,
         appointmentTime: null,
@@ -144,8 +143,11 @@ export const Schedule = () => {
             />
           </Card>
 
-          {isFetchingAvailableDays && <Typography.Text type='danger'>Estamos carregando os horários, aguarde um momento</Typography.Text>}
-
+          {isFetchingAvailableDays && (
+            <Typography.Text type='danger'>
+              Estamos carregando os horários, aguarde um momento
+            </Typography.Text>
+          )}
         </Col>
 
         <Col xs={24} md={11}>

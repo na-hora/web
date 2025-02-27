@@ -3,6 +3,7 @@ export type SpecificPetService = {
   name: string
   price: number
   executionTime: number
+  serviceValueId: number
 }
 
 export type LoadSpecificsPetServicesResponse = {
