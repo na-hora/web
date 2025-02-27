@@ -40,6 +40,19 @@ export const AppointmentManagerModal = () => {
             Excluir agendamento
           </Button>
         </Popconfirm>,
+        <a
+          href={`https://wa.me/${selectedAppointment?.client?.phone?.replace(
+            /\D/g,
+            '',
+          )}`}
+          target='_blank'
+          style={{ marginLeft: 10, position: 'relative', top: '1px' }}
+        >
+          <Button key='submit' type='primary' style={{ background: '#51CF66' }}>
+            <WhatsAppOutlined />
+            Entrar em contato
+          </Button>
+        </a>,
       ]}
     >
       <Col style={{ margin: '40px 0' }}>
@@ -79,7 +92,7 @@ export const AppointmentManagerModal = () => {
 
         <p>
           <MailOutlined style={{ marginRight: '4px' }} />
-          <strong>E-mail:</strong>
+          <strong>E-mail: </strong>
           {selectedAppointment?.client?.email}
           <Tooltip title={copyEmailStatus ? 'Copiado!' : 'Copiar'}>
             <CopyOutlined

@@ -1,6 +1,6 @@
 import { useLoadCompanyDetailsPrivate } from '@/hooks/na-hora/company/use-load-company-details-private.ts'
-import { Col, Flex, Skeleton, Typography } from 'antd'
 import { phoneMask } from '@/utils/masks.ts'
+import { Col, Flex, Skeleton, Typography } from 'antd'
 
 export const CompanyDetails = () => {
   const { data: companyDetails, isLoading: companyDetailsLoading } =
@@ -43,7 +43,9 @@ export const CompanyDetails = () => {
             >
               Telefone:
             </Typography.Text>
-            <Typography.Text>{phoneMask(companyDetails?.phone as string)}</Typography.Text>
+            <Typography.Text>
+              {phoneMask(companyDetails?.phone as string)}
+            </Typography.Text>
           </div>
 
           <div
