@@ -1,3 +1,5 @@
+import { useGlobalAlertContext } from '@/contexts/global-alert-context'
+import { useDeleteAppointment } from '@/hooks/na-hora/appointments/use-delete-appointment'
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import { phoneMask } from '@/utils/masks.ts'
 import { formatDateTime } from '@/utils/time.ts'
@@ -8,11 +10,12 @@ import {
   WhatsAppOutlined,
 } from '@ant-design/icons'
 import { Button, Col, Divider, Modal, Popconfirm, Tooltip } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const AppointmentManagerModal = () => {
   const [copyEmailStatus, setCopyEmailStatus] = useState(false)
   const [copyPhoneStatus, setCopyPhoneStatus] = useState(false)
+  const { triggerAlert } = useGlobalAlertContext()
 
   const {
     isAppointmentManagerModalOpen,
@@ -20,7 +23,38 @@ export const AppointmentManagerModal = () => {
     selectedAppointment,
   } = useAppointmentsContext()
 
-  console.log(selectedAppointment)
+  const {
+    mutate: deleteAppointment,
+    isPending: deletePending,
+    isSuccess: deleteSuccess,
+    isError: deleteError,
+  } = useDeleteAppointment()
+
+  const handleDeleteAppointment = () => {
+    if (selectedAppointment) {
+      deleteAppointment({
+        dynamicRoute: selectedAppointment.id.toString(),
+      })
+    }
+  }
+  useEffect(() => {
+    if (deleteSuccess) {
+      triggerAlert({
+        message: 'Agendamento cancelado com sucesso!',
+        type: 'success',
+      })
+      setIsAppointmentManagerModalOpen(false)
+    }
+  }, [deleteSuccess])
+
+  useEffect(() => {
+    if (deleteError) {
+      triggerAlert({
+        message: 'Ocorreu um erro inesperado na operação. Tente novamente.',
+        type: 'error',
+      })
+    }
+  }, [deleteError])
 
   return (
     <Modal
@@ -34,9 +68,9 @@ export const AppointmentManagerModal = () => {
           okText='Sim'
           cancelText='Não'
           placement='bottom'
-          // onConfirm={companyDashboardLogout}
+          onConfirm={handleDeleteAppointment}
         >
-          <Button key='submit' type='primary' danger>
+          <Button key='submit' type='primary' danger disabled={deletePending}>
             Excluir agendamento
           </Button>
         </Popconfirm>,
@@ -48,7 +82,12 @@ export const AppointmentManagerModal = () => {
           target='_blank'
           style={{ marginLeft: 10, position: 'relative', top: '1px' }}
         >
-          <Button key='submit' type='primary' style={{ background: '#51CF66' }}>
+          <Button
+            key='submit'
+            type='primary'
+            style={{ background: '#51CF66' }}
+            disabled={deletePending}
+          >
             <WhatsAppOutlined />
             Entrar em contato
           </Button>

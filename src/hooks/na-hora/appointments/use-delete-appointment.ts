@@ -1,0 +1,11 @@
+import { useHooks } from '@/hooks'
+import { TDeleteDataParams } from '@/hooks/types'
+
+export const useDeleteAppointment = () => {
+  const { useDeleteData } = useHooks()
+
+  return useDeleteData<TDeleteDataParams, void>({
+    url: `${import.meta.env.VITE_API_URL}/appointments`,
+    mutationKey: 'na-hora:delete-appointment',
+  })
+}
