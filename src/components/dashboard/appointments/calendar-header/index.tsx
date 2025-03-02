@@ -6,7 +6,7 @@ import {
   PlusCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import { Button, Flex, Row, Select } from 'antd'
+import { Button, Flex, Row, Select, Spin, Typography } from 'antd'
 import { useCallback, useEffect } from 'react'
 
 type ViewType = 'month' | 'week' | 'day'
@@ -38,6 +38,8 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     calendarRef,
     petServiceIdFilter,
     setPetServiceIdFilter,
+    fetchingAppointments,
+    totalAppoimentments,
   } = useAppointmentsContext()
 
   const getCallInstance = useCallback(
@@ -109,9 +111,19 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     updateRenderRangeText()
   }, [selectedView, updateRenderRangeText])
 
-  // Ajuste para lidar com múltiplos valores no filtro
   const handleServiceFilterChange = (selectedIds: string[]) => {
     setPetServiceIdFilter(selectedIds)
+  }
+
+  const getAppointmentText = () => {
+    if (fetchingAppointments) {
+      return 'Buscando agendamentos'
+    }
+    return `${totalAppoimentments} ${
+      totalAppoimentments === 1
+        ? 'agendamento encontrado'
+        : 'agendamentos encontrados'
+    }`
   }
 
   return (
@@ -150,10 +162,10 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
         <Select
           mode='multiple'
           style={{ width: 200 }}
-          value={petServiceIdFilter} // Agora é um array
-          onChange={handleServiceFilterChange} // Nova função para múltiplos valores
+          value={petServiceIdFilter}
+          onChange={handleServiceFilterChange}
           placeholder='Filtrar por serviço'
-          allowClear // Permite limpar todos os filtros
+          allowClear
         >
           {services?.map(({ id, name }) => (
             <Select.Option value={String(id)} key={id}>
@@ -161,6 +173,9 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
             </Select.Option>
           ))}
         </Select>
+
+        <Spin spinning={fetchingAppointments} />
+        <Typography.Text strong>{getAppointmentText()}</Typography.Text>
       </Flex>
 
       <Button type='primary'>

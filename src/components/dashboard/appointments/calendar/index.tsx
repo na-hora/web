@@ -39,7 +39,7 @@ const getStatusColor = (status: AppointmentStatus) => {
       }
     default:
       return {
-        backgroundColor: '#808080', // Cinza para status desconhecido
+        backgroundColor: '#808080',
         borderColor: '#666666',
         dragBackgroundColor: '#808080',
       }
@@ -60,8 +60,10 @@ export const AppointmentCalendar = (
     petServiceIdFilter,
     setIsAppointmentManagerModalOpen,
     setSelectedAppointment,
+    setFetchingAppointments,
+    setTotalAppointments,
   } = useAppointmentsContext()
-  const { data: initialAppointments } = useLoadAppointments()
+  const { data: initialAppointments, isFetching } = useLoadAppointments()
 
   const formatAppointment = (appointment: Appointment) => {
     const statusColors = getStatusColor(appointment.status || 'pending')
@@ -94,7 +96,12 @@ export const AppointmentCalendar = (
     })
 
     setAppointments(parsedAppointments)
+    setTotalAppointments(parsedAppointments.length)
   }, [initialAppointments])
+
+  useEffect(() => {
+    setFetchingAppointments(isFetching)
+  }, [isFetching])
 
   const accessToken = parseCookies()['access-token@na-hora']
 
@@ -145,12 +152,17 @@ export const AppointmentCalendar = (
   }
 
   const filterAppointments = () => {
-    if (!petServiceIdFilter || petServiceIdFilter.length === 0)
+    if (!petServiceIdFilter || petServiceIdFilter.length === 0) {
+      setTotalAppointments(appointments.length)
       return appointments
+    }
 
-    return appointments.filter((appointment) => {
+    const filteredAppointments = appointments.filter((appointment) => {
       return petServiceIdFilter.includes(appointment.calendarId as string)
     })
+    setTotalAppointments(filteredAppointments.length)
+
+    return filteredAppointments
   }
 
   const legendItems = [
