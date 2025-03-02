@@ -7,6 +7,7 @@ import {
   RightOutlined,
 } from '@ant-design/icons'
 import { Button, Flex, Row, Select, Spin, Typography } from 'antd'
+import { parseCookies } from 'nookies'
 import { useCallback, useEffect } from 'react'
 
 type ViewType = 'month' | 'week' | 'day'
@@ -126,6 +127,9 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     }`
   }
 
+  const companyCookie = parseCookies()['inf@na-hora']
+  const { id: companyId } = JSON.parse(companyCookie)
+
   return (
     <Row
       align='middle'
@@ -178,9 +182,9 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
         <Typography.Text strong>{getAppointmentText()}</Typography.Text>
       </Flex>
 
-      <Button type='primary'>
+      <Typography.Link href={`/appointment?q=${companyId}`} target='_blank'>
         <PlusCircleOutlined /> Criar agendamento
-      </Button>
+      </Typography.Link>
     </Row>
   )
 }
