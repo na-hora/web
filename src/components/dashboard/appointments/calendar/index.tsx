@@ -145,10 +145,11 @@ export const AppointmentCalendar = (
   }
 
   const filterAppointments = () => {
-    if (petServiceIdFilter === '') return appointments
+    if (!petServiceIdFilter || petServiceIdFilter.length === 0)
+      return appointments
 
     return appointments.filter((appointment) => {
-      return appointment.calendarId === petServiceIdFilter
+      return petServiceIdFilter.includes(appointment.calendarId as string)
     })
   }
 

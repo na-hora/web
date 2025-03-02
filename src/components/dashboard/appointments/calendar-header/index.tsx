@@ -1,25 +1,20 @@
 import { LoadPetServicesResponse } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import { fullMonthAndYearDate } from '@/utils/time'
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
-import { Button, Row, Select } from 'antd'
+import {
+  LeftOutlined,
+  PlusCircleOutlined,
+  RightOutlined,
+} from '@ant-design/icons'
+import { Button, Flex, Row, Select } from 'antd'
 import { useCallback, useEffect } from 'react'
 
 type ViewType = 'month' | 'week' | 'day'
 
 const viewModeOptions = [
-  {
-    title: 'Mês',
-    value: 'month',
-  },
-  {
-    title: 'Semana',
-    value: 'week',
-  },
-  {
-    title: 'Dia',
-    value: 'day',
-  },
+  { title: 'Mês', value: 'month' },
+  { title: 'Semana', value: 'week' },
+  { title: 'Dia', value: 'day' },
 ]
 
 export type FormattedServices = {
@@ -44,6 +39,7 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     petServiceIdFilter,
     setPetServiceIdFilter,
   } = useAppointmentsContext()
+
   const getCallInstance = useCallback(
     () => calendarRef.current?.getInstance?.(),
     [],
@@ -53,6 +49,7 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     const calInstance = getCallInstance()
     if (!calInstance) {
       setSelectedDateRangeText('')
+      return
     }
 
     const viewName = calInstance.getViewName()
@@ -90,7 +87,7 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     }
 
     setSelectedDateRangeText(dateRangeText)
-  }, [])
+  }, [getCallInstance, setSelectedDateRangeText])
 
   const onClickNavi = (ev: React.MouseEvent<HTMLButtonElement>) => {
     if (ev.currentTarget.tagName === 'BUTTON') {
@@ -112,59 +109,63 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     updateRenderRangeText()
   }, [selectedView, updateRenderRangeText])
 
-  const petServiceFilter = (id: string) => {
-    if (id === petServiceIdFilter) {
-      setPetServiceIdFilter('')
-      return
-    }
-
-    setPetServiceIdFilter(id)
+  // Ajuste para lidar com múltiplos valores no filtro
+  const handleServiceFilterChange = (selectedIds: string[]) => {
+    setPetServiceIdFilter(selectedIds)
   }
 
   return (
-    <Row align='middle' style={{ marginBottom: 16, gap: 10 }}>
-      <Select
-        style={{ width: 120 }}
-        value={selectedView}
-        onChange={(value: ViewType) => onChangeSelect(value)}
-      >
-        {viewModeOptions.map((option, index) => (
-          <Select.Option value={option.value} key={index}>
-            {option.title}
-          </Select.Option>
-        ))}
-      </Select>
-
-      <Button data-action='move-today' onClick={onClickNavi}>
-        Hoje
-      </Button>
-
-      <Button data-action='move-prev' onClick={onClickNavi}>
-        <LeftOutlined />
-      </Button>
-
-      <span className='render-range'>{selectedDateRangeText}</span>
-
-      <Button data-action='move-next' onClick={onClickNavi}>
-        <RightOutlined />
-      </Button>
-
-      {services?.map(({ id, name }) => (
-        <Button
-          key={name}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            borderColor: `${
-              petServiceIdFilter === String(id) ? '#03fc24' : ''
-            }`,
-          }}
-          onClick={() => petServiceFilter(String(id))}
+    <Row
+      align='middle'
+      justify='space-between'
+      style={{ marginBottom: 16, gap: 10 }}
+    >
+      <Flex gap='middle' vertical={false} align='center'>
+        <Select
+          style={{ width: 120 }}
+          value={selectedView}
+          onChange={(value: ViewType) => onChangeSelect(value)}
         >
-          <span>{name}</span>
+          {viewModeOptions.map((option, index) => (
+            <Select.Option value={option.value} key={index}>
+              {option.title}
+            </Select.Option>
+          ))}
+        </Select>
+
+        <Button data-action='move-today' onClick={onClickNavi}>
+          Hoje
         </Button>
-      ))}
+
+        <Button data-action='move-prev' onClick={onClickNavi}>
+          <LeftOutlined />
+        </Button>
+
+        <span className='render-range'>{selectedDateRangeText}</span>
+
+        <Button data-action='move-next' onClick={onClickNavi}>
+          <RightOutlined />
+        </Button>
+
+        <Select
+          mode='multiple'
+          style={{ width: 200 }}
+          value={petServiceIdFilter} // Agora é um array
+          onChange={handleServiceFilterChange} // Nova função para múltiplos valores
+          placeholder='Filtrar por serviço'
+          allowClear // Permite limpar todos os filtros
+        >
+          {services?.map(({ id, name }) => (
+            <Select.Option value={String(id)} key={id}>
+              {name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Flex>
+
+      <Button type='primary'>
+        <PlusCircleOutlined /> Criar agendamento
+      </Button>
     </Row>
   )
 }
