@@ -1,3 +1,4 @@
+import { LoadPetServicesResponse } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import { fullMonthAndYearDate } from '@/utils/time'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
@@ -29,11 +30,11 @@ export type FormattedServices = {
   dragBackgroundColor: string
 }[]
 
-type Props = {
-  services: FormattedServices
+type CalendarHeaderProps = {
+  services?: LoadPetServicesResponse | undefined
 }
 
-export const CalendarHeader = ({ services }: Props) => {
+export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
   const {
     selectedDateRangeText,
     setSelectedDateRangeText,
@@ -148,26 +149,20 @@ export const CalendarHeader = ({ services }: Props) => {
         <RightOutlined />
       </Button>
 
-      {services.map(({ id, name, backgroundColor }) => (
+      {services?.map(({ id, name }) => (
         <Button
           key={name}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 4,
-            borderColor: `${petServiceIdFilter === id ? '#03fc24' : ''}`,
+            borderColor: `${
+              petServiceIdFilter === String(id) ? '#03fc24' : ''
+            }`,
           }}
-          onClick={() => petServiceFilter(id)}
+          onClick={() => petServiceFilter(String(id))}
         >
           <span>{name}</span>
-          <div
-            style={{
-              backgroundColor,
-              height: '20px',
-              width: '20px',
-              borderRadius: '50%',
-            }}
-          ></div>
         </Button>
       ))}
     </Row>

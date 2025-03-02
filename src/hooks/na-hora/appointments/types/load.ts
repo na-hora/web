@@ -1,3 +1,5 @@
+export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'CANCELED'
+
 export type Appointment = {
   id: string
   serviceName: string
@@ -5,6 +7,7 @@ export type Appointment = {
   totalTime: number
   totalPrice: number
   canceled: boolean
+  status: AppointmentStatus
 }
 
 export type LoadAppointmentsResponse = {

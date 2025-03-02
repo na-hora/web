@@ -1,5 +1,9 @@
-import { Appointment } from '@/hooks/na-hora/appointments/types/load'
+import {
+  Appointment,
+  AppointmentStatus,
+} from '@/hooks/na-hora/appointments/types/load'
 import { useLoadAppointments } from '@/hooks/na-hora/appointments/use-load-appointments'
+import { LoadPetServicesResponse } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import type { EventObject, ExternalEventTypes } from '@toast-ui/calendar'
 import '@toast-ui/calendar/dist/toastui-calendar.min.css'
@@ -9,44 +13,74 @@ import { addMinutes } from 'date-fns'
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
 
-type FormattedServices = {
-  id: string
-  name: string
-  backgroundColor: string
-  borderColor: string
-  dragBackgroundColor: string
-}[]
-
-type Props = {
-  services: FormattedServices
+type AppointmentCalendarProps = {
+  services?: LoadPetServicesResponse | undefined
 }
 
-export const AppointmentCalendar = ({ services }: Props) => {
+const getStatusColor = (status: AppointmentStatus) => {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return {
+        backgroundColor: '#FFA500',
+        borderColor: '#CC8400',
+        dragBackgroundColor: '#FFA500',
+      }
+    case 'confirmed':
+      return {
+        backgroundColor: '#00FF00',
+        borderColor: '#00CC00',
+        dragBackgroundColor: '#00FF00',
+      }
+    case 'cancelled':
+      return {
+        backgroundColor: '#FF0000',
+        borderColor: '#CC0000',
+        dragBackgroundColor: '#FF0000',
+      }
+    default:
+      return {
+        backgroundColor: '#808080', // Cinza para status desconhecido
+        borderColor: '#666666',
+        dragBackgroundColor: '#808080',
+      }
+  }
+}
+
+export const AppointmentCalendar = (
+  { services } = [] as AppointmentCalendarProps,
+) => {
   const [appointments, setAppointments] = useState<Partial<EventObject>[]>([])
   const [api, contextHolder] = notification.useNotification()
 
   const {
     selectedView,
     setSelectedDateFromCalendar,
-    // setIsCreateAppointmentModalOpen,
     setIsBlockCompanyHourModalOpen,
     calendarRef,
     petServiceIdFilter,
     setIsAppointmentManagerModalOpen,
-    setSelectedAppointment
+    setSelectedAppointment,
   } = useAppointmentsContext()
   const { data: initialAppointments } = useLoadAppointments()
 
   const formatAppointment = (appointment: Appointment) => {
+    const statusColors = getStatusColor(appointment.status || 'pending')
+
+    const service = services?.find(
+      (s) => s.name.toLowerCase() === appointment.serviceName.toLowerCase(),
+    )
+    const calendarId = service ? service.id.toString() : '1'
+
     return {
       ...appointment,
       id: appointment.id,
-      calendarId: `${appointment.serviceName === 'banho' ? 1 : 2}`, // TODO
+      calendarId,
       title: appointment.serviceName,
       category: 'time',
       isReadOnly: false,
       start: new Date(appointment.startTime),
       end: addMinutes(new Date(appointment.startTime), appointment.totalTime),
+      ...statusColors,
     }
   }
 
@@ -88,7 +122,6 @@ export const AppointmentCalendar = ({ services }: Props) => {
       openNotification(formattedAppointment.title)
     }
 
-    // Fechar a conexão SSE ao desmontar o componente
     return () => {
       eventSource.close()
     }
@@ -99,7 +132,6 @@ export const AppointmentCalendar = ({ services }: Props) => {
     end,
   }: EventObject) => {
     setSelectedDateFromCalendar({ start, end })
-    // setIsCreateAppointmentModalOpen(true)
     setIsBlockCompanyHourModalOpen(true)
   }
 
@@ -119,6 +151,13 @@ export const AppointmentCalendar = ({ services }: Props) => {
       return appointment.calendarId === petServiceIdFilter
     })
   }
+
+  const legendItems = [
+    { status: 'Confirmado', color: '#00FF00' },
+    { status: 'Pendente', color: '#FFA500' },
+    // { status: 'Cancelado', color: '#FF0000' },
+    { status: 'Bloqueado', color: '#808080' },
+  ]
 
   return (
     <>
@@ -154,6 +193,41 @@ export const AppointmentCalendar = ({ services }: Props) => {
         onSelectDateTime={openCreateEventModal}
         onClickEvent={handleClickEvent}
       />
+
+      <div
+        style={{
+          marginTop: '10px',
+          display: 'flex',
+          gap: '15px',
+          padding: '10px',
+        }}
+      >
+        {legendItems.map((item) => (
+          <div
+            key={item.status}
+            style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+          >
+            <div
+              style={{
+                width: '12px',
+                height: '12px',
+                backgroundColor: item.color,
+                borderRadius: '2px',
+                border: `1px solid ${
+                  item.color === '#00FF00'
+                    ? '#00CC00'
+                    : item.color === '#FF0000'
+                    ? '#CC0000'
+                    : item.color === '#FFA500'
+                    ? '#CC8400'
+                    : '#666666'
+                }`,
+              }}
+            />
+            <span>{item.status}</span>
+          </div>
+        ))}
+      </div>
     </>
   )
 }
