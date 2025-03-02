@@ -142,7 +142,9 @@ export const AppointmentCalendar = (
     setIsBlockCompanyHourModalOpen(true)
   }
 
-  const handleClickEvent: ExternalEventTypes['clickEvent'] = ({ event }) => {
+  const handleClickEvent: ExternalEventTypes['clickEvent'] = ({
+    event,
+  }: any) => {
     const selectedAppointment = appointments.find(
       (appointment) => appointment.id === event.id,
     )
@@ -180,7 +182,7 @@ export const AppointmentCalendar = (
         ref={calendarRef}
         height='60vh'
         calendars={services}
-        month={{ startDayOfWeek: 1 }}
+        month={{ startDayOfWeek: 0 }}
         events={filterAppointments()}
         template={{
           timegridDisplayPrimaryTime: function ({ time }: any) {
@@ -197,7 +199,7 @@ export const AppointmentCalendar = (
           timezonesCollapsed: false,
           eventView: ['time'],
           taskView: false,
-          startDayOfWeek: 1,
+          startDayOfWeek: 0,
           dayNames: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
           hourStart: 8,
           hourEnd: 18,
