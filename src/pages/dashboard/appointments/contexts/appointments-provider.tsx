@@ -14,7 +14,7 @@ export type Params = {
   isBlockCompanyHourModalOpen: boolean
   setIsBlockCompanyHourModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   calendarRef: React.RefObject<typeof Calendar>
-  petServiceIdFilter: string[] | []
+  petServiceIdFilter: string[]
   setPetServiceIdFilter: (ids: string[]) => void
   isAppointmentManagerModalOpen: boolean
   setIsAppointmentManagerModalOpen: React.Dispatch<

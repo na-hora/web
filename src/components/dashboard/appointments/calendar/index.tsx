@@ -3,12 +3,15 @@ import {
   AppointmentStatus,
 } from '@/hooks/na-hora/appointments/types/load'
 import { useLoadAppointments } from '@/hooks/na-hora/appointments/use-load-appointments'
+import { CompanyHoursBlocked } from '@/hooks/na-hora/company-hour-block/types/load.type'
+import { useDeleteCompanyHourBlock } from '@/hooks/na-hora/company-hour-block/use-delete-company-hour-block'
+import { useLoadCompanyHoursBlock } from '@/hooks/na-hora/company-hour-block/use-load-company-hours-block'
 import { LoadPetServicesResponse } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
 import type { EventObject, ExternalEventTypes } from '@toast-ui/calendar'
 import '@toast-ui/calendar/dist/toastui-calendar.min.css'
 import Calendar from '@toast-ui/react-calendar'
-import { notification, theme } from 'antd'
+import { Button, notification, theme } from 'antd'
 import { addMinutes } from 'date-fns'
 import { parseCookies } from 'nookies'
 import { useEffect, useState } from 'react'
@@ -64,6 +67,11 @@ export const AppointmentCalendar = (
     setTotalAppointments,
   } = useAppointmentsContext()
   const { data: initialAppointments, isFetching } = useLoadAppointments()
+  const { data: companyHoursBlocked } = useLoadCompanyHoursBlock()
+  const {
+    mutate: deleteCompanyHourBlock,
+    isPending: isDeletingCompanyHourBlock,
+  } = useDeleteCompanyHourBlock()
 
   const formatAppointment = (appointment: Appointment) => {
     const statusColors = getStatusColor(appointment.status || 'pending')
@@ -86,18 +94,33 @@ export const AppointmentCalendar = (
     }
   }
 
+  const formatBlockedHour = (blockedHour: CompanyHoursBlocked) => ({
+    id: `blocked-${blockedHour.id}`,
+    calendarId: 'blocked',
+    title: 'Horário Bloqueado',
+    category: 'time',
+    isReadOnly: true,
+    start: new Date(blockedHour.startDate),
+    end: new Date(blockedHour.endDate),
+    backgroundColor: '#808080',
+    borderColor: '#666666',
+    dragBackgroundColor: '#808080',
+  })
+
   useEffect(() => {
-    if (!initialAppointments) return
+    if (!initialAppointments || !companyHoursBlocked) return
 
     const { appointments } = initialAppointments
+    const parsedAppointments = appointments.map((appointment: Appointment) =>
+      formatAppointment(appointment),
+    )
 
-    const parsedAppointments = appointments.map((appointment: Appointment) => {
-      return formatAppointment(appointment)
-    })
+    const parsedBlockedHours = companyHoursBlocked.map((blockedHour) =>
+      formatBlockedHour(blockedHour),
+    )
 
-    setAppointments(parsedAppointments)
-    setTotalAppointments(parsedAppointments.length)
-  }, [initialAppointments])
+    setAppointments([...parsedAppointments, ...parsedBlockedHours])
+  }, [initialAppointments, companyHoursBlocked])
 
   useEffect(() => {
     setFetchingAppointments(isFetching)
@@ -142,9 +165,63 @@ export const AppointmentCalendar = (
     setIsBlockCompanyHourModalOpen(true)
   }
 
+  const deleteBlockedHour = (blockedHourId: number) => {
+    deleteCompanyHourBlock(
+      {
+        dynamicRoute: blockedHourId.toString(),
+      },
+      {
+        onSuccess: () => {
+          api.destroy()
+          setAppointments((prevAppointments) =>
+            prevAppointments.filter((appt) => appt.id !== blockedHourId),
+          )
+
+          api.success({
+            message: 'Horário Desbloqueado',
+            description: 'O horário foi desbloqueado com sucesso.',
+            placement: 'top',
+            duration: 3,
+          })
+        },
+        onError: () => {
+          api.destroy()
+          api.error({
+            message: 'Erro ao desbloquear horário',
+            description: 'Ocorreu um erro ao desbloquear o horário.',
+            placement: 'top',
+            duration: 3,
+          })
+        },
+      },
+    )
+  }
+
   const handleClickEvent: ExternalEventTypes['clickEvent'] = ({
     event,
   }: any) => {
+    if (event.calendarId === 'blocked') {
+      api.open({
+        message: 'Horário Bloqueado',
+        description: (
+          <div>
+            <p>Este horário está bloqueado. Deseja remover o bloqueio?</p>
+            <Button
+              type='primary'
+              danger
+              disabled={isDeletingCompanyHourBlock}
+              onClick={() => deleteBlockedHour(event.id.split('-')[1])}
+            >
+              Remover Bloqueio
+            </Button>
+          </div>
+        ),
+        placement: 'top',
+        duration: 0,
+      })
+      return
+    }
+
     const selectedAppointment = appointments.find(
       (appointment) => appointment.id === event.id,
     )
@@ -153,16 +230,26 @@ export const AppointmentCalendar = (
     setIsAppointmentManagerModalOpen(true)
   }
 
+  const removeBlockedHoursFromAppointments = () => {
+    const filteredAppointments = appointments.filter(
+      (appointment) => appointment.calendarId !== 'blocked',
+    )
+    return filteredAppointments
+  }
+
   const filterAppointments = () => {
     if (!petServiceIdFilter || petServiceIdFilter.length === 0) {
-      setTotalAppointments(appointments.length)
+      const appointmentsWithoutBlocked = removeBlockedHoursFromAppointments()
+      setTotalAppointments(appointmentsWithoutBlocked.length)
       return appointments
     }
 
     const filteredAppointments = appointments.filter((appointment) => {
       return petServiceIdFilter.includes(appointment.calendarId as string)
     })
-    setTotalAppointments(filteredAppointments.length)
+
+    const appointmentsWithoutBlocked = removeBlockedHoursFromAppointments()
+    setTotalAppointments(appointmentsWithoutBlocked.length)
 
     return filteredAppointments
   }
