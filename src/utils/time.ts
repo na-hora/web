@@ -1,3 +1,4 @@
+//@ts-ignore
 import { TZDate } from '@toast-ui/calendar'
 
 export function clone(date: TZDate): TZDate {
@@ -44,15 +45,17 @@ export function convertDateToISOString(dateStr: string) {
 }
 
 export const formatDateTime = (date: Date) => {
-  return date.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  }).replace(',', ' -');
-};
+  return date
+    .toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+    .replace(',', ' -')
+}
 
 export function fullMonthAndYearDate<T>(month: T, year: T): string {
   const date = new Date(`${year}-${month}-01`)

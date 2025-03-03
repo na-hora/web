@@ -1,4 +1,6 @@
+//@ts-ignore
 import { TZDate } from '@toast-ui/calendar'
+//@ts-ignore
 import Calendar from '@toast-ui/react-calendar'
 import { createContext, useContext, useRef, useState } from 'react'
 
@@ -43,7 +45,7 @@ export const AppointmentsProvider: React.FC<{
     useState(false)
   const [isBlockCompanyHourModalOpen, setIsBlockCompanyHourModalOpen] =
     useState(false)
-  const [petServiceIdFilter, setPetServiceIdFilter] = useState([])
+  const [petServiceIdFilter, setPetServiceIdFilter] = useState<string[]>([])
   const [isAppointmentManagerModalOpen, setIsAppointmentManagerModalOpen] =
     useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)

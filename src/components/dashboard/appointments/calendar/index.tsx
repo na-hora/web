@@ -8,8 +8,10 @@ import { useDeleteCompanyHourBlock } from '@/hooks/na-hora/company-hour-block/us
 import { useLoadCompanyHoursBlock } from '@/hooks/na-hora/company-hour-block/use-load-company-hours-block'
 import { LoadPetServicesResponse } from '@/hooks/na-hora/pet-services/types/list.type'
 import { useAppointmentsContext } from '@/pages/dashboard/appointments/contexts/appointments-provider'
+//@ts-ignore
 import type { EventObject, ExternalEventTypes } from '@toast-ui/calendar'
 import '@toast-ui/calendar/dist/toastui-calendar.min.css'
+//@ts-ignore
 import Calendar from '@toast-ui/react-calendar'
 import { Button, notification, theme } from 'antd'
 import { addMinutes } from 'date-fns'
