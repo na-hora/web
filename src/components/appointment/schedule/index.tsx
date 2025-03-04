@@ -2,7 +2,16 @@ import { useLoadAvailableDays } from '@/hooks/na-hora/appointments/use-load-avai
 import { useLoadCompleteDaySchedule } from '@/hooks/na-hora/appointments/use-load-complete-day-schedule'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { locale } from '@/utils/calendar'
-import { Button, Calendar, Card, Col, Row, Skeleton, Typography } from 'antd'
+import {
+  Button,
+  Calendar,
+  Card,
+  Col,
+  Divider,
+  Row,
+  Skeleton,
+  Typography,
+} from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
@@ -194,6 +203,7 @@ export const Schedule = () => {
                 {availableHoursByDay &&
                   availableHoursByDay?.times.afternoon.length > 0 && (
                     <>
+                      <Divider />
                       <Title level={4}>Tarde</Title>
                       <Row gutter={[8, 8]}>
                         {availableHoursByDay?.times.afternoon.map((time) => (
