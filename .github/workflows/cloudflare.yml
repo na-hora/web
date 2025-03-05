@@ -1,0 +1,36 @@
+name: Deploy to Cloudflare Pages
+
+# Define quando o workflow será executado
+on:
+  push:
+    branches:
+      - main  # Altere para o branch que você usa (ex.: main, master)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Faz checkout do código do repositório
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Configura o Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.1'  # Use a versão do Node que você utiliza
+
+      # Instala as dependências
+      - name: Install dependencies
+        run: npm install
+
+      # Executa o build
+      - name: Build
+        run: npm run build
+
+      # Faz o deploy para o Cloudflare Pages
+      - name: Deploy to Cloudflare Pages
+        run: npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
