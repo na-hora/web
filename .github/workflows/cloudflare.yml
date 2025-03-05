@@ -1,0 +1,28 @@
+name: Deploy to Cloudflare Pages
+
+# Define quando o workflow será executado
+on:
+  push:
+    branches:
+      - main  # Altere para o branch que você usa (ex.: main, master)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Faz checkout do código do repositório
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # Run your project's build step
+      - name: Build
+        run: npm install && npm run build
+        
+      - name: Publish
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: na-hora
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
