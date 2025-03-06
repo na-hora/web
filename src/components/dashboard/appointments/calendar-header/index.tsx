@@ -179,7 +179,7 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
         </Select>
 
         <Spin spinning={fetchingAppointments} />
-        <Typography.Text strong>{getAppointmentText()}</Typography.Text>
+        <Typography.Text>{getAppointmentText()}</Typography.Text>
       </Flex>
 
       <Typography.Link href={`/appointment?q=${companyId}`} target='_blank'>
