@@ -86,7 +86,6 @@ export const ServiceConfigurationModal = ({
 
   const removeMaskFromInput = (values: any) =>
     Object.entries(values).reduce((acc, [key, value]: any) => {
-      console.log({ key, value })
       if (key.includes('price')) {
         // Converte o valor formatado para número decimal
         const numericValue =

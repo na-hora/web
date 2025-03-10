@@ -13,8 +13,6 @@ export const AppointmentConfirmationPage = () => {
     origin,
   )
 
-  console.log({ isConfirming, isSuccess })
-
   return (
     <main className={styles.main}>
       <section className={styles.bgsection}>

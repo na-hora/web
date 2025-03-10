@@ -74,7 +74,6 @@ export const OperatorsTab = () => {
 
   const createOperator = () => {
     form.validateFields().then((values) => {
-      console.log({ values })
       createOperatorMutation({
         body: {
           name: values.name,
