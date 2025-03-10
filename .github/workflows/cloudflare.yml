@@ -1,5 +1,6 @@
 name: Deploy to Cloudflare Pages
 
+# Define quando o workflow será executado
 on:
   push:
     branches:
@@ -15,6 +16,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Build
+        run: npm install && npm run build
         
       - name: Publish
         uses: cloudflare/pages-action@v1
