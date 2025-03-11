@@ -110,18 +110,26 @@ export const AppointmentCalendar = (
   })
 
   useEffect(() => {
-    if (!initialAppointments || !companyHoursBlocked) return
+    if (!initialAppointments && !companyHoursBlocked) return
 
-    const { appointments } = initialAppointments
-    const parsedAppointments = appointments.map((appointment: Appointment) =>
-      formatAppointment(appointment),
-    )
+    let parsedAppointments: Partial<EventObject>[] = []
 
-    const parsedBlockedHours = companyHoursBlocked.map((blockedHour) =>
-      formatBlockedHour(blockedHour),
-    )
+    if (initialAppointments) {
+      const { appointments } = initialAppointments
+      parsedAppointments = appointments.map((appointment: Appointment) =>
+        formatAppointment(appointment),
+      )
+    }
 
-    setAppointments([...parsedAppointments, ...parsedBlockedHours])
+    let parsedBlockedHours: Partial<EventObject>[] = []
+    if (companyHoursBlocked) {
+      parsedBlockedHours = companyHoursBlocked.map((blockedHour) =>
+        formatBlockedHour(blockedHour),
+      )
+    }
+
+    const mergedInfo = [...parsedAppointments, ...parsedBlockedHours]
+    setAppointments(mergedInfo)
   }, [initialAppointments, companyHoursBlocked])
 
   useEffect(() => {
