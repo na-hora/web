@@ -138,10 +138,25 @@ export const AppointmentCalendar = (
 
   const accessToken = parseCookies()['access-token@na-hora']
 
-  const openNotification = (serviceName: string, customerName: string) => {
+  const openNotification = (
+    serviceName: string,
+    customerName: string,
+    status: string,
+    startTime: string,
+  ) => {
+    const message =
+      status === 'PENDING' ? 'Novo agendamento' : 'Agendamento confirmado'
+    const startTimeFormatted = new Date(startTime).toLocaleString('pt-BR', {
+      day: 'numeric',
+      month: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    })
+    const description = `${serviceName} - ${customerName} - ${startTimeFormatted}`
+
     api.success({
-      message: `Novo atendimento`,
-      description: `${serviceName} - ${customerName}`,
+      message,
+      description,
       placement: 'bottomRight',
     })
   }
@@ -157,11 +172,28 @@ export const AppointmentCalendar = (
       const parsedAppointment: Appointment = JSON.parse(event.data)
       const formattedAppointment = formatAppointment(parsedAppointment)
 
-      setAppointments((prevMessages) => [...prevMessages, formattedAppointment])
+      const existingAppointment = appointments.find(
+        (appt) => appt.id === formattedAppointment.id,
+      )
+
+      if (existingAppointment) {
+        setAppointments((prevAppointments) =>
+          prevAppointments.map((appt) =>
+            appt.id === formattedAppointment.id ? formattedAppointment : appt,
+          ),
+        )
+      } else {
+        setAppointments((prevMessages) => [
+          ...prevMessages,
+          formattedAppointment,
+        ])
+      }
 
       openNotification(
         parsedAppointment.serviceName,
         parsedAppointment.client.name,
+        parsedAppointment.status,
+        parsedAppointment.startTime,
       )
     }
 
