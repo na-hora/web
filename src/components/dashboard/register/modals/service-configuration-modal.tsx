@@ -69,7 +69,8 @@ export const ServiceConfigurationModal = ({
       if (
         currentObjectTreated['companyPetHairID'] !== 0 &&
         currentObjectTreated['companyPetSizeID'] !== 0 &&
-        currentObjectTreated['executionTime'] !== 0
+        currentObjectTreated['executionTime'] !== 0 &&
+        currentObjectTreated['price'] !== 0
       ) {
         treatedData.push({ ...currentObjectTreated })
         currentObjectTreated['companyPetHairID'] = 0
@@ -131,7 +132,6 @@ export const ServiceConfigurationModal = ({
       return 'R$ 0,00'
     }
 
-    console.log('value: ', value)
     const numericValue = Number(value.toString().replace(/[^0-9]/g, '')) / 100
     return numericValue.toLocaleString('pt-BR', {
       style: 'currency',
@@ -283,6 +283,16 @@ export const ServiceConfigurationModal = ({
                       label={index === 0 && 'Preço'}
                       name={`${size.id}-${hair.id}-price`}
                       rules={[
+                        {
+                          validator: (_, value) => {
+                            const treatedValue =
+                              Number(value.toString().replace(/[^0-9]/g, '')) /
+                              100
+                            return treatedValue > 0
+                              ? Promise.resolve()
+                              : Promise.reject('Preço deve ser maior que 0.')
+                          },
+                        },
                         { required: true, message: 'Preço obrigatório.' },
                       ]}
                       initialValue={price}
