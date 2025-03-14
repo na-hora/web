@@ -8,6 +8,13 @@ export type Appointment = {
   totalPrice: number
   canceled: boolean
   status: AppointmentStatus
+  client: Client
+}
+
+export type Client = {
+  name: string
+  email: string
+  phone: string
 }
 
 export type LoadAppointmentsResponse = {

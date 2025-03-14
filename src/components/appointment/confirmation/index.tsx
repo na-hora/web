@@ -9,7 +9,7 @@ export const Confirmation = () => {
       </p>
       <strong style={{ color: 'red', fontSize: '1.2rem' }}>Atenção:</strong>
       <p>
-        O link de confirmação expira em <strong>30 minutos.</strong>
+        O link de confirmação expira em <strong>15 minutos.</strong>
       </p>
       <p>
         O seu horário permanecerá reservado, <strong>mas não confirmado</strong>

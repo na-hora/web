@@ -138,10 +138,10 @@ export const AppointmentCalendar = (
 
   const accessToken = parseCookies()['access-token@na-hora']
 
-  const openNotification = (description = 'Confira seu agendamento') => {
+  const openNotification = (serviceName: string, customerName: string) => {
     api.success({
       message: `Novo atendimento`,
-      description: `${description}`,
+      description: `${serviceName} - ${customerName}`,
       placement: 'bottomRight',
     })
   }
@@ -159,7 +159,10 @@ export const AppointmentCalendar = (
 
       setAppointments((prevMessages) => [...prevMessages, formattedAppointment])
 
-      openNotification(formattedAppointment.title)
+      openNotification(
+        parsedAppointment.serviceName,
+        parsedAppointment.client.name,
+      )
     }
 
     return () => {

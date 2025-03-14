@@ -40,7 +40,6 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     petServiceIdFilter,
     setPetServiceIdFilter,
     fetchingAppointments,
-    totalAppoimentments,
   } = useAppointmentsContext()
 
   const getCallInstance = useCallback(
@@ -116,17 +115,6 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
     setPetServiceIdFilter(selectedIds)
   }
 
-  const getAppointmentText = () => {
-    if (fetchingAppointments) {
-      return 'Buscando agendamentos'
-    }
-    return `${totalAppoimentments} ${
-      totalAppoimentments === 1
-        ? 'agendamento encontrado'
-        : 'agendamentos encontrados'
-    }`
-  }
-
   const companyCookie = parseCookies()['inf@na-hora']
   const { id: companyId } = JSON.parse(companyCookie)
 
@@ -179,7 +167,6 @@ export const CalendarHeader = ({ services } = [] as CalendarHeaderProps) => {
         </Select>
 
         <Spin spinning={fetchingAppointments} />
-        <Typography.Text>{getAppointmentText()}</Typography.Text>
       </Flex>
 
       <Typography.Link href={`/appointment?q=${companyId}`} target='_blank'>
