@@ -87,7 +87,10 @@ export const AppointmentCalendar = (
       ...appointment,
       id: appointment.id,
       calendarId,
-      title: appointment.serviceName,
+      title: `${appointment.client.name.split(' ')[0]} - ${
+        appointment.serviceName
+      }`,
+      body: appointment.client.name,
       category: 'time',
       isReadOnly: false,
       start: new Date(appointment.startTime),
