@@ -87,7 +87,9 @@ export const AppointmentCalendar = (
       ...appointment,
       id: appointment.id,
       calendarId,
-      title: appointment.serviceName,
+      title: `${appointment.serviceName} - ${
+        appointment.client.name.split(' ')[0]
+      }`,
       category: 'time',
       isReadOnly: false,
       start: new Date(appointment.startTime),
@@ -137,6 +139,11 @@ export const AppointmentCalendar = (
   }, [isFetching])
 
   const accessToken = parseCookies()['access-token@na-hora']
+  const companyCookie = parseCookies()['inf@na-hora']
+  const { companyShift } = JSON.parse(companyCookie)
+
+  const startTime = companyShift?.startMinute / 60
+  const endTime = companyShift?.endMinute / 60
 
   const openNotification = (
     serviceName: string,
@@ -333,8 +340,8 @@ export const AppointmentCalendar = (
           taskView: false,
           startDayOfWeek: 0,
           dayNames: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-          hourStart: 8,
-          hourEnd: 18,
+          hourStart: startTime,
+          hourEnd: endTime,
           timeStep: [0, 10, 20, 30, 40, 50],
         }}
         onSelectDateTime={openCreateEventModal}
