@@ -1,4 +1,5 @@
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
+import { formatToCurrency } from '@/utils/currency'
 import { Col, Divider, Skeleton, Typography } from 'antd'
 import dayjs from 'dayjs'
 
@@ -17,16 +18,15 @@ export const ReviewStep = () => {
   const generateMapLink = () => {
     if (!company) return
 
-    const fullAddress = `${company?.address?.street}, ${company?.address?.number}, ${company?.address?.neighborhood}, ${company?.address?.city}`;
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+    const fullAddress = `${company?.address?.street}, ${company?.address?.number}, ${company?.address?.neighborhood}, ${company?.address?.city}`
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      fullAddress,
+    )}`
   }
 
   if (!appointmentData) {
-    return (
-      <Skeleton active />
-    )
+    return <Skeleton active />
   }
-
 
   return (
     <Col style={{ textAlign: 'left', marginTop: '20px' }}>
@@ -43,6 +43,13 @@ export const ReviewStep = () => {
       </p>
       <p>
         <b>Serviço:</b> {appointmentData?.petService?.name}
+      </p>
+
+      <p>
+        <b>Valor estimado:</b>{' '}
+        {appointmentData.petService?.price
+          ? formatToCurrency(appointmentData.petService?.price)
+          : 'Consultar'}
       </p>
 
       <p>
@@ -71,19 +78,18 @@ export const ReviewStep = () => {
 
       <p>
         <b>Endereço: </b>
-          {company?.address?.street},&nbsp;
-          {company?.address?.number},&nbsp;
-          {company?.address?.neighborhood},&nbsp;
-          {company?.address?.city},&nbsp;
-          {company?.address?.state}
+        {company?.address?.street},&nbsp;
+        {company?.address?.number},&nbsp;
+        {company?.address?.neighborhood},&nbsp;
+        {company?.address?.city},&nbsp;
+        {company?.address?.state}
       </p>
 
       <Typography.Text>
-        <a href={generateMapLink()} target="_blank" rel="noopener noreferrer">
+        <a href={generateMapLink()} target='_blank' rel='noopener noreferrer'>
           Ver no mapa
         </a>
       </Typography.Text>
-
     </Col>
   )
 }

@@ -1,7 +1,8 @@
 import { SpecificPetService } from '@/hooks/na-hora/pet-services/types/load-specifics-services.type'
 import { useLoadSpecificsPetServices } from '@/hooks/na-hora/pet-services/use-load-specifics-pet-services'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
-import { Button, Flex, Row, Skeleton, Space } from 'antd'
+import { formatToCurrency } from '@/utils/currency'
+import { Button, Col, Flex, Row, Skeleton, Space } from 'antd'
 import styles from './styles.module.css'
 
 export const AnimalServices = () => {
@@ -86,9 +87,21 @@ export const AnimalServices = () => {
             }}
           >
             <img src={serviceImage(petService.name)} height={100} />
-            <h3>{petService.name}</h3>
+            <Col style={{ textAlign: 'left' }}>
+              <h3>{petService.name}</h3>
+              <p style={{ fontSize: '12px' }}>
+                Valor:&nbsp;
+                {petService.price === 0
+                  ? 'Consultar'
+                  : formatToCurrency(petService.price)}
+              </p>
+            </Col>
           </Button>
         ))}
+
+        <p style={{ fontSize: '12px', color: 'red' }}>
+          Os valores dos serviços são estimados e podem sofrer variações.
+        </p>
       </Row>
     </>
   )
