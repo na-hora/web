@@ -31,7 +31,10 @@ export const UserInfoForm = () => {
       <Form.Item
         label='Telefone'
         name='phone'
-        rules={[{ required: true, message: 'Telefone obrigatório' }]}
+        rules={[
+          { required: true, message: 'Telefone obrigatório' },
+          { min: 14, message: 'Telefone inválido' },
+        ]}
         required
       >
         <PhoneInput
@@ -63,18 +66,14 @@ export const UserInfoForm = () => {
         />
       </Form.Item>
 
-      <Form.Item
-        label='Nome do seu pet'
-        name= 'petName'
-      >
+      <Form.Item label='Nome do seu pet' name='petName'>
         <Input onChange={(e) => handleOnChange('petName', e.target.value)} />
       </Form.Item>
 
-      <Form.Item
-        label='Alguma informação adicional?'
-        name= 'note'
-      >
-        <Input.TextArea  onChange={(e) => handleOnChange('note', e.target.value)} />
+      <Form.Item label='Alguma informação adicional?' name='note'>
+        <Input.TextArea
+          onChange={(e) => handleOnChange('note', e.target.value)}
+        />
       </Form.Item>
     </Form>
   )
