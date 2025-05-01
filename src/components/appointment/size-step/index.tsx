@@ -1,12 +1,13 @@
-import { useLoadPetSizes } from '@/hooks/na-hora/pet-size/use-load-pet-sizes'
+import { useLoadHairsAndSizesByType } from '@/hooks/na-hora/pet-type/use-load-hairs-and-sizes-by-type'
 import { useAppointmentContext } from '@/pages/appointment/contexts/appointments-provider'
 import { Button, Col, Row, Skeleton } from 'antd'
 
 export const AnimalSize = () => {
   const { appointmentData, setAppointmentData } = useAppointmentContext()
 
-  const { data: petSizes, isFetching } = useLoadPetSizes(
+  const { data: petHairsAndSizes, isFetching } = useLoadHairsAndSizesByType(
     appointmentData?.companyId as string,
+    appointmentData?.petTypeId as number,
   )
 
   const setPetSizeId = (petSizeId: number) => {
@@ -48,7 +49,7 @@ export const AnimalSize = () => {
       </p>
 
       <Row justify='space-evenly'>
-        {petSizes?.map((petSize) => (
+        {petHairsAndSizes?.sizes?.map((petSize) => (
           <Col>
             <Button
               onClick={() => setPetSizeId(petSize.id)}

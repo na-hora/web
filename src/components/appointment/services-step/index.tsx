@@ -73,31 +73,35 @@ export const AnimalServices = () => {
       </p>
 
       <Row justify='space-evenly'>
-        {petServices?.services.map((petService) => (
-          <Button
-            key={petService.id}
-            onClick={() => savePetService(petService)}
-            className={styles.button}
-            style={{
-              border: `${
-                petService.id === appointmentData.petService?.id
-                  ? '2px solid #3196b5'
-                  : 'none'
-              }`,
-            }}
-          >
-            <img src={serviceImage(petService.name)} height={100} />
-            <Col style={{ textAlign: 'left' }}>
-              <h3>{petService.name}</h3>
-              <p style={{ fontSize: '12px' }}>
-                Valor:&nbsp;
-                {petService.price === 0
-                  ? 'Consultar'
-                  : formatToCurrency(petService.price)}
-              </p>
-            </Col>
-          </Button>
-        ))}
+        {petServices?.services?.length ? (
+          petServices?.services.map((petService) => (
+            <Button
+              key={petService.id}
+              onClick={() => savePetService(petService)}
+              className={styles.button}
+              style={{
+                border: `${
+                  petService.id === appointmentData.petService?.id
+                    ? '2px solid #3196b5'
+                    : 'none'
+                }`,
+              }}
+            >
+              <img src={serviceImage(petService.name)} height={100} />
+              <Col style={{ textAlign: 'left' }}>
+                <h3>{petService.name}</h3>
+                <p style={{ fontSize: '12px' }}>
+                  Valor:&nbsp;
+                  {petService.price === 0
+                    ? 'Consultar'
+                    : formatToCurrency(petService.price)}
+                </p>
+              </Col>
+            </Button>
+          ))
+        ) : (
+          <p>Não atendemos essa combinação atualmente...</p>
+        )}
 
         <p style={{ fontSize: '12px', color: 'red' }}>
           Os valores dos serviços são estimados e podem sofrer variações.
