@@ -1,4 +1,5 @@
 import { useConfirmAppointment } from '@/hooks/na-hora/appointments/use-confirm-appointment'
+import { CheckCircleOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
 import { useSearchParams } from 'react-router-dom'
 import styles from './styles.module.css'
@@ -28,6 +29,8 @@ export const AppointmentConfirmationPage = () => {
         ) : isSuccess ? (
           <>
             <h1>Agendamento confirmado!</h1>
+            {/* icone de sucesso */}
+            <CheckCircleOutlined style={{ fontSize: '50px', color: 'green' }} />
             <p>Seu agendamento foi confirmado com sucesso.</p>
             <p>Obrigado por usar nossa plataforma, volte sempre!</p>
           </>
