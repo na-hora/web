@@ -100,7 +100,7 @@ export const AppointmentCalendar = (
 
   const formatBlockedHour = (blockedHour: CompanyHoursBlocked) => ({
     id: `blocked-${blockedHour.id}`,
-    calendarId: 'blocked',
+    calendarId: '__blocked__',
     title: 'Horário Bloqueado',
     category: 'time',
     isReadOnly: true,
@@ -179,22 +179,12 @@ export const AppointmentCalendar = (
       const parsedAppointment: Appointment = JSON.parse(event.data)
       const formattedAppointment = formatAppointment(parsedAppointment)
 
-      const existingAppointment = appointments.find(
-        (appt) => appt.id === formattedAppointment.id,
-      )
-
-      if (existingAppointment) {
-        setAppointments((prevAppointments) =>
-          prevAppointments.map((appt) =>
-            appt.id === formattedAppointment.id ? formattedAppointment : appt,
-          ),
+      setAppointments((prevAppointments) => {
+        const filtered = prevAppointments.filter(
+          (appt) => appt.id !== formattedAppointment.id,
         )
-      } else {
-        setAppointments((prevMessages) => [
-          ...prevMessages,
-          formattedAppointment,
-        ])
-      }
+        return [...filtered, formattedAppointment]
+      })
 
       openNotification(
         parsedAppointment.serviceName,
@@ -284,7 +274,7 @@ export const AppointmentCalendar = (
 
   const removeBlockedHoursFromAppointments = () => {
     const filteredAppointments = appointments.filter(
-      (appointment) => appointment.calendarId !== 'blocked',
+      (appointment) => appointment.calendarId !== '__blocked__',
     )
     return filteredAppointments
   }
