@@ -98,7 +98,9 @@ export const AppointmentCalendar = (
     }
   }
 
-  const formatBlockedHour = (blockedHour: CompanyHoursBlocked) => ({
+  const formatBlockedHour = (
+    blockedHour: CompanyHoursBlocked,
+  ): EventObject => ({
     id: `blocked-${blockedHour.id}`,
     calendarId: '__blocked__',
     title: 'Horário Bloqueado',
@@ -242,7 +244,7 @@ export const AppointmentCalendar = (
   const handleClickEvent: ExternalEventTypes['clickEvent'] = ({
     event,
   }: any) => {
-    if (event.calendarId === 'blocked') {
+    if (event.calendarId === '__blocked__') {
       api.open({
         message: 'Horário Bloqueado',
         description: (

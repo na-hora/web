@@ -29,7 +29,7 @@ export const AnimalType = () => {
       return '/imgs/appointment/cat-avatar.png'
     }
 
-    return ''
+    return '/imgs/appointment/generic-avatar.png'
   }
 
   if (isFetching) {
