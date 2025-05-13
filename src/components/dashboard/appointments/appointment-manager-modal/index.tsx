@@ -160,6 +160,18 @@ export const AppointmentManagerModal = () => {
           <strong>Horário Final:</strong>{' '}
           {formatDateTime(selectedAppointment?.end)}
         </p>
+        {selectedAppointment?.petSizeName && (
+          <p>
+            <strong>Tamanho:</strong>{' '}
+            {selectedAppointment?.petSizeName || 'Não informado'}
+          </p>
+        )}
+        {selectedAppointment?.petHairName && (
+          <p>
+            <strong>Pelagem:</strong>{' '}
+            {selectedAppointment?.petHairName || 'Não informado'}
+          </p>
+        )}
         <p>
           <strong>Nome do pet:</strong>{' '}
           {selectedAppointment?.petName || 'Não informado'}
