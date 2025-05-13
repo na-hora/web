@@ -34,7 +34,7 @@ export const AnimalServices = () => {
       case 'banho e tosa':
         return '/imgs/appointment/shower.png'
       default:
-        return ''
+        return '/imgs/appointment/generic-service.png'
     }
   }
 
