@@ -13,6 +13,7 @@ export const AnimalHair = () => {
   const setPetHairId = (petHairId: number) => {
     setAppointmentData({
       ...appointmentData,
+      petService: null,
       petHairId: petHairId,
     })
   }

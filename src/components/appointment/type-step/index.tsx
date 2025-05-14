@@ -13,6 +13,7 @@ export const AnimalType = () => {
   const savePetTypeId = (petTypeId: number) => {
     setAppointmentData({
       ...appointmentData,
+      petService: null,
       petTypeId: petTypeId,
     })
   }

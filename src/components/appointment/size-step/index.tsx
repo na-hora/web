@@ -13,6 +13,7 @@ export const AnimalSize = () => {
   const setPetSizeId = (petSizeId: number) => {
     setAppointmentData({
       ...appointmentData,
+      petService: null,
       petSizeId: petSizeId,
     })
   }
