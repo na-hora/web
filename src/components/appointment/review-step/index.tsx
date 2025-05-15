@@ -73,7 +73,7 @@ export const ReviewStep = () => {
       <Divider />
 
       <p>
-        <b>{company?.fantasyName}</b>
+        <b style={{ color: '#3196b5' }}>{company?.fantasyName}</b>
       </p>
 
       <p>

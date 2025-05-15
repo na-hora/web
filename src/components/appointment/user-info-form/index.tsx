@@ -18,63 +18,71 @@ export const UserInfoForm = () => {
   }
 
   return (
-    <Form form={form} layout='vertical' style={{ width: '100%' }}>
-      <Form.Item
-        label='Nome completo'
-        name='name'
-        rules={[{ required: true, message: 'Nome completo obrigatório' }]}
-        required
-      >
-        <Input onChange={(e) => handleOnChange('name', e.target.value)} />
-      </Form.Item>
+    <>
+      <Form form={form} layout='vertical' style={{ width: '100%' }}>
+        <Form.Item
+          label='Nome completo'
+          name='name'
+          rules={[{ required: true, message: 'Nome completo obrigatório' }]}
+          required
+        >
+          <Input onChange={(e) => handleOnChange('name', e.target.value)} />
+        </Form.Item>
 
-      <Form.Item
-        label='Telefone'
-        name='phone'
-        rules={[
-          { required: true, message: 'Telefone obrigatório' },
-          { min: 14, message: 'Telefone inválido' },
-        ]}
-        required
-      >
-        <PhoneInput
-          onChange={(e) => {
-            form.setFieldValue('phone', phoneMask(e.target.value))
-            handleOnChange('phone', phoneMask(e.target.value))
-          }}
-        />
-      </Form.Item>
+        <Form.Item
+          label='Telefone'
+          name='phone'
+          rules={[
+            { required: true, message: 'Telefone obrigatório' },
+            { min: 14, message: 'Telefone inválido' },
+          ]}
+          required
+        >
+          <PhoneInput
+            onChange={(e) => {
+              form.setFieldValue('phone', phoneMask(e.target.value))
+              handleOnChange('phone', phoneMask(e.target.value))
+            }}
+          />
+        </Form.Item>
 
-      <Form.Item
-        label='E-mail'
-        name='email'
-        rules={[
-          {
-            type: 'email',
-            message: 'Esse não é um e-mail válido',
-          },
-          {
-            required: true,
-            message: 'E-mail obrigatório',
-          },
-        ]}
-        required
-      >
-        <Input
-          type='email'
-          onChange={(e) => handleOnChange('email', e.target.value)}
-        />
-      </Form.Item>
+        <Form.Item
+          label='E-mail'
+          name='email'
+          rules={[
+            {
+              type: 'email',
+              message: 'Esse não é um e-mail válido',
+            },
+            {
+              required: true,
+              message: 'E-mail obrigatório',
+            },
+          ]}
+          required
+        >
+          <Input
+            type='email'
+            onChange={(e) => handleOnChange('email', e.target.value)}
+          />
+        </Form.Item>
 
-      <Form.Item label='Nome do seu pet' name='petName'>
-        <Input onChange={(e) => handleOnChange('petName', e.target.value)} />
-      </Form.Item>
+        <Form.Item label='Nome do seu pet' name='petName'>
+          <Input onChange={(e) => handleOnChange('petName', e.target.value)} />
+        </Form.Item>
 
-      <Form.Item label='Alguma informação adicional?' name='note'>
-        <Input.TextArea
-          onChange={(e) => handleOnChange('note', e.target.value)}
-        />
-      </Form.Item>
-    </Form>
+        <Form.Item label='Alguma informação adicional?' name='note'>
+          <Input.TextArea
+            onChange={(e) => handleOnChange('note', e.target.value)}
+          />
+        </Form.Item>
+      </Form>
+
+      <p style={{ fontSize: '12px' }}>
+        <b style={{ color: 'red' }}>Importante: </b>
+        Utilize um número de telefone com Whatsapp para poder confirmar o
+        agendamento.
+      </p>
+    </>
   )
 }
