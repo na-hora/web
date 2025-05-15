@@ -26,16 +26,15 @@ export const AnimalServices = () => {
   const serviceImage = (serviceName: string): string => {
     const serviceNameLowerCase = serviceName.toLowerCase()
 
-    switch (serviceNameLowerCase) {
-      case 'banho':
-        return '/imgs/appointment/shower.png'
-      case 'tosa':
-        return '/imgs/appointment/scissor.png'
-      case 'banho e tosa':
-        return '/imgs/appointment/shower.png'
-      default:
-        return '/imgs/appointment/generic-service.png'
+    if (serviceNameLowerCase.includes('banho')) {
+      return '/imgs/appointment/shower.png'
     }
+
+    if (serviceNameLowerCase.includes('tosa')) {
+      return '/imgs/appointment/scissor.png'
+    }
+
+    return '/imgs/appointment/generic-service.png'
   }
 
   if (isFetching) {
@@ -103,8 +102,12 @@ export const AnimalServices = () => {
           <p>Não atendemos essa combinação atualmente...</p>
         )}
 
-        <p style={{ fontSize: '12px', color: 'red' }}>
-          Os valores dos serviços são estimados e podem sofrer variações.
+        <p style={{ fontSize: '12px' }}>
+          <b style={{ color: 'red' }}>Atenção: </b>
+          Os valores dos serviços são estimados, o pagamento será feito
+          diretamente ao Petshop.
+          <br />
+          Qualquer dúvida, entrar em contato diretamente com o estabelecimento.
         </p>
       </Row>
     </>
