@@ -1,11 +1,11 @@
 export const Confirmation = () => {
   return (
     <div>
-      <h1>Verifique seu e-mail para confirmar o agendamento!</h1>
+      <h1>Verifique seu whatsapp para confirmar o agendamento!</h1>
 
       <p>
-        Enviamos os dados do seu agendamento e um link de confirmação para o seu
-        e-mail. Por favor, clique nele para finalizar seu agendamento.
+        Enviamos os dados do seu agendamento e um botão de confirmação para o
+        seu whatsapp. Por favor, clique nele para finalizar seu agendamento.
       </p>
       <strong style={{ color: 'red', fontSize: '1.2rem' }}>Atenção:</strong>
       <p>

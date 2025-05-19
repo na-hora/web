@@ -36,6 +36,7 @@ export const UserInfoForm = () => {
             { required: true, message: 'Telefone obrigatório' },
             { min: 14, message: 'Telefone inválido' },
           ]}
+          tooltip='Utilize um número de telefone com Whatsapp para poder confirmar o agendamento.'
           required
         >
           <PhoneInput
