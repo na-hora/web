@@ -200,7 +200,7 @@ export const ServiceConfigurationModal = ({
               </Typography.Text>
 
               <Typography.Text type='secondary' style={{ fontSize: '12px' }}>
-                Se o preço for 0, o cliente verá a frase "Sob consulta".
+                O preço sempre será exibido como uma estimativa!
               </Typography.Text>
             </Col>
           }
