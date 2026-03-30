@@ -54,7 +54,7 @@ src/
 
 - **Node.js** (v18 or higher recommended)
 - **npm** (or your preferred package manager)
-- **Na Hora API** running locally or accessible remotely (see [Backend API](#backend-api))
+- **Na Hora API** running locally or accessible remotely
 
 ## Getting Started
 
